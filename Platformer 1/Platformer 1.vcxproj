@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D28B3705-A0BB-4C45-AF67-F43FBCEA45FA}</ProjectGuid>
+    <RootNamespace>Platformer1</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>C:\allegro\MVSC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\allegro\MVSC\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>allegro-5.0.7-monolith-md-debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>c:\allegro\MVSC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\allegro\MVSC\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>allegro-5.0.7-monolith-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="BaseSprite.cpp" />
+    <ClCompile Include="Blood.cpp" />
+    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="DynamicObject.cpp" />
+    <ClCompile Include="FileManager.cpp" />
+    <ClCompile Include="FontManager.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="globals.cpp" />
+    <ClCompile Include="imageManager.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="obj_Double_Spike_Down.cpp" />
+    <ClCompile Include="obj_Double_Spike_Up.cpp" />
+    <ClCompile Include="obj_Saw.cpp" />
+    <ClCompile Include="obj_saw_bar.cpp" />
+    <ClCompile Include="obj_Saw_Small.cpp" />
+    <ClCompile Include="obj_Trigger_Double_Spike.cpp" />
+    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Save.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="Spike.cpp" />
+    <ClCompile Include="Spike_Down.cpp" />
+    <ClCompile Include="Spike_Left.cpp" />
+    <ClCompile Include="Spike_Right.cpp" />
+    <ClCompile Include="Spike_Up.cpp" />
+    <ClCompile Include="spr_Player.cpp" />
+    <ClCompile Include="StaticObject.cpp" />
+    <ClCompile Include="Wall.cpp" />
+    <ClCompile Include="Wall_Fade.cpp" />
+    <ClCompile Include="Wall_Fake.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BaseSprite.h" />
+    <ClInclude Include="Blood.h" />
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="DynamicObject.h" />
+    <ClInclude Include="FileManager.h" />
+    <ClInclude Include="FontManager.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="globals.h" />
+    <ClInclude Include="imageManager.h" />
+    <ClInclude Include="obj_Double_Spike_Down.h" />
+    <ClInclude Include="obj_Double_Spike_Up.h" />
+    <ClInclude Include="obj_Saw.h" />
+    <ClInclude Include="obj_Saw_Bar.h" />
+    <ClInclude Include="obj_Saw_Small.h" />
+    <ClInclude Include="obj_Trigger_Double_Spike.h" />
+    <ClInclude Include="Particle.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Save.h" />
+    <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="Spike.h" />
+    <ClInclude Include="Spike_Down.h" />
+    <ClInclude Include="Spike_Left.h" />
+    <ClInclude Include="Spike_Right.h" />
+    <ClInclude Include="Spike_Up.h" />
+    <ClInclude Include="spr_Player.h" />
+    <ClInclude Include="StaticObject.h" />
+    <ClInclude Include="Wall.h" />
+    <ClInclude Include="Wall_Fade.h" />
+    <ClInclude Include="Wall_Fake.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

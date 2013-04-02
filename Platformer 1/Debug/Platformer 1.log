@@ -1,0 +1,49 @@
+﻿Build started 2-4-2013 12:16:14.
+     1>Project "d:\dhr. max oomen\documents\visual studio 2010\Projects\Platformer 1\Platformer 1\Platformer 1.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Debug\Platformer 1.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\allegro\MVSC\include /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         main.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"d:\dhr. max oomen\documents\visual studio 2010\Projects\Platformer 1\Debug\Platformer 1.exe" /NOLOGO /LIBPATH:C:\allegro\MVSC\lib "allegro-5.0.7-monolith-md-debug.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\Platformer 1.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"d:\dhr. max oomen\documents\visual studio 2010\Projects\Platformer 1\Debug\Platformer 1.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"d:\dhr. max oomen\documents\visual studio 2010\Projects\Platformer 1\Debug\Platformer 1.lib" /MACHINE:X86 Debug\BaseSprite.obj
+         Debug\Blood.obj
+         Debug\Bullet.obj
+         Debug\DynamicObject.obj
+         Debug\FileManager.obj
+         Debug\FontManager.obj
+         Debug\GameObject.obj
+         Debug\globals.obj
+         Debug\imageManager.obj
+         Debug\main.obj
+         Debug\obj_Double_Spike_Down.obj
+         Debug\obj_Double_Spike_Up.obj
+         Debug\obj_Saw.obj
+         Debug\obj_saw_bar.obj
+         Debug\obj_Trigger_Double_Spike.obj
+         Debug\Particle.obj
+         Debug\Player.obj
+         Debug\Save.obj
+         Debug\SoundManager.obj
+         Debug\Spike.obj
+         Debug\Spike_Down.obj
+         Debug\Spike_Left.obj
+         Debug\Spike_Right.obj
+         Debug\Spike_Up.obj
+         Debug\spr_Player.obj
+         Debug\StaticObject.obj
+         Debug\Wall.obj
+         Debug\Wall_Fade.obj
+         Debug\Wall_Fake.obj
+         LINK : d:\dhr. max oomen\documents\visual studio 2010\Projects\Platformer 1\Debug\Platformer 1.exe not found or not built by the last incremental link; performing full link
+         Platformer 1.vcxproj -> d:\dhr. max oomen\documents\visual studio 2010\Projects\Platformer 1\Debug\Platformer 1.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"d:\dhr. max oomen\documents\visual studio 2010\Projects\Platformer 1\Debug\Platformer 1.exe;#1" /manifest "Debug\Platformer 1.exe.intermediate.manifest"
+       FinalizeBuildStatus:
+         Deleting file "Debug\Platformer 1.unsuccessfulbuild".
+         Touching "Debug\Platformer 1.lastbuildstate".
+     1>Done Building Project "d:\dhr. max oomen\documents\visual studio 2010\Projects\Platformer 1\Platformer 1\Platformer 1.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.01

@@ -1,0 +1,246 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Objects">
+      <UniqueIdentifier>{85e5d78c-b574-4454-a2f4-e1be6cb928c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Sprites">
+      <UniqueIdentifier>{f4fe1ded-047b-4255-a48f-d8a706885d49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Sprites">
+      <UniqueIdentifier>{d122b1ef-aa6e-4405-b13b-5b35645518f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects">
+      <UniqueIdentifier>{e9c236ea-6818-420f-8e10-4a77c976af01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects\Spike">
+      <UniqueIdentifier>{f10c993d-3e82-4d6d-9ba9-e1fb0e253863}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects\Spike">
+      <UniqueIdentifier>{eed7cce8-873a-42cd-900a-c3f3d4f4926b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects\Wall">
+      <UniqueIdentifier>{4b1cb1d2-911b-4a5b-b6e8-f5bcaa4cbbb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects\Wall">
+      <UniqueIdentifier>{3c3d3ba8-3251-4a03-83a6-e9948628fa3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers">
+      <UniqueIdentifier>{505557bd-7874-4d0e-a8ea-80da50a009bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Managers">
+      <UniqueIdentifier>{e0cfaa54-3126-4402-814c-6dee4e5e494f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects\Spike\Moving Spike">
+      <UniqueIdentifier>{dbbb5995-0dd4-496e-a18b-c70640560fa9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects\Spike\Moving Spike">
+      <UniqueIdentifier>{b091d75c-a965-4453-af10-43fcda06b240}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Particles">
+      <UniqueIdentifier>{9b3e11d6-05c7-443a-b260-c2ec1eaffbd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Particles">
+      <UniqueIdentifier>{f39398d7-5864-43a3-951f-72fc80237103}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects\Saw">
+      <UniqueIdentifier>{4829388b-67fd-4864-a745-a11cf0fdcc73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects\Saw">
+      <UniqueIdentifier>{0fa37b26-f085-4b0a-8a2f-8a08b684bd3c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseSprite.cpp">
+      <Filter>Source Files\Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicObject.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticObject.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="spr_Player.cpp">
+      <Filter>Source Files\Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Spike.cpp">
+      <Filter>Source Files\Objects\Spike</Filter>
+    </ClCompile>
+    <ClCompile Include="Spike_Down.cpp">
+      <Filter>Source Files\Objects\Spike</Filter>
+    </ClCompile>
+    <ClCompile Include="Spike_Up.cpp">
+      <Filter>Source Files\Objects\Spike</Filter>
+    </ClCompile>
+    <ClCompile Include="Spike_Left.cpp">
+      <Filter>Source Files\Objects\Spike</Filter>
+    </ClCompile>
+    <ClCompile Include="Spike_Right.cpp">
+      <Filter>Source Files\Objects\Spike</Filter>
+    </ClCompile>
+    <ClCompile Include="globals.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Wall.cpp">
+      <Filter>Source Files\Objects\Wall</Filter>
+    </ClCompile>
+    <ClCompile Include="Wall_Fade.cpp">
+      <Filter>Source Files\Objects\Wall</Filter>
+    </ClCompile>
+    <ClCompile Include="Wall_Fake.cpp">
+      <Filter>Source Files\Objects\Wall</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="imageManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="FontManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="FileManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Save.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="obj_Trigger_Double_Spike.cpp">
+      <Filter>Source Files\Objects\Spike\Moving Spike</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Source Files\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Blood.cpp">
+      <Filter>Source Files\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="obj_Double_Spike_Down.cpp">
+      <Filter>Source Files\Objects\Spike\Moving Spike</Filter>
+    </ClCompile>
+    <ClCompile Include="obj_Saw.cpp">
+      <Filter>Source Files\Objects\Saw</Filter>
+    </ClCompile>
+    <ClCompile Include="obj_saw_bar.cpp">
+      <Filter>Source Files\Objects\Saw</Filter>
+    </ClCompile>
+    <ClCompile Include="obj_Double_Spike_Up.cpp">
+      <Filter>Source Files\Objects\Spike\Moving Spike</Filter>
+    </ClCompile>
+    <ClCompile Include="obj_Saw_Small.cpp">
+      <Filter>Source Files\Objects\Saw</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticObject.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicObject.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseSprite.h">
+      <Filter>Header Files\Sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="spr_Player.h">
+      <Filter>Header Files\Sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Spike.h">
+      <Filter>Header Files\Objects\Spike</Filter>
+    </ClInclude>
+    <ClInclude Include="Spike_Up.h">
+      <Filter>Header Files\Objects\Spike</Filter>
+    </ClInclude>
+    <ClInclude Include="Spike_Down.h">
+      <Filter>Header Files\Objects\Spike</Filter>
+    </ClInclude>
+    <ClInclude Include="Spike_Left.h">
+      <Filter>Header Files\Objects\Spike</Filter>
+    </ClInclude>
+    <ClInclude Include="Spike_Right.h">
+      <Filter>Header Files\Objects\Spike</Filter>
+    </ClInclude>
+    <ClInclude Include="Wall.h">
+      <Filter>Header Files\Objects\Wall</Filter>
+    </ClInclude>
+    <ClInclude Include="Wall_Fade.h">
+      <Filter>Header Files\Objects\Wall</Filter>
+    </ClInclude>
+    <ClInclude Include="Wall_Fake.h">
+      <Filter>Header Files\Objects\Wall</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="FontManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="FileManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="imageManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Save.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="obj_Trigger_Double_Spike.h">
+      <Filter>Header Files\Objects\Spike\Moving Spike</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Header Files\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Blood.h">
+      <Filter>Header Files\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="obj_Double_Spike_Down.h">
+      <Filter>Header Files\Objects\Spike\Moving Spike</Filter>
+    </ClInclude>
+    <ClInclude Include="obj_Saw_Bar.h">
+      <Filter>Header Files\Objects\Saw</Filter>
+    </ClInclude>
+    <ClInclude Include="obj_Saw.h">
+      <Filter>Header Files\Objects\Saw</Filter>
+    </ClInclude>
+    <ClInclude Include="obj_Saw_Small.h">
+      <Filter>Header Files\Objects\Saw</Filter>
+    </ClInclude>
+    <ClInclude Include="obj_Double_Spike_Up.h">
+      <Filter>Header Files\Objects\Spike\Moving Spike</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
