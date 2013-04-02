@@ -193,11 +193,22 @@ bool DynamicObject::checkCollision(GameObject *other)
 			|         |
 			*----*----*
 		*/
-		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x,y))
-		{
-			std::cout << "working!";
+		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x-boundLeft,y-boundUp))
 			return true;
-		}
+		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x,y-boundUp))
+			return true;
+		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x+boundLeft,y-boundUp))
+			return true;
+		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x-boundLeft,y))
+			return true;
+		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x+boundLeft,y))
+			return true;
+		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x-boundLeft,y+boundUp))
+			return true;
+		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x,y+boundUp))
+			return true;
+		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x+boundLeft,y+boundUp))
+			return true;
 	}
 	return false;
 }
@@ -221,7 +232,7 @@ bool DynamicObject::is_p_in_triangle(float xPoint1, float yPoint1, float xPoint2
 
 bool DynamicObject::is_p_in_circle(float xCircle, float yCircle, float radiusCircle, float Px, float Py)
 {
-	if((xCircle-Px)*(xCircle-Px) + (yCircle-Py)*(yCircle-Py) < radiusCircle*radiusCircle)
+	if((Px-xCircle)*(Px-xCircle) + (Py-yCircle)*(Py-yCircle) < radiusCircle*radiusCircle)
 		return true;
 	return false;
 }

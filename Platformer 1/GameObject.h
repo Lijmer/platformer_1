@@ -38,7 +38,7 @@ public:
 	float getYPoint2()							{return yPoint2;}
 	float getXPoint3()							{return xPoint3;}
 	float getYPoint3()							{return yPoint3;}
-	float getRadius()							{return radius;}
+	unsigned char getRadius()					{return radius;}
 	int getID()									{return ID;}
 	int getDepth()								{return depth;}
 	bool getAlive()								{return alive;}
@@ -74,7 +74,7 @@ protected:
 	float yPoint2;
 	float xPoint3;
 	float yPoint3;
-	float radius;
+	unsigned char radius;
 	ALLEGRO_BITMAP *image;
 private:
 	int ID;

@@ -828,7 +828,6 @@ void __cdecl deleteDynamicObjects(void)
 {
 	for(iter=dynamicObjects.begin();iter!=dynamicObjects.end();)
 	{
-		std::cout << (*iter)->getID() << std::endl;
 		(*iter)->destroy();
 		delete (*iter);
 		iter = dynamicObjects.erase(iter);

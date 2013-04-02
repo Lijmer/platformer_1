@@ -4,7 +4,7 @@
 obj_Saw_Small::obj_Saw_Small(void)
 {
 	setID(global::SAW);
-	setCollisionType(BB);
+	setCollisionType(CBB);
 	setCollidable(true);
 }
 

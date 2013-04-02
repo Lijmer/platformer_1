@@ -4,7 +4,7 @@
 obj_Saw::obj_Saw(void)
 {
 	setID(global::SAW);
-	setCollisionType(BB);
+	setCollisionType(CBB);
 	setCollidable(true);
 }
 
@@ -24,7 +24,7 @@ void obj_Saw::init(float x, float y)
 }
 void obj_Saw::update(bool *keys, bool *keys_pressed)
 {
-	direction += 5;
+	direction += 20;
 	while(direction>360)
 		direction-=360;
 }

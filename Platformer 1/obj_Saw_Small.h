@@ -11,7 +11,6 @@ public:
 	void draw();
 	void destroy();
 private:
-	char radius;
 	float direction;
 };
 
