@@ -8,6 +8,7 @@ spr_Player::spr_Player(void)
 	direction = 0;
 	column = 0;
 	direction=true;
+	vertical_direction=true;
 }
 
 void spr_Player::update()
@@ -43,8 +44,18 @@ void spr_Player::update()
 
 void spr_Player::draw(float x, float y)
 {
-	if(direction)
-		al_draw_tinted_scaled_rotated_bitmap_region(image,28*column, 26*row, 28, 26, al_map_rgba(255,255,255,255), 13, 14 ,x, y, 1, 1,0,0);
-	else
-		al_draw_tinted_scaled_rotated_bitmap_region(image,28*column, 26*row, 28, 26, al_map_rgba(255,255,255,255), 13, 14 ,x, y, -1, 1,0,0);
+	if(vertical_direction)
+	{
+		if(direction)
+			al_draw_tinted_scaled_rotated_bitmap_region(image,28*column, 26*row, 28, 26, al_map_rgba(255,255,255,255), 13, 14 ,x, y, 1, 1,0,0);
+		else
+			al_draw_tinted_scaled_rotated_bitmap_region(image,28*column, 26*row, 28, 26, al_map_rgba(255,255,255,255), 13, 14 ,x, y, -1, 1,0,0);
+	}
+	else if(!vertical_direction)
+	{
+		if(direction)
+			al_draw_tinted_scaled_rotated_bitmap_region(image,28*column, 26*row, 28, 26, al_map_rgba(255,255,255,255), 13, 14 ,x, y, 1, -1,0,0);
+		else
+			al_draw_tinted_scaled_rotated_bitmap_region(image,28*column, 26*row, 28, 26, al_map_rgba(255,255,255,255), 13, 14 ,x, y, -1, -1,0,0);
+	}
 }

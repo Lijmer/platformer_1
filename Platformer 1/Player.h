@@ -34,6 +34,7 @@ private:
 	
 	bool idle;
 	bool dir;
+	bool vertical_dir;
 
 	spr_Player sprite;
 

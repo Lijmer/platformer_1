@@ -849,6 +849,13 @@ void maxParticles()
 		delete (*particleIter);
 		particleIter=particles.erase(particleIter);
 	}
+	while(deactivatedParticles.size()>5000)
+	{
+		particleIter = deactivatedParticles.begin();
+		(*particleIter)->destroy();
+		delete (*particleIter);
+		particleIter=deactivatedParticles.erase(particleIter);
+	}
 }
 
 void __cdecl reserveSpace(char ID, int size)

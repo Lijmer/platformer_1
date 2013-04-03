@@ -21,6 +21,7 @@ Player::Player(bool(*placeFree)(float x, float y), void(*createObject)(int ID, i
 	velY=0;
 
 	dir=true;
+	vertical_dir=true;
 	Player::placeFree = placeFree;
 	Player::createObject = createObject;
 	Player::reserveSpace = reserveSpace;
@@ -63,13 +64,26 @@ void Player::update(bool *keys, bool *keys_pressed)
 	y_previous = y;
 	//If collided with block and the y of the block is greater, than put gravity at 0 and allow reset double jump.
 	//Else put the gravity to 0.62 px/(frame^2)
-	if(collisionWallDown)
+	if(vertical_dir)
 	{
-		gravity = 0;
-		jump=true;
+		if(collisionWallDown)
+		{
+			gravity = 0;
+			jump=true;
+		}
+		else
+			gravity=.62;
 	}
-	else
-		gravity=.62;
+	else if(!vertical_dir)
+	{
+		if(collisionWallUp)
+		{
+			gravity = 0;
+			jump=true;
+		}
+		else
+			gravity=-.62;
+	}
 
 	//Add gravity to velocity
 	velY+=gravity;
@@ -106,24 +120,59 @@ void Player::update(bool *keys, bool *keys_pressed)
 	//Jump
 	if(keys_pressed[global::Z_KEY])
 	{
-		if(collisionWallDown)
+		if(vertical_dir)
 		{
-			SoundManager::GetInstance().play(global::JUMP1);
-			velY=-6.5;
+			if(collisionWallDown)
+			{
+				SoundManager::GetInstance().play(global::JUMP1);
+				velY=-6.5;
+			}
+			else if(jump)
+			{
+				SoundManager::GetInstance().play(global::JUMP2);
+				velY=-6.5;
+				jump=false;
+			}
 		}
-		else if(jump)
+		if(!vertical_dir)
 		{
-			SoundManager::GetInstance().play(global::JUMP2);
-			velY=-6.5;
-			jump=false;
+			if(collisionWallUp)
+			{
+				SoundManager::GetInstance().play(global::JUMP1);
+				velY=6.5;
+			}
+			else if(jump)
+			{
+				SoundManager::GetInstance().play(global::JUMP2);
+				velY=6.5;
+				jump=false;
+			}
 		}
 	}
-	if(keys[global::Z_KEY] && velY<0)	{velY-=.35;}
-	if(keys[global::SPACE]) velY=-6.5;
+	if(vertical_dir)
+	{
+		if(keys[global::Z_KEY] && velY<0)
+			velY-=.35;
+	}
+	else if(!vertical_dir)
+	{
+		if(keys[global::Z_KEY] && velY>0)
+			velY+=.35;
+	}
+
+	if(keys[global::SPACE])
+	{
+		if(vertical_dir && collisionWallDown)
+			vertical_dir=false;
+		else if(!vertical_dir && collisionWallUp)
+			vertical_dir=true;
+	}
 
 	//Maximum velocity for going down.
 	if(velY>7)
 		velY=7;
+	if(velY<-7)
+		velY=-7;
 
 	if(velY==0)
 		if(idle)
@@ -151,6 +200,8 @@ void Player::update(bool *keys, bool *keys_pressed)
 	//Update Cam
 	global::camX = int(x/global::SCREEN_WIDTH)*global::SCREEN_WIDTH;
 	global::camY = int(y/global::SCREEN_HEIGHT)*global::SCREEN_HEIGHT;
+
+	sprite.setVertical_Direction(vertical_dir);
 }
 
 void Player::draw()

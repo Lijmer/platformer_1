@@ -48,7 +48,7 @@ void Bullet::destroy()
 
 void Bullet::Collided(GameObject *other)
 {
-	if(other->getID() == global::WALL || other->getID()==global::SPIKE || other->getID()==global::SAVE)
+	if(other->getID() == global::WALL || other->getID()==global::SPIKE || other->getID()==global::SAVE || other->getID()==global::SAW)
 	{
 		setAlive(false);
 	}
