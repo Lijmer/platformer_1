@@ -10,6 +10,7 @@ public:
 	void update(bool *keys, bool *keys_pressed);
 	void draw();
 	void destroy();
+
 private:
 	float direction;
 };

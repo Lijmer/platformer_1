@@ -24,7 +24,7 @@ void obj_Saw_Small::init(float x, float y)
 }
 void obj_Saw_Small::update(bool *keys, bool *keys_pressed)
 {
-	direction += 20;
+	direction += -5;
 	while(direction>360)
 		direction-=360;
 }
