@@ -1,33 +1,10 @@
-﻿Build started 3-4-2013 23:16:30.
+﻿Build started 5-4-2013 14:22:41.
      1>Project "D:\Dhr. Max Oomen\Documents\GitHub\platformer_1\Platformer 1\Platformer 1.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
-         Touching "Release\Platformer 1.unsuccessfulbuild".
+         Creating "Release\Platformer 1.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Ic:\allegro\MVSC\include /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Blood.cpp Bullet.cpp DynamicObject.cpp GameObject.cpp main.cpp obj_Double_Spike_Down.cpp obj_Double_Spike_Up.cpp obj_Saw.cpp obj_saw_bar.cpp obj_Saw_Small.cpp obj_Trigger_Double_Spike.cpp Particle.cpp Player.cpp Save.cpp Spike.cpp Spike_Down.cpp Spike_Left.cpp Spike_Right.cpp Spike_Up.cpp StaticObject.cpp Wall.cpp Wall_Fade.cpp Wall_Fake.cpp
-         Blood.cpp
-         Bullet.cpp
-         DynamicObject.cpp
-         GameObject.cpp
-         main.cpp
-         obj_Double_Spike_Down.cpp
-         obj_Double_Spike_Up.cpp
-         obj_Saw.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Ic:\allegro\MVSC\include /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt obj_saw_bar.cpp
          obj_saw_bar.cpp
-         obj_Saw_Small.cpp
-         obj_Trigger_Double_Spike.cpp
-         Particle.cpp
-         Player.cpp
-         Save.cpp
-         Spike.cpp
-         Spike_Down.cpp
-         Spike_Left.cpp
-         Spike_Right.cpp
-         Spike_Up.cpp
-         StaticObject.cpp
-         Compiling...
-         Wall.cpp
-         Wall_Fade.cpp
-         Wall_Fake.cpp
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Dhr. Max Oomen\Documents\GitHub\platformer_1\Release\Platformer 1.exe" /NOLOGO /LIBPATH:C:\allegro\MVSC\lib "allegro-5.0.7-monolith-md.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\Platformer 1.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\Dhr. Max Oomen\Documents\GitHub\platformer_1\Release\Platformer 1.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Dhr. Max Oomen\Documents\GitHub\platformer_1\Release\Platformer 1.lib" /MACHINE:X86 Release\BaseSprite.obj
          Release\Blood.obj
@@ -71,4 +48,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:16.92
+Time Elapsed 00:00:03.25
