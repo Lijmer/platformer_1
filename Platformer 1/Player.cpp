@@ -212,7 +212,7 @@ void Player::draw()
 void Player::kill()
 {
 	SoundManager::GetInstance().play(global::SPLAT);
-	for(int i=0; i<250; i++)
+	for(int i=0; i<125; i++)
 	{
 		createObject(100,x,y);
 	}

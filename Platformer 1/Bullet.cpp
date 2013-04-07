@@ -28,12 +28,13 @@ void Bullet::update(bool *keys, bool *keys_pressed)
 void Bullet::draw()
 {
 	if(++countFrame >= frameDelay)
-
-		if(color=true)
+	{
+		if(color)
 			color=false;
-		else if(color=false)
+		else if(!color)
 			color=true;
-
+		countFrame=0;
+	}
 	al_draw_filled_circle(x,y,2,al_map_rgb(0,0,0));
 	if(color)
 		al_draw_filled_circle(x,y,1,al_map_rgb(255,255,255));

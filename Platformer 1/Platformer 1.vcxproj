@@ -62,7 +62,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\allegro\MVSC\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>allegro-5.0.7-monolith-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>allegro-5.0.8-monolith-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
