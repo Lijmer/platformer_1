@@ -3,7 +3,7 @@
 
 StaticObject::StaticObject(void)
 {
-	setID(global::UNDEFINED);
+	setID(UNDEFINED);
 	setDepth(0);
 }
 

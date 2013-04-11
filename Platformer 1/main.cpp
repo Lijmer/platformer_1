@@ -1,9 +1,5 @@
+#pragma region Include
 //Basic Stuff
-//#include <allegro5/allegro.h>
-//#include <allegro5/allegro_image.h>
-//#include <allegro5/allegro_primitives.h>
-//#include <allegro5/allegro_font.h>
-//#include <allegro5/allegro_ttf.h>
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -44,7 +40,9 @@ using std::cout;
 using std::endl;
 using namespace std;
 
-//globals
+#pragma endregion All include and using stuff is in here
+
+#pragma region Variables
 vector<DynamicObject *> dynamicObjects;
 vector<DynamicObject *> deactivatedDynamicObjects;
 vector<StaticObject *> staticObjects;
@@ -85,6 +83,9 @@ bool keys_pressed[]		=	{false, false, false, false, false, false, false, false};
 bool keys_released[]	=	{false, false, false, false, false, false, false, false};
 bool keys[]				=	{false, false, false, false, false, false, false, false};
 
+#pragma endregion All vectors, object pointers and other variables are declared in here
+
+#pragma region Prototypes
 //prototypes
 bool __cdecl placeFree(float x, float y);
 int sortFunction(GameObject *i, GameObject *j) {return (i->getDepth()<j->getDepth());}
@@ -96,9 +97,11 @@ obj_Double_Spike_Up* __cdecl create_obj_Double_Spike_Up(float x,float y);
 void __cdecl deleteDynamicObjects(void);
 void __cdecl reserveSpace(char ID, int size);
 void maxParticles();
+#pragma endregion All protypes are in here
 
 int main(int argc, char **argv)
 {
+	#pragma region Setup
 	//==============================================
 	//SHELL VARIABLES
 	//==============================================
@@ -115,8 +118,8 @@ int main(int argc, char **argv)
 	//==============================================
 	//PROJECT VARIABLES
 	//==============================================
-	particles.reserve(750);
-	global::difficulty=0;
+	particles.reserve(125);
+	_difficulty=0;
 
 	//==============================================
 	//ALLEGRO VARIABLES
@@ -125,6 +128,7 @@ int main(int argc, char **argv)
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer;
 	ALLEGRO_TRANSFORM camera;
+	ALLEGRO_BITMAP *staticCanvas = NULL;
 	
 	//==============================================
 	//ALLEGRO INIT FUNCTIONS
@@ -132,7 +136,7 @@ int main(int argc, char **argv)
 	if(!al_init())	//initialize Allegro
 		return -1;
 
-	display = al_create_display(global::SCREEN_WIDTH, global::SCREEN_HEIGHT);	//create our display object
+	display = al_create_display(_SCREEN_WIDTH, _SCREEN_HEIGHT);	//create our display object
 
 	if(!display)																//test display object
 		return -1;
@@ -160,7 +164,7 @@ int main(int argc, char **argv)
 
 	//Map
 	FileManager fmanager(&createObject, &deleteDynamicObjects);
-	fmanager.loadLevel(global::currentLevel); 
+	fmanager.loadLevel(_currentLevel); 
 	
 	
 	//==============================================
@@ -168,6 +172,7 @@ int main(int argc, char **argv)
 	//==============================================
 	event_queue = al_create_event_queue();
 	timer = al_create_timer(1.0 / 60.0);
+	staticCanvas = al_create_bitmap(1024,768);
 
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
@@ -175,14 +180,13 @@ int main(int argc, char **argv)
 
 	al_start_timer(timer);
 	gameTime = al_current_time();
+	#pragma endregion Setting up the game before entering the loop (declaring variables, initing allegro, installing addons, registering even sources)
 	while(!done)
 	{
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
 
-		//==============================================
-		//INPUT
-		//==============================================
+		#pragma region Input
 		if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
 			switch(ev.keyboard.keycode)
@@ -191,50 +195,50 @@ int main(int argc, char **argv)
 				done = true;
 				break;
 			case ALLEGRO_KEY_LEFT:
-				keys_pressed[global::LEFT]=true;
-				keys[global::LEFT] = true;
+				keys_pressed[LEFT]=true;
+				keys[LEFT] = true;
 				break;
 			case ALLEGRO_KEY_RIGHT:
-				keys_pressed[global::RIGHT]=true;
-				keys[global::RIGHT] = true;
+				keys_pressed[RIGHT]=true;
+				keys[RIGHT] = true;
 				break;
 			case ALLEGRO_KEY_UP:
-				keys[global::UP] = true;
+				keys[UP] = true;
 				break;
 			case ALLEGRO_KEY_DOWN:
-				keys[global::DOWN] = true;
+				keys[DOWN] = true;
 				break;
 			case ALLEGRO_KEY_SPACE:
-				keys[global::SPACE] = true;
+				keys[SPACE] = true;
 				break;
 			case ALLEGRO_KEY_Z:
-				keys_pressed[global::Z_KEY]=true;
-				keys[global::Z_KEY] = true;
+				keys_pressed[Z_KEY]=true;
+				keys[Z_KEY] = true;
 				break;
 			case ALLEGRO_KEY_X:
-				keys_pressed[global::X_KEY]=true;
-				keys[global::X_KEY] = true;
-				if(Bullet::getNumBullets() < 10 && d_object_exists(global::PLAYER))
+				keys_pressed[X_KEY]=true;
+				keys[X_KEY] = true;
+				if(Bullet::getNumBullets() < 10 && d_object_exists(PLAYER))
 				{
 					bool dir = player->getDir();
 					bullet = new Bullet();
-					SoundManager::GetInstance().play(global::SHOOT);
+					SoundManager::GetInstance().play(SHOOT);
 					if(dir)
-						bullet->init(player->getX()+13,player->getY()-1,player->getVelX()+10,0,global::BULLET,0);
+						bullet->init(player->getX()+13,player->getY()-1,player->getVelX()+10,0,BULLET,0);
 					else
-						bullet->init(player->getX()-13,player->getY()-1,player->getVelX()-10,0,global::BULLET,0);
+						bullet->init(player->getX()-13,player->getY()-1,player->getVelX()-10,0,BULLET,0);
 					dynamicObjects.push_back(bullet);
 				}
 				break;
 			case ALLEGRO_KEY_R:
-				keys_pressed[global::R_KEY]=true;
-				keys[global::R_KEY]=true;
-				fmanager.restartLevel(global::currentLevel);
-				global::camX_prev=-1;
-				global::camY_prev=-1;
+				keys_pressed[R_KEY]=true;
+				keys[R_KEY]=true;
+				fmanager.restartLevel(_currentLevel);
+				_camX_prev=-1;
+				_camY_prev=-1;
 				break;
 			case ALLEGRO_KEY_Q:
-				if(d_object_exists(global::PLAYER))
+				if(d_object_exists(PLAYER))
 				{
 					player->kill();
 					player->setAlive(false);
@@ -250,27 +254,27 @@ int main(int argc, char **argv)
 				done = true;
 				break;
 			case ALLEGRO_KEY_LEFT:
-				keys[global::LEFT] = false;
+				keys[LEFT] = false;
 				break;
 			case ALLEGRO_KEY_RIGHT:
-				keys[global::RIGHT] = false;
+				keys[RIGHT] = false;
 				break;
 			case ALLEGRO_KEY_UP:
-				keys[global::UP] = false;
+				keys[UP] = false;
 				break;
 			case ALLEGRO_KEY_DOWN:
-				keys[global::DOWN] = false;
+				keys[DOWN] = false;
 				break;
 			case ALLEGRO_KEY_SPACE:
-				keys[global::SPACE] = false;
+				keys[SPACE] = false;
 				break;
 			case ALLEGRO_KEY_Z:
-				keys_released[global::Z_KEY]=true;
-				keys[global::Z_KEY] = false;
+				keys_released[Z_KEY]=true;
+				keys[Z_KEY] = false;
 				break;
 			case ALLEGRO_KEY_X:
-				keys_released[global::X_KEY]=true;
-				keys[global::X_KEY] = false;
+				keys_released[X_KEY]=true;
+				keys[X_KEY] = false;
 				break;
 			}
 		}
@@ -278,9 +282,9 @@ int main(int argc, char **argv)
 		{
 			done=true;
 		}
-		//=====================================================================================================================
-		//GAME UPDATE
-		//=====================================================================================================================
+		#pragma endregion Get input from the user
+
+		#pragma region Update
 		else if(ev.type == ALLEGRO_EVENT_TIMER)
 		{
 			render = true;
@@ -350,7 +354,7 @@ int main(int argc, char **argv)
 			}
 
 			//Activate and Deactivate objects when Camera has moved
-			if(global::camX!=global::camX_prev || global::camY!=global::camY_prev)
+			if(_camX!=_camX_prev || _camY!=_camY_prev)
 			{
 				//Activate
 				for(iter = deactivatedDynamicObjects.begin(); iter!=deactivatedDynamicObjects.end();)
@@ -390,7 +394,7 @@ int main(int argc, char **argv)
 				//Deactivate
 				for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end();)
 				{
-					if((*iter)->getID() != global::PLAYER)
+					if((*iter)->getID() != PLAYER)
 					{
 						(*iter)->deactivate();
 						if(!(*iter)->getActivated())
@@ -426,15 +430,22 @@ int main(int argc, char **argv)
 					else
 						particleIter++;
 				}
+				//Draw all staticobjects on the staticCanvas, This is so there will be less looping through the staticObjectsvector
+				al_set_target_bitmap(staticCanvas);
+				al_clear_to_color(al_map_rgb(192,192,192));
+				for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); iter3++)
+				{
+					(*iter3)->draw();
+				}
 			}
 			maxParticles();
 			//Move cam
 			al_identity_transform(&camera);
-			al_translate_transform(&camera, -global::camX, -global::camY);
+			al_translate_transform(&camera, -_camX, -_camY);
 			al_use_transform(&camera);
 
-			global::camX_prev=global::camX;
-			global::camY_prev=global::camY;
+			_camX_prev=_camX;
+			_camY_prev=_camY;
 			//Reset keys
 			for(int i=0; i<8; i++)
 			{
@@ -442,10 +453,9 @@ int main(int argc, char **argv)
 				//keys_released[i]=false;
 			}
 		}
+		#pragma endregion This is where the magic happens ;)
 
-		//=====================================================================================================================
-		//RENDER
-		//=====================================================================================================================
+		#pragma region Draw
 		if(render && al_is_event_queue_empty(event_queue))
 		{
 			//UPDATE FPS=======================================================================================================
@@ -462,26 +472,30 @@ int main(int argc, char **argv)
 			//BEGIN PROJECT RENDER=============================================================================================
 			sort(staticObjects.begin(),staticObjects.end(), sortFunction);
 			sort(dynamicObjects.begin(),dynamicObjects.end(), sortFunction);
+			al_set_target_backbuffer(display);
+			/*
 			for(r_iter3 = staticObjects.rbegin(); r_iter3!=staticObjects.rend(); r_iter3++)
-				(*r_iter3)->draw();
+				(*r_iter3)->draw();*/
+			al_draw_bitmap(staticCanvas,_camX,_camY,0);
 			for(r_iter = dynamicObjects.rbegin(); r_iter!=dynamicObjects.rend(); r_iter++)
 				(*r_iter)->draw();
 			for(particleIter = particles.begin(); particleIter!=particles.end(); particleIter++)
 				(*particleIter)->draw();
-			al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),global::camX+5,global::camY+5,0,"FPS: %i", gameFPS);
-			if(d_object_exists(global::PLAYER))
+			al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),_camX+5,_camY+5,0,"FPS: %i", gameFPS);
+			if(d_object_exists(PLAYER))
 			{
-				al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),global::camX+5,global::camY+25,0,"X: %f\tY: %f", player->getX(), player->getY());
-				al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),global::camX+5,global::camY+45,0,"Gravity: %f", player->getGravity());
-				al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),global::camX+5,global::camY+65,0,"velY: %f\tvelX: %f", player->getVelY(), player->getVelX());
+				al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),_camX+5,_camY+25,0,"X: %f\tY: %f", player->getX(), player->getY());
+				al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),_camX+5,_camY+45,0,"Gravity: %f", player->getGravity());
+				al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),_camX+5,_camY+65,0,"velY: %f\tvelX: %f", player->getVelY(), player->getVelX());
 	
 			}
 			//FLIP BUFFERS========================
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(192,192,192));
 		}
+		#pragma endregion All drawing stuff happens in here
 	}
-
+	#pragma region Clean up
 	//==============================================
 	//DESTROY PROJECT OBJECTS
 	//==============================================
@@ -530,15 +544,18 @@ int main(int argc, char **argv)
 	al_destroy_timer(timer);
 	al_destroy_event_queue(event_queue);
 	al_destroy_display(display);
+	#pragma endregion This destroys all objects and variables made in the platformer
 	return 0;
 }
+
+#pragma region Functions
 
 //Checks if there is no object blocking the player.
 bool __cdecl placeFree(float x, float y)
 {
 	for(iter3 = staticObjects.begin(); iter3 != staticObjects.end(); iter3++)
 	{		
-		if((*iter3)->getID() != global::WALL) continue;
+		if((*iter3)->getID() != WALL) continue;
 		if(x + player->getBoundRight() >= (*iter3)->getX() - (*iter3)->getBoundLeft() &&
 			x - player->getBoundLeft() <= (*iter3)->getX() + (*iter3)->getBoundRight() &&
 			y + player->getBoundDown() -1 > (*iter3)->getY() - (*iter3)->getBoundUp() &&
@@ -551,7 +568,7 @@ bool __cdecl placeFree(float x, float y)
 	}
 	for(iter2 = dynamicObjects.begin(); iter2 != dynamicObjects.end(); iter2++)
 	{		
-		if((*iter2)->getID() != global::WALL_FADE && (*iter2)->getID()!= global::SAVE) continue;
+		if((*iter2)->getID() != WALL_FADE && (*iter2)->getID()!= SAVE) continue;
 		if(x + player->getBoundRight() >= (*iter2)->getX() - (*iter2)->getBoundLeft() &&
 			x - player->getBoundLeft() <= (*iter2)->getX() + (*iter2)->getBoundRight() &&
 			y + player->getBoundDown() -1 > (*iter2)->getY() - (*iter2)->getBoundUp() &&
@@ -882,3 +899,5 @@ void __cdecl reserveSpace(char ID, int size)
 	}
 
 }
+
+#pragma endregion

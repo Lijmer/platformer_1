@@ -7,7 +7,7 @@ Wall::Wall(void)
 	boundDown = 32;
 	boundLeft=0;
 	boundRight=32;
-	setID(global::WALL);
+	setID(WALL);
 	setDepth(-10);
 	setCollisionType(BB);
 	image =  ImageManager::getInstance().getImage(2);

@@ -28,7 +28,7 @@ Player::Player(bool(*placeFree)(float x, float y), void(*createObject)(int ID, i
 
 	setCollisionType(BB);
 
-	setID(global::PLAYER);
+	setID(PLAYER);
 	setDepth(-11);
 }
 
@@ -89,7 +89,7 @@ void Player::update(bool *keys, bool *keys_pressed)
 	velY+=gravity;
 
 	//Move Left
-	if(keys[global::LEFT] && !keys[global::RIGHT])
+	if(keys[LEFT] && !keys[RIGHT])
 	{
 		sprite.setDirection(false);
 		dir=false;
@@ -104,7 +104,7 @@ void Player::update(bool *keys, bool *keys_pressed)
 	}
 
 	//Move Right
-	if(keys[global::RIGHT] && !keys[global::LEFT])
+	if(keys[RIGHT] && !keys[LEFT])
 	{
 		sprite.setDirection(true);
 		idle=false;
@@ -118,18 +118,18 @@ void Player::update(bool *keys, bool *keys_pressed)
 	}
 
 	//Jump
-	if(keys_pressed[global::Z_KEY])
+	if(keys_pressed[Z_KEY])
 	{
 		if(vertical_dir)
 		{
 			if(collisionWallDown)
 			{
-				SoundManager::GetInstance().play(global::JUMP1);
+				SoundManager::GetInstance().play(JUMP1);
 				velY=-6.5;
 			}
 			else if(jump)
 			{
-				SoundManager::GetInstance().play(global::JUMP2);
+				SoundManager::GetInstance().play(JUMP2);
 				velY=-6.5;
 				jump=false;
 			}
@@ -138,12 +138,12 @@ void Player::update(bool *keys, bool *keys_pressed)
 		{
 			if(collisionWallUp)
 			{
-				SoundManager::GetInstance().play(global::JUMP1);
+				SoundManager::GetInstance().play(JUMP1);
 				velY=6.5;
 			}
 			else if(jump)
 			{
-				SoundManager::GetInstance().play(global::JUMP2);
+				SoundManager::GetInstance().play(JUMP2);
 				velY=6.5;
 				jump=false;
 			}
@@ -151,16 +151,16 @@ void Player::update(bool *keys, bool *keys_pressed)
 	}
 	if(vertical_dir)
 	{
-		if(keys[global::Z_KEY] && velY<0)
+		if(keys[Z_KEY] && velY<0)
 			velY-=.35;
 	}
 	else if(!vertical_dir)
 	{
-		if(keys[global::Z_KEY] && velY>0)
+		if(keys[Z_KEY] && velY>0)
 			velY+=.35;
 	}
 
-	if(keys[global::SPACE])
+	if(keys[SPACE])
 	{
 		if(vertical_dir && collisionWallDown)
 			vertical_dir=false;
@@ -198,8 +198,8 @@ void Player::update(bool *keys, bool *keys_pressed)
 	sprite.update();
 
 	//Update Cam
-	global::camX = int(x/global::SCREEN_WIDTH)*global::SCREEN_WIDTH;
-	global::camY = int(y/global::SCREEN_HEIGHT)*global::SCREEN_HEIGHT;
+	_camX = int(x/_SCREEN_WIDTH)*_SCREEN_WIDTH;
+	_camY = int(y/_SCREEN_HEIGHT)*_SCREEN_HEIGHT;
 
 	sprite.setVertical_Direction(vertical_dir);
 }
@@ -211,7 +211,7 @@ void Player::draw()
 
 void Player::kill()
 {
-	SoundManager::GetInstance().play(global::SPLAT);
+	SoundManager::GetInstance().play(SPLAT);
 	for(int i=0; i<125; i++)
 	{
 		createObject(100,x,y);
@@ -226,7 +226,7 @@ void Player::destroy()
 
 void Player::Collided(GameObject *other)
 {
-	if(other->getID()==global::WALL || other->getID()==global::WALL_FADE || other->getID()==global::SAVE)
+	if(other->getID()==WALL || other->getID()==WALL_FADE || other->getID()==SAVE)
 	{
 		if(y >= other->getY())
 			collisionWallUp = true;
@@ -259,7 +259,7 @@ void Player::Collided(GameObject *other)
 
 		velY=0;
 	}
-	else if(other->getID() == global::SPIKE || other->getID() == global::SAW)
+	else if(other->getID() == SPIKE || other->getID() == SAW)
 	{
 		kill();
 		setAlive(false);

@@ -9,16 +9,16 @@ Save::Save(void(*createObject)(int ID, int x, int y))
 	boundDown=31;
 	boundLeft=0;
 	boundRight=28;
-	setID(global::SAVE);
+	setID(SAVE);
 	Save::createObject = createObject;
 }
 
 void Save::init(float x, float y, char difficulty)
 {
 	image = ImageManager::getInstance().getImage(7);
-	DynamicObject::init(x,y,0,0,global::SAVE,0);
+	DynamicObject::init(x,y,0,0,SAVE,0);
 
-	if(difficulty < global::difficulty)
+	if(difficulty < _difficulty)
 	{
 		createObject(0,x,y);
 		setAlive(false);
@@ -52,7 +52,7 @@ void Save::destroy()
 
 void Save::Collided(GameObject *other)
 {
-	if(other->getID() == global::BULLET)
+	if(other->getID() == BULLET)
 	{
 		count = 0;
 		active=true;

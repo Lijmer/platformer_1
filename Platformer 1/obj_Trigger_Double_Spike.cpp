@@ -3,7 +3,7 @@
 
 obj_Trigger_Double_Spike::obj_Trigger_Double_Spike(obj_Double_Spike_Down*(*create_obj_Double_Spike_Down)(float x,float y),obj_Double_Spike_Up*(*create_obj_Double_Spike_Up)(float x,float y))
 {
-	setID(global::TRIGGER_DOUBLE_SPIKE);
+	setID(TRIGGER_DOUBLE_SPIKE);
 	obj_Trigger_Double_Spike::create_obj_Double_Spike_Down = create_obj_Double_Spike_Down;
 	obj_Trigger_Double_Spike::create_obj_Double_Spike_Up = create_obj_Double_Spike_Up;
 	boundUp = 0;
@@ -43,7 +43,7 @@ void obj_Trigger_Double_Spike::destroy()
 
 void obj_Trigger_Double_Spike::Collided(GameObject *other)
 {
-	if(other->getID() == global::PLAYER)
+	if(other->getID() == PLAYER)
 	{
 		down->activate();
 		up->activate();

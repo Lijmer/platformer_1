@@ -1,7 +1,3 @@
 #include "globals.h"
-namespace global
-{
-	int camX = 0, camY=0, camX_prev=-1, camY_prev=-1;
-	char difficulty = -1, currentLevel=0;
-};
-
+int _camX = 0, _camY=0, _camX_prev=-1, _camY_prev=-1;
+char _difficulty = -1, _currentLevel=0;

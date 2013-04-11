@@ -13,7 +13,7 @@ GameObject::GameObject()
 	xPoint3 = 0;
 	yPoint3 = 0;
 	radius=0;
-	ID=global::UNDEFINED;
+	ID=UNDEFINED;
 }
 
 
@@ -29,13 +29,13 @@ void GameObject::init(float x, float y, int ID, int depth)
 
 void GameObject::activate()
 {
-	if(x>global::camX-64 && x<global::camX+global::SCREEN_WIDTH+64 && y>global::camY-64 && y<global::camY+global::SCREEN_HEIGHT+64)
+	if(x>_camX-64 && x<_camX+_SCREEN_WIDTH+64 && y>_camY-64 && y<_camY+_SCREEN_HEIGHT+64)
 		activated = true;
 }
 
 void GameObject::deactivate()
 {
-	if(x<global::camX-64 || x>global::camX+global::SCREEN_WIDTH+64 || y<global::camY-64 || y>global::camY+global::SCREEN_HEIGHT+64)
+	if(x<_camX-64 || x>_camX+_SCREEN_WIDTH+64 || y<_camY-64 || y>_camY+_SCREEN_HEIGHT+64)
 		activated = false;
 }
 

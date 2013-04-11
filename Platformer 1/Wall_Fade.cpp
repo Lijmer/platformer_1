@@ -14,7 +14,7 @@ Wall_Fade::Wall_Fade(void)
 void Wall_Fade::init(float x, float y)
 {
 	image = ImageManager::getInstance().getImage(2);
-	DynamicObject::init(x,y,0,0,global::WALL_FADE,0);
+	DynamicObject::init(x,y,0,0,WALL_FADE,0);
 }
 
 void Wall_Fade::update(bool *keys, bool *keys_pressed)
@@ -39,7 +39,7 @@ void Wall_Fade::destroy()
 
 void Wall_Fade::Collided(GameObject *other)
 {
-	if(other->getID() == global::PLAYER)
+	if(other->getID() == PLAYER)
 	{
 		if(other->getY()<y)
 			activated=true;

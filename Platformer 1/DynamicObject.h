@@ -5,7 +5,7 @@ class DynamicObject : public GameObject
 public:
 	DynamicObject(void);
 
-	void init(float x, float y, float velX, float velY, int ID = global::UNDEFINED, int depth = 0);
+	void init(float x, float y, float velX, float velY, int ID = UNDEFINED, int depth = 0);
 	void virtual update(bool *keys, bool *keys_pressed);
 	void virtual draw();
 	void virtual destroy();

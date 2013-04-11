@@ -42,13 +42,13 @@ void SoundManager::clean()
 
 void SoundManager::play(int num)
 {
-	if(num == global::SHOOT)
+	if(num == SHOOT)
 	al_play_sample(snd_shoot,1,0,1,ALLEGRO_PLAYMODE_ONCE,0); 
-	else if(num==global::JUMP1)
+	else if(num==JUMP1)
 		al_play_sample(snd_jump1,1,0,1,ALLEGRO_PLAYMODE_ONCE,0);
-	else if(num==global::JUMP2)
+	else if(num==JUMP2)
 		al_play_sample(snd_jump2,1,0,1,ALLEGRO_PLAYMODE_ONCE,0);
-	else if(num==global::SPLAT)
+	else if(num==SPLAT)
 		al_play_sample(snd_splat,1,0,1,ALLEGRO_PLAYMODE_ONCE,0);
 	//else if(num==50)
 	//	al_play_sample(music_level1,.5,0,1,ALLEGRO_PLAYMODE_LOOP,0);

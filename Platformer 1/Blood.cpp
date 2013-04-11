@@ -13,7 +13,7 @@ Blood::Blood(void)
 	gravity = 1;
 	x = 0;
 	y = 0;
-	setID(global::PARTICLE);
+	setID(PARTICLE);
 	setCollisionType(BB);
 	kind=rand()%2;
 	frame=rand()%2;
@@ -67,17 +67,14 @@ void Blood::destroy()
 
 void Blood::Collided(GameObject *other)
 {
-	if(other->getID() == global::WALL || other->getID() == global::WALL_FADE)
+	if(other->getID() == WALL || other->getID() == WALL_FADE)
 	{
 		collided=true;
 		velX=0;
 		velY=0;
 	}
-	else if(other->getID() == global::SPIKE)
+	else if(other->getID() == SPIKE)
 	{
-		//velX=velX/2;
-		//velY=velY/2;
-		//collided=true;
 		velX/=1.5;
 		velY/=1.5;
 	}

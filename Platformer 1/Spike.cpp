@@ -7,7 +7,7 @@ Spike::Spike(void)
 	boundDown = 32;
 	boundLeft = 0;
 	boundRight = 32;
-	setID(global::SPIKE);
+	setID(SPIKE);
 	setDepth(0);
 	setCollisionType(TBB);
 }

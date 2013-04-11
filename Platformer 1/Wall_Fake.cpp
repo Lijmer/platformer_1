@@ -3,7 +3,7 @@
 
 Wall_Fake::Wall_Fake(void)
 {
-	setID(global::WALL_FAKE);
+	setID(WALL_FAKE);
 	boundUp=0;
 	boundDown=0;
 	boundLeft=0;

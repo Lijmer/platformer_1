@@ -21,7 +21,7 @@ void Bullet::update(bool *keys, bool *keys_pressed)
 	x_previous = x;
 	y_previous = y;
 	x+=velX;
-	if(x<global::camX || x>global::camX+global::SCREEN_WIDTH || y<global::camY || y>global::camY+global::SCREEN_HEIGHT)
+	if(x<_camX || x>_camX+_SCREEN_WIDTH || y<_camY || y>_camY+_SCREEN_HEIGHT)
 		setAlive(false);
 }
 
@@ -49,7 +49,7 @@ void Bullet::destroy()
 
 void Bullet::Collided(GameObject *other)
 {
-	if(other->getID() == global::WALL || other->getID()==global::SPIKE || other->getID()==global::SAVE || other->getID()==global::SAW)
+	if(other->getID() == WALL || other->getID()==SPIKE || other->getID()==SAVE || other->getID()==SAW)
 	{
 		setAlive(false);
 	}

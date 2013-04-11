@@ -3,7 +3,7 @@
 
 obj_Double_Spike_Up::obj_Double_Spike_Up(void)
 {
-	setID(global::SPIKE);
+	setID(SPIKE);
 	setCollisionType(TBB);
 	setDepth(-1);
 	velX=0;

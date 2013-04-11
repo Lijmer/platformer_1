@@ -3,7 +3,7 @@
 
 Particle::Particle(void)
 {
-	setID(global::PARTICLE);
+	setID(PARTICLE);
 	setCollisionType(BB);
 }
 
