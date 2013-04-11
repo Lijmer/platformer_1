@@ -18,7 +18,6 @@
 #include "Particle.h"
 #include "StaticObject.h"
 #include "Player.h"
-#include "Blood.h"
 #include "Bullet.h"
 #include "Wall.h"
 #include "Wall_Fake.h"
@@ -35,6 +34,10 @@
 #include "obj_Saw_Small.h"
 #include "obj_Saw_Bar.h"
 
+#include "Blood.h"
+#include "Blood_Head.h"
+#include "Blood_Torso.h"
+
 using std::vector;
 using std::cout;
 using std::endl;
@@ -48,6 +51,7 @@ vector<DynamicObject *> deactivatedDynamicObjects;
 vector<StaticObject *> staticObjects;
 vector<StaticObject *> deactivatedStaticObjects;
 vector<Particle *> particles;
+vector<Particle *> stillParticles;
 vector<Particle *> deactivatedParticles;
 
 
@@ -61,7 +65,6 @@ vector<StaticObject *>::reverse_iterator r_iter3;
 vector<Particle *>::iterator particleIter;
 
 Player *player = NULL;
-Blood *blood = NULL;
 Bullet *bullet = NULL;
 Wall *wall = NULL;
 Wall_Fake *wall_fake = NULL;
@@ -78,10 +81,14 @@ obj_Saw *obj_saw = NULL;
 obj_Saw_Small *obj_saw_small = NULL;
 obj_Saw_Bar *obj_saw_bar = NULL;
 
+Blood *blood = NULL;
+Blood_Head *blood_head = NULL;
+Blood_Torso *blood_torso = NULL;
 
 bool keys_pressed[]		=	{false, false, false, false, false, false, false, false};
 bool keys_released[]	=	{false, false, false, false, false, false, false, false};
 bool keys[]				=	{false, false, false, false, false, false, false, false};
+int stillParticlesSize = -1;
 
 #pragma endregion All vectors, object pointers and other variables are declared in here
 
@@ -120,6 +127,7 @@ int main(int argc, char **argv)
 	//==============================================
 	particles.reserve(125);
 	_difficulty=0;
+	stillParticlesSize = stillParticles.size();
 
 	//==============================================
 	//ALLEGRO VARIABLES
@@ -129,6 +137,7 @@ int main(int argc, char **argv)
 	ALLEGRO_TIMER *timer;
 	ALLEGRO_TRANSFORM camera;
 	ALLEGRO_BITMAP *staticCanvas = NULL;
+	ALLEGRO_BITMAP *stillParticleCanvas = NULL;
 	
 	//==============================================
 	//ALLEGRO INIT FUNCTIONS
@@ -173,6 +182,7 @@ int main(int argc, char **argv)
 	event_queue = al_create_event_queue();
 	timer = al_create_timer(1.0 / 60.0);
 	staticCanvas = al_create_bitmap(1024,768);
+	stillParticleCanvas = al_create_bitmap(1024,768);
 
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
@@ -181,11 +191,12 @@ int main(int argc, char **argv)
 	al_start_timer(timer);
 	gameTime = al_current_time();
 	#pragma endregion Setting up the game before entering the loop (declaring variables, initing allegro, installing addons, registering even sources)
+
 	while(!done)
 	{
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
-
+		
 		#pragma region Input
 		if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
@@ -284,19 +295,19 @@ int main(int argc, char **argv)
 		}
 		#pragma endregion Get input from the user
 
-		#pragma region Update
+		#pragma region Timer event
 		else if(ev.type == ALLEGRO_EVENT_TIMER)
 		{
 			render = true;
 
-			//====================================
-			//update
+			#pragma region Update
 			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
 				(*iter)->update(keys, keys_pressed);
 			for(particleIter = particles.begin(); particleIter!=particles.end(); particleIter++)
 				(*particleIter)->update();
+			#pragma endregion
 
-			//collisions
+			#pragma region Collisions
 			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
 			{
 				for(iter2 = dynamicObjects.begin(); iter2!=dynamicObjects.end(); iter2++)
@@ -327,33 +338,9 @@ int main(int argc, char **argv)
 						(*particleIter)->Collided(*iter);
 				}
 			}
-			
-			//cull the dead
-			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); )
-			{
-				if(!(*iter)->getAlive())
-				{
-					(*iter)->destroy();
-					delete (*iter);
-					iter = dynamicObjects.erase(iter);
-				}
-				else
-					++iter;
-			}
+			#pragma endregion
 
-			for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); )
-			{
-				if(!(*iter3)->getAlive())
-				{
-					(*iter3)->destroy();
-					delete (*iter3);
-					iter3 = staticObjects.erase(iter3);
-				}
-				else
-					++iter3;
-			}
-
-			//Activate and Deactivate objects when Camera has moved
+			#pragma region Activate and Deactivate
 			if(_camX!=_camX_prev || _camY!=_camY_prev)
 			{
 				//Activate
@@ -384,7 +371,7 @@ int main(int argc, char **argv)
 					(*particleIter)->activate();
 					if((*particleIter)->getActivated())
 					{
-						particles.push_back((*particleIter));
+						stillParticles.push_back((*particleIter));
 						particleIter = deactivatedParticles.erase(particleIter);
 					}
 					else
@@ -419,39 +406,84 @@ int main(int argc, char **argv)
 					else
 						iter3++;
 				}
-				for(particleIter = particles.begin(); particleIter!=particles.end();)
+				for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end();)
 				{
 					(*particleIter)->deactivate();
-					if(!(*particleIter)->getActivated() && (*particleIter)->getVelX() == 0 && (*particleIter)->getVelY() == 0)
+					if(!(*particleIter)->getActivated())
 					{
 						deactivatedParticles.push_back((*particleIter));
-						particleIter = particles.erase(particleIter);
+						particleIter = stillParticles.erase(particleIter);
 					}
 					else
 						particleIter++;
 				}
+				cout << deactivatedParticles.size();
+
 				//Draw all staticobjects on the staticCanvas, This is so there will be less looping through the staticObjectsvector
 				al_set_target_bitmap(staticCanvas);
-				al_clear_to_color(al_map_rgb(192,192,192));
+				al_clear_to_color(al_map_rgba(0,0,0,0));
 				for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); iter3++)
 				{
 					(*iter3)->draw();
 				}
 			}
-			maxParticles();
-			//Move cam
-			al_identity_transform(&camera);
-			al_translate_transform(&camera, -_camX, -_camY);
-			al_use_transform(&camera);
+			#pragma endregion
 
+			#pragma region Not moving particles
+			for(particleIter=particles.begin(); particleIter!=particles.end(); )
+			{
+				if((*particleIter)->getVelX() == 0 && (*particleIter)->getVelY() == 0)
+				{
+					stillParticles.push_back((*particleIter));
+					particleIter = particles.erase(particleIter);
+				}
+				else
+					particleIter++;
+			}
+
+			if(stillParticlesSize != stillParticles.size())
+			{
+				al_set_target_bitmap(stillParticleCanvas);
+				al_clear_to_color(al_map_rgba(0,0,0,0));
+				for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end(); particleIter++)
+					(*particleIter)->draw();
+			}
+			#pragma endregion
+
+			#pragma region Cleaning
+			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); )
+			{
+				if(!(*iter)->getAlive())
+				{
+					(*iter)->destroy();
+					delete (*iter);
+					iter = dynamicObjects.erase(iter);
+				}
+				else
+					++iter;
+			}
+
+			for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); )
+			{
+				if(!(*iter3)->getAlive())
+				{
+					(*iter3)->destroy();
+					delete (*iter3);
+					iter3 = staticObjects.erase(iter3);
+				}
+				else
+					++iter3;
+			}
+			maxParticles();
+
+			#pragma endregion
+			
 			_camX_prev=_camX;
 			_camY_prev=_camY;
+			stillParticlesSize = stillParticles.size();
 			//Reset keys
 			for(int i=0; i<8; i++)
-			{
 				keys_pressed[i]=false;
-				//keys_released[i]=false;
-			}
 		}
 		#pragma endregion This is where the magic happens ;)
 
@@ -468,30 +500,29 @@ int main(int argc, char **argv)
 			}
 
 			render = false;
+			
+			al_set_target_backbuffer(display);
+			al_clear_to_color(al_map_rgb(192,192,192));
 
 			//BEGIN PROJECT RENDER=============================================================================================
-			sort(staticObjects.begin(),staticObjects.end(), sortFunction);
+			//sort(staticObjects.begin(),staticObjects.end(), sortFunction);
 			sort(dynamicObjects.begin(),dynamicObjects.end(), sortFunction);
-			al_set_target_backbuffer(display);
-			/*
-			for(r_iter3 = staticObjects.rbegin(); r_iter3!=staticObjects.rend(); r_iter3++)
-				(*r_iter3)->draw();*/
-			al_draw_bitmap(staticCanvas,_camX,_camY,0);
+			al_draw_bitmap(staticCanvas,0,0,0);
 			for(r_iter = dynamicObjects.rbegin(); r_iter!=dynamicObjects.rend(); r_iter++)
 				(*r_iter)->draw();
 			for(particleIter = particles.begin(); particleIter!=particles.end(); particleIter++)
 				(*particleIter)->draw();
-			al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),_camX+5,_camY+5,0,"FPS: %i", gameFPS);
+			al_draw_bitmap(stillParticleCanvas,0,0,0);
+			al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),5,5,0,"FPS: %i", gameFPS);
 			if(d_object_exists(PLAYER))
 			{
-				al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),_camX+5,_camY+25,0,"X: %f\tY: %f", player->getX(), player->getY());
-				al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),_camX+5,_camY+45,0,"Gravity: %f", player->getGravity());
-				al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),_camX+5,_camY+65,0,"velY: %f\tvelX: %f", player->getVelY(), player->getVelX());
+				al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),5,25,0,"X: %f\tY: %f", player->getX(), player->getY());
+				al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),5,45,0,"Gravity: %f", player->getGravity());
+				al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),5,65,0,"velY: %f\tvelX: %f", player->getVelY(), player->getVelX());
 	
 			}
 			//FLIP BUFFERS========================
 			al_flip_display();
-			al_clear_to_color(al_map_rgb(192,192,192));
 		}
 		#pragma endregion All drawing stuff happens in here
 	}
@@ -529,6 +560,12 @@ int main(int argc, char **argv)
 		delete (*particleIter);
 		particleIter = particles.erase(particleIter);
 	}
+	for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end();)
+	{
+		(*particleIter)->destroy();
+		delete (*particleIter);
+		particleIter = stillParticles.erase(particleIter);
+	}
 	for(particleIter = deactivatedParticles.begin(); particleIter != deactivatedParticles.end(); )
 	{
 		(*particleIter)->destroy();
@@ -545,12 +582,13 @@ int main(int argc, char **argv)
 	al_destroy_event_queue(event_queue);
 	al_destroy_display(display);
 	#pragma endregion This destroys all objects and variables made in the platformer
+
 	return 0;
 }
 
 #pragma region Functions
 
-//Checks if there is no object blocking the player.
+#pragma region placeFree
 bool __cdecl placeFree(float x, float y)
 {
 	for(iter3 = staticObjects.begin(); iter3 != staticObjects.end(); iter3++)
@@ -581,9 +619,9 @@ bool __cdecl placeFree(float x, float y)
 	}
 	return true;
 }
+#pragma endregion Checks if there is no object blocking the player.
 
-
-//Check if dynamic object with ID exists
+#pragma region d_object_exists
 bool d_object_exists(int ID)
 {
 	for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
@@ -598,7 +636,9 @@ bool d_object_exists(int ID)
 	}
 	return false;
 }
+#pragma endregion Check if dynamic object with ID exists
 
+#pragma region CreateObject
 void __cdecl createObject(int ID,int x,int y)
 {
 	if(ID==0)
@@ -698,7 +738,18 @@ void __cdecl createObject(int ID,int x,int y)
 		blood->init(x,y,rand()%360,(((float)rand()/(float)RAND_MAX)*30.0));
 		particles.push_back(blood);
 	}
-
+	else if(ID==101)
+	{
+		blood_head = new Blood_Head();
+		blood_head->init(x,y,270,10);
+		particles.push_back(blood_head);
+	}
+	else if(ID==102)
+	{
+		blood_torso = new Blood_Torso();
+		blood_torso->init(x,y,rand()%360,((float)rand()/(float)RAND_MAX)*30.0);
+		particles.push_back(blood_torso);
+	}
 }
 
 GameObject* __cdecl createObjectWithPointer(int ID,int x,int y)
@@ -818,13 +869,14 @@ GameObject* __cdecl createObjectWithPointer(int ID,int x,int y)
 	}
 	else if(ID==101)
 	{
-		obj_double_spike_down = new obj_Double_Spike_Down;
-		obj_double_spike_down->init(x,y);
-		dynamicObjects.push_back(obj_double_spike_down);
-		return obj_double_spike_down;
+		blood_head = new Blood_Head();
+		blood_head->init(x,y,270,20);
+		particles.push_back(blood_head);
 	}
+	
 	return NULL;
 }
+#pragma endregion
 
 obj_Double_Spike_Down* __cdecl create_obj_Double_Spike_Down(float x,float y)
 {

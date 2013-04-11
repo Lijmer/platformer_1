@@ -1,4 +1,5 @@
 #pragma once
+#include "globals.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 class BaseSprite

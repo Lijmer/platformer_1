@@ -30,7 +30,7 @@ void obj_Saw_Small::update(bool *keys, bool *keys_pressed)
 }
 void obj_Saw_Small::draw()
 {
-	al_draw_scaled_rotated_bitmap(image,radius*2,radius*2,x,y,.5,.5,direction*PI/180,0);
+	al_draw_scaled_rotated_bitmap(image,radius*2,radius*2,x-_camX,y-_camY,.5,.5,direction*PI/180,0);
 }
 void obj_Saw_Small::destroy()
 {}

@@ -19,7 +19,6 @@ public:
 
 private:
 	ALLEGRO_BITMAP *img_player;
-	ALLEGRO_BITMAP *img_blood;
 	ALLEGRO_BITMAP *img_wall;
 	ALLEGRO_BITMAP *img_spike_up;
 	ALLEGRO_BITMAP *img_spike_down;
@@ -28,5 +27,11 @@ private:
 	ALLEGRO_BITMAP *img_save;
 	ALLEGRO_BITMAP *img_saw;
 	ALLEGRO_BITMAP *img_saw_bar;
+	
+	ALLEGRO_BITMAP *img_blood;
+	ALLEGRO_BITMAP *img_blood_head;
+	ALLEGRO_BITMAP *img_blood_torso;
+	ALLEGRO_BITMAP *img_blood_arm;
+	ALLEGRO_BITMAP *img_blood_foot;
 };
 

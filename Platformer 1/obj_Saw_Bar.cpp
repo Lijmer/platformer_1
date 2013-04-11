@@ -30,7 +30,7 @@ void obj_Saw_Bar::update(bool *keys, bool *keys_pressed)
 }
 void obj_Saw_Bar::draw()
 {
-	al_draw_rotated_bitmap(image, 4, 4, x+16, y+16, direction*PI/180, 0);
+	al_draw_rotated_bitmap(image, 4, 4, x+16 -_camX, y+16 -_camY, direction*PI/180, 0);
 }
 void obj_Saw_Bar::destroy()
 {}

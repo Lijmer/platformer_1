@@ -40,9 +40,9 @@ void Save::update(bool *keys, bool *keys_pressed)
 void Save::draw()
 {
 	if(!active)
-		al_draw_bitmap_region(image, 0, 0, 28, 31, x, y, 0);
+		al_draw_bitmap_region(image, 0, 0, 28, 31, x-_camX, y-_camY, 0);
 	else
-		al_draw_bitmap_region(image, 28, 0, 28, 31, x, y, 0);
+		al_draw_bitmap_region(image, 28, 0, 28, 31, x-_camX, y-_camY, 0);
 }
 
 void Save::destroy()

@@ -46,7 +46,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\allegro\MVSC\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>allegro-5.0.7-monolith-md-debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>allegro-5.0.8-monolith-md-debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -69,6 +69,8 @@
   <ItemGroup>
     <ClCompile Include="BaseSprite.cpp" />
     <ClCompile Include="Blood.cpp" />
+    <ClCompile Include="Blood_Head.cpp" />
+    <ClCompile Include="Blood_Torso.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="DynamicObject.cpp" />
     <ClCompile Include="FileManager.cpp" />
@@ -101,6 +103,8 @@
   <ItemGroup>
     <ClInclude Include="BaseSprite.h" />
     <ClInclude Include="Blood.h" />
+    <ClInclude Include="Blood_Head.h" />
+    <ClInclude Include="Blood_Torso.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="DynamicObject.h" />
     <ClInclude Include="FileManager.h" />

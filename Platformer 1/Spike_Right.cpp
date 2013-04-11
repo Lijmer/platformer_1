@@ -20,7 +20,7 @@ void Spike_Right::init(float x,float y)
 
 void Spike_Right::draw()
 {
-	al_draw_bitmap(image,x,y,0);
+	al_draw_bitmap(image,x-_camX,y-_camY,0);
 }
 
 void Spike_Right::destroy()

@@ -29,7 +29,7 @@ void Wall_Fade::update(bool *keys, bool *keys_pressed)
 
 void Wall_Fade::draw()
 {
-	al_draw_tinted_bitmap(image,al_map_rgba(opacity*255.0,opacity*255.0,opacity*255.0,opacity*255.0),x,y,0);
+	al_draw_tinted_bitmap(image,al_map_rgba(opacity*255.0,opacity*255.0,opacity*255.0,opacity*255.0),x-_camX,y-_camY,0);
 }
 
 void Wall_Fade::destroy()

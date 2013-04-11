@@ -45,7 +45,7 @@ void obj_Double_Spike_Up::update(bool *keys, bool *keys_pressed)
 
 void obj_Double_Spike_Up::draw()
 {
-	al_draw_bitmap(image,x,y,0);
+	al_draw_bitmap(image,x-_camX,y-_camY,0);
 }
 
 void obj_Double_Spike_Up::destroy()

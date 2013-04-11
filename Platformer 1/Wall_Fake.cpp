@@ -14,7 +14,7 @@ Wall_Fake::Wall_Fake(void)
 
 void Wall_Fake::draw()
 {
-	al_draw_bitmap(image,x,y,0);
+	al_draw_bitmap(image,x-_camX,y-_camY,0);
 }
 void Wall_Fake::destroy()
 {}

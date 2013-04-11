@@ -43,9 +43,7 @@ void Player::init(float x, float y)
 	Player::y=y;
 	
 	if(image!=NULL)
-	{
 		sprite.init(ImageManager::getInstance().getImage(0), 28, 26, 0, 2);
-	}
 
 	jump=false;
 	direction = 270;
@@ -213,9 +211,9 @@ void Player::kill()
 {
 	SoundManager::GetInstance().play(SPLAT);
 	for(int i=0; i<125; i++)
-	{
 		createObject(100,x,y);
-	}
+	createObject(101,x,y);
+	createObject(102,x,y);
 	destroy();
 }
 

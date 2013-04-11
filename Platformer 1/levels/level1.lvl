@@ -67,6 +67,9 @@ END
 05 = wall_fade
 06 = wall_fake
 07 = obj_Double_Spike_Trigger
+08 = obj_saw
+09 = obj_saw_small
+10 = obj_saw_bar (includes a obj_saw_small)
 96 = save_pussy
 97 = save_medium
 98 = save_hard

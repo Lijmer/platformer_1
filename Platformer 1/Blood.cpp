@@ -27,7 +27,7 @@ Blood::~Blood(void)
 
 void Blood::init(float x, float y, float dir, float spd)
 {
-	image = ImageManager::getInstance().getImage(1);
+	image = ImageManager::getInstance().getImage(100);
 	frameCount=0;
 	frameDelay=rand()%5+5;
 	Particle::init(x,y,(cos(dir*PI/180.0))*spd,(sin(dir*PI/float(180.0)))*spd);
@@ -55,9 +55,9 @@ void Blood::draw()
 	//}
 	
 	if(kind)
-		al_draw_tinted_scaled_rotated_bitmap_region(image,8*frame,0,8,8,al_map_rgba(255,255,255,255),4,4,x,y,1,1,direction*PI/180,0);
+		al_draw_tinted_scaled_rotated_bitmap_region(image,8*frame,0,8,8,al_map_rgba(255,255,255,255),4,4,x-_camX,y-_camY,1,1,direction*PI/180,0);
 	else if(!kind)
-		al_draw_tinted_scaled_rotated_bitmap_region(image,12*frame,8,12,16,al_map_rgba(255,255,255,255),6,8,x,y,1,1,direction*PI/180,0);
+		al_draw_tinted_scaled_rotated_bitmap_region(image,12*frame,8,12,16,al_map_rgba(255,255,255,255),6,8,x-_camX,y-_camY,1,1,direction*PI/180,0);
 }
 
 void Blood::destroy()

@@ -6,16 +6,16 @@ public:
 	Blood(void);
 	~Blood(void);
 	void init(float x, float y, float dir, float speed);
-	void update();
+	void virtual update();
 	void draw();
 	void destroy();
 	void Collided(GameObject *other);
-private:
+protected:
 	bool collided;
 	float gravity;
 	bool kind;
 	bool frame;
-	unsigned char direction;
+	unsigned short direction;
 
 	char frameCount;
 	char frameDelay;

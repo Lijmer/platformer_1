@@ -21,7 +21,7 @@ void Spike_Down::init(float x, float y)
 
 void Spike_Down::draw()
 {
-	al_draw_bitmap(image,x,y,0);
+	al_draw_bitmap(image,x-_camX,y-_camY,0);
 }
 
 void Spike_Down::destroy()
