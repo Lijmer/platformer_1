@@ -133,6 +133,7 @@ int main(int argc, char **argv)
 	//ALLEGRO VARIABLES
 	//==============================================
 	ALLEGRO_DISPLAY *display = NULL;
+	ALLEGRO_DISPLAY_MODE disp_data;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer;
 	ALLEGRO_TRANSFORM camera;
@@ -145,10 +146,25 @@ int main(int argc, char **argv)
 	if(!al_init())	//initialize Allegro
 		return -1;
 
-	display = al_create_display(_SCREEN_WIDTH, _SCREEN_HEIGHT);	//create our display object
+	#pragma region Display
+	al_get_display_mode(al_get_num_display_modes() - 1, &disp_data);
+	al_set_new_display_flags(ALLEGRO_FULLSCREEN);
+	display = al_create_display(disp_data.width, disp_data.height);	//create our display object
+
+	float scaleScreenWidth = disp_data.width / (float)_SCREEN_WIDTH;
+	float scaleScreenHeight = disp_data.height / (float)_SCREEN_HEIGHT;
+	float scaleScreen = min(scaleScreenWidth, scaleScreenHeight);
+
+	al_identity_transform(&camera);
+	al_translate_transform(&camera, (disp_data.width - (_SCREEN_WIDTH * scaleScreen))/2.0, (disp_data.height - (_SCREEN_HEIGHT * scaleScreen))/2.0);
+	al_scale_transform(&camera, scaleScreen, scaleScreen);
+	al_use_transform(&camera);
 
 	if(!display)																//test display object
 		return -1;
+
+	#pragma endregion
+
 	//
 	//==============================================
 	//ADDON INSTALL
@@ -521,6 +537,13 @@ int main(int argc, char **argv)
 				al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),5,65,0,"velY: %f\tvelX: %f", player->getVelY(), player->getVelX());
 	
 			}
+
+			//Draw borders
+			al_draw_filled_rectangle(-(disp_data.width - (_SCREEN_WIDTH * scaleScreen))/2.0, 0, 0, _SCREEN_HEIGHT,al_map_rgb(0,0,0));
+			al_draw_filled_rectangle(_SCREEN_WIDTH + (disp_data.width - (_SCREEN_WIDTH * scaleScreen))/2.0, 0, _SCREEN_WIDTH, _SCREEN_HEIGHT, al_map_rgb(0,0,0));
+			al_draw_filled_rectangle(0, -(disp_data.height - (_SCREEN_HEIGHT * scaleScreen))/2.0, _SCREEN_WIDTH, 0, al_map_rgb(0,0,0));
+			al_draw_filled_rectangle(0, _SCREEN_HEIGHT + (disp_data.height - (_SCREEN_HEIGHT * scaleScreen))/2.0, _SCREEN_WIDTH, _SCREEN_HEIGHT, al_map_rgb(0,0,0));
+
 			//FLIP BUFFERS========================
 			al_flip_display();
 		}
@@ -878,6 +901,7 @@ GameObject* __cdecl createObjectWithPointer(int ID,int x,int y)
 }
 #pragma endregion
 
+#pragma region Double_Spike
 obj_Double_Spike_Down* __cdecl create_obj_Double_Spike_Down(float x,float y)
 {
 	obj_double_spike_down = new obj_Double_Spike_Down;
@@ -893,6 +917,9 @@ obj_Double_Spike_Up* __cdecl create_obj_Double_Spike_Up(float x,float y)
 	return obj_double_spike_up;
 }
 
+#pragma endregion
+
+#pragma region deleteDynamicObjects
 void __cdecl deleteDynamicObjects(void)
 {
 	for(iter=dynamicObjects.begin();iter!=dynamicObjects.end();)
@@ -908,6 +935,7 @@ void __cdecl deleteDynamicObjects(void)
 		iter = deactivatedDynamicObjects.erase(iter);
 	}
 }
+#pragma endregion
 
 void maxParticles()
 {
