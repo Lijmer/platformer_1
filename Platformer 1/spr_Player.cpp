@@ -11,7 +11,7 @@ spr_Player::spr_Player(void)
 	vertical_direction=true;
 }
 
-void spr_Player::update()
+void spr_Player::Update()
 {
 	switch(row)
 	{
@@ -42,7 +42,7 @@ void spr_Player::update()
 	}
 }
 
-void spr_Player::draw(float x, float y)
+void spr_Player::Draw(float x, float y)
 {
 	if(vertical_direction)
 	{

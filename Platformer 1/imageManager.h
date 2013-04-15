@@ -3,19 +3,20 @@
 #include <iostream>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_native_dialog.h>
 class ImageManager
 {
 public:
 	ImageManager(void);
 	~ImageManager(void);
 		
-	static ImageManager &getInstance();
+	static ImageManager &GetInstance();
 
-	void init();
-	void load();
-	void clean();
+	void Init();
+	void Load();
+	void Clean();
 
-	ALLEGRO_BITMAP* getImage(char ID = -1);
+	ALLEGRO_BITMAP* GetImage(char ID = -1);
 
 private:
 	ALLEGRO_BITMAP *img_player;

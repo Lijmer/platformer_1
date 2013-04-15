@@ -9,16 +9,15 @@ public:
 	~SoundManager(void);
 	static SoundManager &GetInstance();
 
-	void init();
-	void clean();
-	void play(int num);
+	void Init();
+	void Clean();
+	void Play(int num);
 
 	
 
 private:
 	SoundManager(void);
 	SoundManager(SoundManager const&);
-	void operator=(SoundManager const*);
 	
 	ALLEGRO_SAMPLE *snd_shoot;
 	ALLEGRO_SAMPLE *snd_jump1;

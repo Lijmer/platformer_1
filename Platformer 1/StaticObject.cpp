@@ -3,18 +3,18 @@
 
 StaticObject::StaticObject(void)
 {
-	setID(UNDEFINED);
-	setDepth(0);
+	SetID(UNDEFINED);
+	SetDepth(0);
 }
 
 
-void StaticObject::init(float x, float y)
+void StaticObject::Init(float x, float y)
 {
 	StaticObject::x=x;
 	StaticObject::y=y;
-	GameObject::init(x,y,getID(),getDepth());
+	//GameObject::Init(x,y,GetID(),GetDepth());
 }
-void StaticObject::draw()
+void StaticObject::Draw()
 {}
-void StaticObject::destroy()
+void StaticObject::Destroy()
 {}

@@ -3,17 +3,17 @@
 class Save : public DynamicObject
 {
 public:
-	Save(void(*createObject)(int ID, int x, int y));
-	void init(float x,float y,char difficulty);
-	void update(bool *keys, bool *keys_pressed);
-	void draw();
-	void destroy();
+	Save(void(*CreateObject)(int ID, int x, int y));
+	void Init(float x,float y,char difficulty);
+	void Update();
+	void Draw();
+	void Destroy();
 	void Collided(GameObject *other);
 
 private:
 	bool active;
 	int count;
 
-	void(*createObject)(int ID, int x, int y);
+	void(*CreateObject)(int ID, int x, int y);
 };
 

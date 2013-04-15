@@ -5,9 +5,9 @@ class StaticObject : public GameObject
 public:
 	StaticObject(void);
 
-	void init(float x, float y);
-	void virtual draw();
-	void virtual destroy();
+	void Init(float x, float y);
+	void virtual Draw();
+	void virtual Destroy();
 
 	//what to do when collided
 	//void virtual Collided(StaticObject *other);

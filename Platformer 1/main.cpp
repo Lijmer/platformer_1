@@ -1,4 +1,5 @@
 #pragma region Include
+#include <allegro5/allegro_native_dialog.h>
 //Basic Stuff
 #include <vector>
 #include <iostream>
@@ -52,6 +53,7 @@ vector<StaticObject *> staticObjects;
 vector<StaticObject *> deactivatedStaticObjects;
 vector<Particle *> particles;
 vector<Particle *> stillParticles;
+vector<Particle *> stillParticlesBuffer;
 vector<Particle *> deactivatedParticles;
 
 
@@ -85,28 +87,25 @@ Blood *blood = NULL;
 Blood_Head *blood_head = NULL;
 Blood_Torso *blood_torso = NULL;
 
-bool keys_pressed[]		=	{false, false, false, false, false, false, false, false};
-bool keys_released[]	=	{false, false, false, false, false, false, false, false};
-bool keys[]				=	{false, false, false, false, false, false, false, false};
 int stillParticlesSize = -1;
 
 #pragma endregion All vectors, object pointers and other variables are declared in here
 
 #pragma region Prototypes
 //prototypes
-bool __cdecl placeFree(float x, float y);
-int sortFunction(GameObject *i, GameObject *j) {return (i->getDepth()<j->getDepth());}
-bool d_object_exists(int ID);
-void __cdecl createObject(int ID,int x,int y);
-GameObject* __cdecl createObjectWithPointer(int ID,int x,int y);
-obj_Double_Spike_Down* __cdecl create_obj_Double_Spike_Down(float x,float y);
-obj_Double_Spike_Up* __cdecl create_obj_Double_Spike_Up(float x,float y);
-void __cdecl deleteDynamicObjects(void);
-void __cdecl reserveSpace(char ID, int size);
-void maxParticles();
+bool __cdecl PlaceFree(float x, float y);
+int SortFunction(GameObject *i, GameObject *j) {return (i->GetDepth()<j->GetDepth());}
+bool D_object_exists(int ID);
+void __cdecl CreateObject(int ID,int x,int y);
+GameObject* __cdecl CreateObjectWithPointer(int ID,int x,int y);
+obj_Double_Spike_Down* __cdecl Create_obj_Double_Spike_Down(float x,float y);
+obj_Double_Spike_Up* __cdecl Create_obj_Double_Spike_Up(float x,float y);
+void __cdecl DeleteDynamicObjects(void);
+void __cdecl ReserveSpace(char ID, int size);
+void MaxParticles();
 #pragma endregion All protypes are in here
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
 	#pragma region Setup
 	//==============================================
@@ -115,9 +114,9 @@ int main(int argc, char **argv)
 	bool done = false;
 	bool render = false;
 
-	float gameTime = 0;
+	int gameTime = 0;
 	int frames = 0;
-	int gameFPS = 0;
+	float gameFPS = 0;
 	int APM = 0, APS = 0;
 
 
@@ -140,12 +139,16 @@ int main(int argc, char **argv)
 	ALLEGRO_BITMAP *staticCanvas = NULL;
 	ALLEGRO_BITMAP *stillParticleCanvas = NULL;
 	
+	al_show_native_message_box(NULL, "Test!", "Test!", "Test", "Ok Sok", 0);
+
 	//==============================================
 	//ALLEGRO INIT FUNCTIONS
 	//==============================================
 	if(!al_init())	//initialize Allegro
+	{
+		al_show_native_message_box(NULL, "Error!", "Error!", "Couldn't init allegro 5", "Ok Sok", 0);
 		return -1;
-
+	}
 	#pragma region Display
 	al_get_display_mode(al_get_num_display_modes() - 1, &disp_data);
 	al_set_new_display_flags(ALLEGRO_FULLSCREEN);
@@ -156,12 +159,15 @@ int main(int argc, char **argv)
 	float scaleScreen = min(scaleScreenWidth, scaleScreenHeight);
 
 	al_identity_transform(&camera);
-	al_translate_transform(&camera, (disp_data.width - (_SCREEN_WIDTH * scaleScreen))/2.0, (disp_data.height - (_SCREEN_HEIGHT * scaleScreen))/2.0);
 	al_scale_transform(&camera, scaleScreen, scaleScreen);
+	al_translate_transform(&camera, (disp_data.width - (_SCREEN_WIDTH * scaleScreen))/2.0, (disp_data.height - (_SCREEN_HEIGHT * scaleScreen))/2.0);
 	al_use_transform(&camera);
 
-	if(!display)																//test display object
+	if(!display)			//test display object
+	{
+		al_show_native_message_box(NULL, "Error!", "Error!", "Couldn't create display", "Ok Sok", 0);
 		return -1;
+	}
 
 	#pragma endregion
 
@@ -180,16 +186,16 @@ int main(int argc, char **argv)
 	//==============================================
 	
 	//font
-	FontManager::GetInstance().init();
+	FontManager::GetInstance().Init();
 	//images
-	ImageManager::getInstance().init();
+	ImageManager::GetInstance().Init();
 	//sound
-	SoundManager::GetInstance().init();
-	SoundManager::GetInstance().play(50);
+	SoundManager::GetInstance().Init();
+	SoundManager::GetInstance().Play(50);
 
 	//Map
-	FileManager fmanager(&createObject, &deleteDynamicObjects);
-	fmanager.loadLevel(_currentLevel); 
+	FileManager fmanager(&CreateObject, &DeleteDynamicObjects);
+	fmanager.LoadLevel(_currentLevel); 
 	
 	
 	//==============================================
@@ -207,7 +213,7 @@ int main(int argc, char **argv)
 	al_start_timer(timer);
 	gameTime = al_current_time();
 	#pragma endregion Setting up the game before entering the loop (declaring variables, initing allegro, installing addons, registering even sources)
-
+	
 	while(!done)
 	{
 		ALLEGRO_EVENT ev;
@@ -222,53 +228,53 @@ int main(int argc, char **argv)
 				done = true;
 				break;
 			case ALLEGRO_KEY_LEFT:
-				keys_pressed[LEFT]=true;
-				keys[LEFT] = true;
+				_keys_pressed[LEFT]=true;
+				_keys[LEFT] = true;
 				break;
 			case ALLEGRO_KEY_RIGHT:
-				keys_pressed[RIGHT]=true;
-				keys[RIGHT] = true;
+				_keys_pressed[RIGHT]=true;
+				_keys[RIGHT] = true;
 				break;
 			case ALLEGRO_KEY_UP:
-				keys[UP] = true;
+				_keys[UP] = true;
 				break;
 			case ALLEGRO_KEY_DOWN:
-				keys[DOWN] = true;
+				_keys[DOWN] = true;
 				break;
 			case ALLEGRO_KEY_SPACE:
-				keys[SPACE] = true;
+				_keys[SPACE] = true;
 				break;
 			case ALLEGRO_KEY_Z:
-				keys_pressed[Z_KEY]=true;
-				keys[Z_KEY] = true;
+				_keys_pressed[Z_KEY]=true;
+				_keys[Z_KEY] = true;
 				break;
 			case ALLEGRO_KEY_X:
-				keys_pressed[X_KEY]=true;
-				keys[X_KEY] = true;
-				if(Bullet::getNumBullets() < 10 && d_object_exists(PLAYER))
+				_keys_pressed[X_KEY]=true;
+				_keys[X_KEY] = true;
+				if(Bullet::getNumBullets() < 10 && D_object_exists(PLAYER))
 				{
-					bool dir = player->getDir();
+					bool dir = player->GetDir();
 					bullet = new Bullet();
-					SoundManager::GetInstance().play(SHOOT);
+					SoundManager::GetInstance().Play(SHOOT);
 					if(dir)
-						bullet->init(player->getX()+13,player->getY()-1,player->getVelX()+10,0,BULLET,0);
+						bullet->Init(player->GetX()+13,player->GetY()-1,player->GetVelX()+10,0,BULLET,0);
 					else
-						bullet->init(player->getX()-13,player->getY()-1,player->getVelX()-10,0,BULLET,0);
+						bullet->Init(player->GetX()-13,player->GetY()-1,player->GetVelX()-10,0,BULLET,0);
 					dynamicObjects.push_back(bullet);
 				}
 				break;
 			case ALLEGRO_KEY_R:
-				keys_pressed[R_KEY]=true;
-				keys[R_KEY]=true;
-				fmanager.restartLevel(_currentLevel);
+				_keys_pressed[R_KEY]=true;
+				_keys[R_KEY]=true;
+				fmanager.RestartLevel(_currentLevel);
 				_camX_prev=-1;
 				_camY_prev=-1;
 				break;
 			case ALLEGRO_KEY_Q:
-				if(d_object_exists(PLAYER))
+				if(D_object_exists(PLAYER))
 				{
-					player->kill();
-					player->setAlive(false);
+					player->Kill();
+					player->SetAlive(false);
 				}
 				break;
 			}
@@ -281,27 +287,27 @@ int main(int argc, char **argv)
 				done = true;
 				break;
 			case ALLEGRO_KEY_LEFT:
-				keys[LEFT] = false;
+				_keys[LEFT] = false;
 				break;
 			case ALLEGRO_KEY_RIGHT:
-				keys[RIGHT] = false;
+				_keys[RIGHT] = false;
 				break;
 			case ALLEGRO_KEY_UP:
-				keys[UP] = false;
+				_keys[UP] = false;
 				break;
 			case ALLEGRO_KEY_DOWN:
-				keys[DOWN] = false;
+				_keys[DOWN] = false;
 				break;
 			case ALLEGRO_KEY_SPACE:
-				keys[SPACE] = false;
+				_keys[SPACE] = false;
 				break;
 			case ALLEGRO_KEY_Z:
-				keys_released[Z_KEY]=true;
-				keys[Z_KEY] = false;
+				_keys_released[Z_KEY]=true;
+				_keys[Z_KEY] = false;
 				break;
 			case ALLEGRO_KEY_X:
-				keys_released[X_KEY]=true;
-				keys[X_KEY] = false;
+				_keys_released[X_KEY]=true;
+				_keys[X_KEY] = false;
 				break;
 			}
 		}
@@ -318,9 +324,9 @@ int main(int argc, char **argv)
 
 			#pragma region Update
 			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
-				(*iter)->update(keys, keys_pressed);
+				(*iter)->Update();
 			for(particleIter = particles.begin(); particleIter!=particles.end(); particleIter++)
-				(*particleIter)->update();
+				(*particleIter)->Update();
 			#pragma endregion
 
 			#pragma region Collisions
@@ -328,14 +334,14 @@ int main(int argc, char **argv)
 			{
 				for(iter2 = dynamicObjects.begin(); iter2!=dynamicObjects.end(); iter2++)
 				{
-					if((*iter)->getID() == (*iter2)->getID()) continue;
-					if(!(*iter)->checkCollision((*iter2)))	continue;
+					if((*iter)->GetID() == (*iter2)->GetID()) continue;
+					if(!(*iter)->CheckCollision((*iter2)))	continue;
 					(*iter)->Collided(*iter2);
 					(*iter2)->Collided(*iter);
 				}
 				for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); iter3++)
 				{
-					if(!(*iter)->checkCollision((*iter3)))	continue;
+					if(!(*iter)->CheckCollision((*iter3)))	continue;
 					(*iter)->Collided(*iter3);
 				}
 			}
@@ -343,14 +349,14 @@ int main(int argc, char **argv)
 			{
 				for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); iter3++)
 				{
-					if((*particleIter)->checkCollision(*iter3))
+					if((*particleIter)->CheckCollision(*iter3))
 					{
 						(*particleIter)->Collided(*iter3);
 					}
 				}
 				for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
 				{
-					if((*particleIter)->checkCollision(*iter))
+					if((*particleIter)->CheckCollision(*iter))
 						(*particleIter)->Collided(*iter);
 				}
 			}
@@ -362,8 +368,8 @@ int main(int argc, char **argv)
 				//Activate
 				for(iter = deactivatedDynamicObjects.begin(); iter!=deactivatedDynamicObjects.end();)
 				{
-					(*iter)->activate();
-					if((*iter)->getActivated())
+					(*iter)->Activate();
+					if((*iter)->GetActivated())
 					{
 						dynamicObjects.push_back((*iter));
 						iter = deactivatedDynamicObjects.erase(iter);
@@ -373,8 +379,8 @@ int main(int argc, char **argv)
 				}
 				for(iter3 = deactivatedStaticObjects.begin(); iter3!=deactivatedStaticObjects.end();)
 				{
-					(*iter3)->activate();
-					if((*iter3)->getActivated())
+					(*iter3)->Activate();
+					if((*iter3)->GetActivated())
 					{
 						staticObjects.push_back((*iter3));
 						iter3 = deactivatedStaticObjects.erase(iter3);
@@ -384,8 +390,8 @@ int main(int argc, char **argv)
 				}
 				for(particleIter = deactivatedParticles.begin(); particleIter!=deactivatedParticles.end();)
 				{
-					(*particleIter)->activate();
-					if((*particleIter)->getActivated())
+					(*particleIter)->Activate();
+					if((*particleIter)->GetActivated())
 					{
 						stillParticles.push_back((*particleIter));
 						particleIter = deactivatedParticles.erase(particleIter);
@@ -397,10 +403,10 @@ int main(int argc, char **argv)
 				//Deactivate
 				for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end();)
 				{
-					if((*iter)->getID() != PLAYER)
+					if((*iter)->GetID() != PLAYER)
 					{
-						(*iter)->deactivate();
-						if(!(*iter)->getActivated())
+						(*iter)->Deactivate();
+						if(!(*iter)->GetActivated())
 						{
 							deactivatedDynamicObjects.push_back((*iter));
 							iter = dynamicObjects.erase(iter);
@@ -413,8 +419,8 @@ int main(int argc, char **argv)
 				}
 				for(iter3 = staticObjects.begin(); iter3!=staticObjects.end();)
 				{
-					(*iter3)->deactivate();
-					if(!(*iter3)->getActivated())
+					(*iter3)->Deactivate();
+					if(!(*iter3)->GetActivated())
 					{
 						deactivatedStaticObjects.push_back((*iter3));
 						iter3 = staticObjects.erase(iter3);
@@ -424,8 +430,8 @@ int main(int argc, char **argv)
 				}
 				for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end();)
 				{
-					(*particleIter)->deactivate();
-					if(!(*particleIter)->getActivated())
+					(*particleIter)->Deactivate();
+					if(!(*particleIter)->GetActivated())
 					{
 						deactivatedParticles.push_back((*particleIter));
 						particleIter = stillParticles.erase(particleIter);
@@ -433,14 +439,13 @@ int main(int argc, char **argv)
 					else
 						particleIter++;
 				}
-				cout << deactivatedParticles.size();
 
 				//Draw all staticobjects on the staticCanvas, This is so there will be less looping through the staticObjectsvector
 				al_set_target_bitmap(staticCanvas);
 				al_clear_to_color(al_map_rgba(0,0,0,0));
 				for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); iter3++)
 				{
-					(*iter3)->draw();
+					(*iter3)->Draw();
 				}
 			}
 			#pragma endregion
@@ -448,13 +453,22 @@ int main(int argc, char **argv)
 			#pragma region Not moving particles
 			for(particleIter=particles.begin(); particleIter!=particles.end(); )
 			{
-				if((*particleIter)->getVelX() == 0 && (*particleIter)->getVelY() == 0)
+				if((*particleIter)->GetVelX() == 0 && (*particleIter)->GetVelY() == 0)
 				{
-					stillParticles.push_back((*particleIter));
+					stillParticlesBuffer.push_back((*particleIter));
 					particleIter = particles.erase(particleIter);
 				}
 				else
 					particleIter++;
+			}
+
+			if(stillParticlesBuffer.size() >= 125)
+			{
+				for(particleIter = stillParticlesBuffer.begin(); particleIter!=stillParticlesBuffer.end(); )
+				{
+					stillParticles.push_back((*particleIter));
+					particleIter = stillParticlesBuffer.erase(particleIter);
+				}
 			}
 
 			if(stillParticlesSize != stillParticles.size())
@@ -462,16 +476,16 @@ int main(int argc, char **argv)
 				al_set_target_bitmap(stillParticleCanvas);
 				al_clear_to_color(al_map_rgba(0,0,0,0));
 				for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end(); particleIter++)
-					(*particleIter)->draw();
+					(*particleIter)->Draw();
 			}
 			#pragma endregion
 
 			#pragma region Cleaning
 			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); )
 			{
-				if(!(*iter)->getAlive())
+				if(!(*iter)->GetAlive())
 				{
-					(*iter)->destroy();
+					(*iter)->Destroy();
 					delete (*iter);
 					iter = dynamicObjects.erase(iter);
 				}
@@ -481,16 +495,16 @@ int main(int argc, char **argv)
 
 			for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); )
 			{
-				if(!(*iter3)->getAlive())
+				if(!(*iter3)->GetAlive())
 				{
-					(*iter3)->destroy();
+					(*iter3)->Destroy();
 					delete (*iter3);
 					iter3 = staticObjects.erase(iter3);
 				}
 				else
 					++iter3;
 			}
-			maxParticles();
+			MaxParticles();
 
 			#pragma endregion
 			
@@ -499,7 +513,7 @@ int main(int argc, char **argv)
 			stillParticlesSize = stillParticles.size();
 			//Reset keys
 			for(int i=0; i<8; i++)
-				keys_pressed[i]=false;
+				_keys_pressed[i]=false;
 		}
 		#pragma endregion This is where the magic happens ;)
 
@@ -522,19 +536,23 @@ int main(int argc, char **argv)
 
 			//BEGIN PROJECT RENDER=============================================================================================
 			//sort(staticObjects.begin(),staticObjects.end(), sortFunction);
-			sort(dynamicObjects.begin(),dynamicObjects.end(), sortFunction);
+			sort(dynamicObjects.begin(),dynamicObjects.end(), SortFunction);
 			al_draw_bitmap(staticCanvas,0,0,0);
 			for(r_iter = dynamicObjects.rbegin(); r_iter!=dynamicObjects.rend(); r_iter++)
-				(*r_iter)->draw();
+				(*r_iter)->Draw();
+			for(particleIter = stillParticlesBuffer.begin(); particleIter!=stillParticlesBuffer.end(); particleIter++)
+				(*particleIter)->Draw();
 			for(particleIter = particles.begin(); particleIter!=particles.end(); particleIter++)
-				(*particleIter)->draw();
+				(*particleIter)->Draw();
+			
 			al_draw_bitmap(stillParticleCanvas,0,0,0);
-			al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),5,5,0,"FPS: %i", gameFPS);
-			if(d_object_exists(PLAYER))
+			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,5,0,"FPS: %f", gameFPS);
+			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,85,0,"_camX: %i\t_camY: %i", _camX, _camY);
+			if(D_object_exists(PLAYER))
 			{
-				al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),5,25,0,"X: %f\tY: %f", player->getX(), player->getY());
-				al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),5,45,0,"Gravity: %f", player->getGravity());
-				al_draw_textf(FontManager::GetInstance().getFont(0), al_map_rgb(255,0,255),5,65,0,"velY: %f\tvelX: %f", player->getVelY(), player->getVelX());
+				al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,25,0,"X: %f\tY: %f", player->GetX(), player->GetY());
+				al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,45,0,"Gravity: %f", player->GetGravity());
+				al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,65,0,"velY: %f\tvelX: %f", player->GetVelY(), player->GetVelX());
 	
 			}
 
@@ -549,56 +567,57 @@ int main(int argc, char **argv)
 		}
 		#pragma endregion All drawing stuff happens in here
 	}
+
 	#pragma region Clean up
 	//==============================================
 	//DESTROY PROJECT OBJECTS
 	//==============================================
 	for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); )
 	{
-		(*iter)->destroy();
+		(*iter)->Destroy();
 		delete (*iter);
 		iter = dynamicObjects.erase(iter);
 	}
 	for(iter = deactivatedDynamicObjects.begin(); iter!=deactivatedDynamicObjects.end();)
 	{
-		(*iter)->destroy();
+		(*iter)->Destroy();
 		delete(*iter);
 		iter = deactivatedDynamicObjects.erase(iter);
 	}
 	for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); )
 	{
-		(*iter3)->destroy();
+		(*iter3)->Destroy();
 		delete (*iter3);
 		iter3 = staticObjects.erase(iter3);
 	}
 	for(iter3 = deactivatedStaticObjects.begin(); iter3!=deactivatedStaticObjects.end(); )
 	{
-		(*iter3)->destroy();
+		(*iter3)->Destroy();
 		delete (*iter3);
 		iter3 = deactivatedStaticObjects.erase(iter3);
 	}
 	for(particleIter = particles.begin(); particleIter !=particles.end();)
 	{
-		(*particleIter)->destroy();
+		(*particleIter)->Destroy();
 		delete (*particleIter);
 		particleIter = particles.erase(particleIter);
 	}
 	for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end();)
 	{
-		(*particleIter)->destroy();
+		(*particleIter)->Destroy();
 		delete (*particleIter);
 		particleIter = stillParticles.erase(particleIter);
 	}
 	for(particleIter = deactivatedParticles.begin(); particleIter != deactivatedParticles.end(); )
 	{
-		(*particleIter)->destroy();
+		(*particleIter)->Destroy();
 		delete(*particleIter);
 		particleIter = deactivatedParticles.erase(particleIter);
 	}
 
-	FontManager::GetInstance().clean();
-	SoundManager::GetInstance().clean();
-	ImageManager::getInstance().clean();
+	FontManager::GetInstance().Clean();
+	SoundManager::GetInstance().Clean();
+	ImageManager::GetInstance().Clean();
 
 	//SHELL OBJECTS=================================
 	al_destroy_timer(timer);
@@ -611,16 +630,16 @@ int main(int argc, char **argv)
 
 #pragma region Functions
 
-#pragma region placeFree
-bool __cdecl placeFree(float x, float y)
+#pragma region PlaceFree
+bool __cdecl PlaceFree(float x, float y)
 {
 	for(iter3 = staticObjects.begin(); iter3 != staticObjects.end(); iter3++)
 	{		
-		if((*iter3)->getID() != WALL) continue;
-		if(x + player->getBoundRight() >= (*iter3)->getX() - (*iter3)->getBoundLeft() &&
-			x - player->getBoundLeft() <= (*iter3)->getX() + (*iter3)->getBoundRight() &&
-			y + player->getBoundDown() -1 > (*iter3)->getY() - (*iter3)->getBoundUp() &&
-			y - player->getBoundUp() +1 < (*iter3)->getY() + (*iter3)->getBoundDown())
+		if((*iter3)->GetID() != WALL) continue;
+		if(x + player->GetBoundRight() >= (*iter3)->GetX() - (*iter3)->GetBoundLeft() &&
+			x - player->GetBoundLeft() <= (*iter3)->GetX() + (*iter3)->GetBoundRight() &&
+			y + player->GetBoundDown() -1 > (*iter3)->GetY() - (*iter3)->GetBoundUp() &&
+			y - player->GetBoundUp() +1 < (*iter3)->GetY() + (*iter3)->GetBoundDown())
 		{
 			return false;
 		}
@@ -629,11 +648,11 @@ bool __cdecl placeFree(float x, float y)
 	}
 	for(iter2 = dynamicObjects.begin(); iter2 != dynamicObjects.end(); iter2++)
 	{		
-		if((*iter2)->getID() != WALL_FADE && (*iter2)->getID()!= SAVE) continue;
-		if(x + player->getBoundRight() >= (*iter2)->getX() - (*iter2)->getBoundLeft() &&
-			x - player->getBoundLeft() <= (*iter2)->getX() + (*iter2)->getBoundRight() &&
-			y + player->getBoundDown() -1 > (*iter2)->getY() - (*iter2)->getBoundUp() &&
-			y - player->getBoundUp() +1 < (*iter2)->getY() + (*iter2)->getBoundDown())
+		if((*iter2)->GetID() != WALL_FADE && (*iter2)->GetID()!= SAVE) continue;
+		if(x + player->GetBoundRight() >= (*iter2)->GetX() - (*iter2)->GetBoundLeft() &&
+			x - player->GetBoundLeft() <= (*iter2)->GetX() + (*iter2)->GetBoundRight() &&
+			y + player->GetBoundDown() -1 > (*iter2)->GetY() - (*iter2)->GetBoundUp() &&
+			y - player->GetBoundUp() +1 < (*iter2)->GetY() + (*iter2)->GetBoundDown())
 		{
 			return false;
 		}
@@ -644,17 +663,17 @@ bool __cdecl placeFree(float x, float y)
 }
 #pragma endregion Checks if there is no object blocking the player.
 
-#pragma region d_object_exists
-bool d_object_exists(int ID)
+#pragma region D_object_exists
+bool D_object_exists(int ID)
 {
 	for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
 	{
-		if((*iter)->getID() == ID)
+		if((*iter)->GetID() == ID)
 			return true;
 	}
 	for(iter = deactivatedDynamicObjects.begin(); iter!=deactivatedDynamicObjects.end(); iter++)
 	{
-		if((*iter)->getID() == ID)
+		if((*iter)->GetID() == ID)
 			return true;
 	}
 	return false;
@@ -662,223 +681,223 @@ bool d_object_exists(int ID)
 #pragma endregion Check if dynamic object with ID exists
 
 #pragma region CreateObject
-void __cdecl createObject(int ID,int x,int y)
+void __cdecl CreateObject(int ID,int x,int y)
 {
 	if(ID==0)
 	{
 		wall = new Wall();
-		wall->init(x,y);
+		wall->Init(x,y);
 		staticObjects.push_back(wall);
 	}
 	else if(ID==1)
 	{
 		spike_up = new Spike_Up();
-		spike_up->init(x,y);
+		spike_up->Init(x,y);
 		staticObjects.push_back(spike_up);
 	}
 	else if(ID==2)
 	{
 		spike_down = new Spike_Down();
-		spike_down->init(x,y);
+		spike_down->Init(x,y);
 		staticObjects.push_back(spike_down);
 	}
 	else if(ID==3)
 	{
 		spike_left = new Spike_Left();
-		spike_left->init(x,y);
+		spike_left->Init(x,y);
 		staticObjects.push_back(spike_left);
 	}
 	else if(ID==4)
 	{
 		spike_right = new Spike_Right();
-		spike_right->init(x,y);
+		spike_right->Init(x,y);
 		staticObjects.push_back(spike_right);
 	}
 	else if(ID==5)
 	{
 		wall_fade = new Wall_Fade();
-		wall_fade->init(x,y);
+		wall_fade->Init(x,y);
 		dynamicObjects.push_back(wall_fade);
 	}
 	else if(ID==6)
 	{
 		wall_fake = new Wall_Fake();
-		wall_fake->init(x,y);
+		wall_fake->Init(x,y);
 		staticObjects.push_back(wall_fake);
 	}
 	else if(ID==7)
 	{
-		obj_trigger_double_spike = new obj_Trigger_Double_Spike(&create_obj_Double_Spike_Down, &create_obj_Double_Spike_Up);
-		obj_trigger_double_spike->init(x,y);
+		obj_trigger_double_spike = new obj_Trigger_Double_Spike(&Create_obj_Double_Spike_Down, &Create_obj_Double_Spike_Up);
+		obj_trigger_double_spike->Init(x,y);
 		dynamicObjects.push_back(obj_trigger_double_spike);
 	}
 	else if(ID==8)
 	{
 		obj_saw = new obj_Saw();
-		obj_saw->init(x,y);
+		obj_saw->Init(x,y);
 		dynamicObjects.push_back(obj_saw);
 	}
 	else if(ID==9)
 	{
 		obj_saw_small = new obj_Saw_Small();
-		obj_saw_small->init(x,y);
+		obj_saw_small->Init(x,y);
 		dynamicObjects.push_back(obj_saw_small);
 	}
 	else if(ID==10)
 	{
-		obj_saw_bar = new obj_Saw_Bar(&createObjectWithPointer);
-		obj_saw_bar->init(x,y);
+		obj_saw_bar = new obj_Saw_Bar(&CreateObjectWithPointer);
+		obj_saw_bar->Init(x,y);
 		dynamicObjects.push_back(obj_saw_bar);
 	}
 	else if(ID==96)
 	{
-		save = new Save(&createObject);
-		save->init(x,y,0);
+		save = new Save(&CreateObject);
+		save->Init(x,y,0);
 		dynamicObjects.push_back(save);
 	}
 	else if(ID==97)
 	{
-		save = new Save(&createObject);
-		save->init(x,y,1);
+		save = new Save(&CreateObject);
+		save->Init(x,y,1);
 		dynamicObjects.push_back(save);
 	}
 	else if(ID==98)
 	{
-		save = new Save(&createObject);
-		save->init(x,y,2);
+		save = new Save(&CreateObject);
+		save->Init(x,y,2);
 		dynamicObjects.push_back(save);
 	}
 	else if(ID==99)
 	{
-		player = new Player(&placeFree, &createObject, &reserveSpace);
-		player->init(x,y);
+		player = new Player(&PlaceFree, &CreateObject, &ReserveSpace);
+		player->Init(x,y);
 		dynamicObjects.push_back(player);
 	}
 
 	else if(ID==100)
 	{
 		blood = new Blood();
-		blood->init(x,y,rand()%360,(((float)rand()/(float)RAND_MAX)*30.0));
+		blood->Init(x,y,rand()%360,(((float)rand()/(float)RAND_MAX)*30.0));
 		particles.push_back(blood);
 	}
 	else if(ID==101)
 	{
 		blood_head = new Blood_Head();
-		blood_head->init(x,y,270,10);
+		blood_head->Init(x,y,270,10);
 		particles.push_back(blood_head);
 	}
 	else if(ID==102)
 	{
 		blood_torso = new Blood_Torso();
-		blood_torso->init(x,y,rand()%360,((float)rand()/(float)RAND_MAX)*30.0);
+		blood_torso->Init(x,y,rand()%360,((float)rand()/(float)RAND_MAX)*30.0);
 		particles.push_back(blood_torso);
 	}
 }
 
-GameObject* __cdecl createObjectWithPointer(int ID,int x,int y)
+GameObject* __cdecl CreateObjectWithPointer(int ID,int x,int y)
 {
 	if(ID==0)
 	{
 		wall = new Wall();
-		wall->init(x,y);
+		wall->Init(x,y);
 		staticObjects.push_back(wall);
 		return wall;
 	}
 	else if(ID==1)
 	{
 		spike_up = new Spike_Up();
-		spike_up->init(x,y);
+		spike_up->Init(x,y);
 		staticObjects.push_back(spike_up);
 		return spike_up;
 	}
 	else if(ID==2)
 	{
 		spike_down = new Spike_Down();
-		spike_down->init(x,y);
+		spike_down->Init(x,y);
 		staticObjects.push_back(spike_down);
 		return spike_down;
 	}
 	else if(ID==3)
 	{
 		spike_left = new Spike_Left();
-		spike_left->init(x,y);
+		spike_left->Init(x,y);
 		staticObjects.push_back(spike_left);
 		return spike_left;
 	}
 	else if(ID==4)
 	{
 		spike_right = new Spike_Right();
-		spike_right->init(x,y);
+		spike_right->Init(x,y);
 		staticObjects.push_back(spike_right);
 		return spike_right;
 	}
 	else if(ID==5)
 	{
 		wall_fade = new Wall_Fade();
-		wall_fade->init(x,y);
+		wall_fade->Init(x,y);
 		dynamicObjects.push_back(wall_fade);
 		return wall_fade;
 	}
 	else if(ID==6)
 	{
 		wall_fake = new Wall_Fake();
-		wall_fake->init(x,y);
+		wall_fake->Init(x,y);
 		staticObjects.push_back(wall_fake);
 		return wall_fake;
 	}
 	else if(ID==7)
 	{
-		obj_trigger_double_spike = new obj_Trigger_Double_Spike(&create_obj_Double_Spike_Down,&create_obj_Double_Spike_Up);
-		obj_trigger_double_spike->init(x,y);
+		obj_trigger_double_spike = new obj_Trigger_Double_Spike(&Create_obj_Double_Spike_Down,&Create_obj_Double_Spike_Up);
+		obj_trigger_double_spike->Init(x,y);
 		dynamicObjects.push_back(obj_trigger_double_spike);
 		return obj_trigger_double_spike;
 	}
 	else if(ID==8)
 	{
 		obj_saw = new obj_Saw();
-		obj_saw->init(x,y);
+		obj_saw->Init(x,y);
 		dynamicObjects.push_back(obj_saw);
 		return obj_saw;
 	}
 	else if(ID==9)
 	{
 		obj_saw_small = new obj_Saw_Small();
-		obj_saw_small->init(x,y);
+		obj_saw_small->Init(x,y);
 		dynamicObjects.push_back(obj_saw_small);
 		return obj_saw_small;
 	}
 	else if(ID==10)
 	{
-		obj_saw_bar = new obj_Saw_Bar(&createObjectWithPointer);
-		obj_saw_bar->init(x,y);
+		obj_saw_bar = new obj_Saw_Bar(&CreateObjectWithPointer);
+		obj_saw_bar->Init(x,y);
 		dynamicObjects.push_back(obj_saw_bar);
 		return obj_saw_bar;
 	}
 	else if(ID==96)
 	{
-		save = new Save(&createObject);
-		save->init(x,y,0);
+		save = new Save(&CreateObject);
+		save->Init(x,y,0);
 		dynamicObjects.push_back(save);
 		return save;
 	}
 	else if(ID==97)
 	{
-		save = new Save(&createObject);
-		save->init(x,y,1);
+		save = new Save(&CreateObject);
+		save->Init(x,y,1);
 		dynamicObjects.push_back(save);
 		return save;
 	}
 	else if(ID==98)
 	{
-		save = new Save(&createObject);
-		save->init(x,y,2);
+		save = new Save(&CreateObject);
+		save->Init(x,y,2);
 		dynamicObjects.push_back(save);
 		return save;
 	}
 	else if(ID==99)
 	{
-		player = new Player(&placeFree, &createObject, &reserveSpace);
-		player->init(x,y);
+		player = new Player(&PlaceFree, &CreateObject, &ReserveSpace);
+		player->Init(x,y);
 		dynamicObjects.push_back(player);
 		return player;
 	}
@@ -886,14 +905,14 @@ GameObject* __cdecl createObjectWithPointer(int ID,int x,int y)
 	else if(ID==100)
 	{
 		blood = new Blood();
-		blood->init(x,y,rand()%360,(((float)rand()/(float)RAND_MAX)*30.0));
+		blood->Init(x,y,rand()%360,(((float)rand()/(float)RAND_MAX)*30.0));
 		particles.push_back(blood);
 		return blood;
 	}
 	else if(ID==101)
 	{
 		blood_head = new Blood_Head();
-		blood_head->init(x,y,270,20);
+		blood_head->Init(x,y,270,20);
 		particles.push_back(blood_head);
 	}
 	
@@ -902,17 +921,17 @@ GameObject* __cdecl createObjectWithPointer(int ID,int x,int y)
 #pragma endregion
 
 #pragma region Double_Spike
-obj_Double_Spike_Down* __cdecl create_obj_Double_Spike_Down(float x,float y)
+obj_Double_Spike_Down* __cdecl Create_obj_Double_Spike_Down(float x,float y)
 {
 	obj_double_spike_down = new obj_Double_Spike_Down;
-	obj_double_spike_down->init(x,y);
+	obj_double_spike_down->Init(x,y);
 	dynamicObjects.push_back(obj_double_spike_down);
 	return obj_double_spike_down;
 }
-obj_Double_Spike_Up* __cdecl create_obj_Double_Spike_Up(float x,float y)
+obj_Double_Spike_Up* __cdecl Create_obj_Double_Spike_Up(float x,float y)
 {
 	obj_double_spike_up = new obj_Double_Spike_Up;
-	obj_double_spike_up->init(x,y);
+	obj_double_spike_up->Init(x,y);
 	dynamicObjects.push_back(obj_double_spike_up);
 	return obj_double_spike_up;
 }
@@ -920,42 +939,45 @@ obj_Double_Spike_Up* __cdecl create_obj_Double_Spike_Up(float x,float y)
 #pragma endregion
 
 #pragma region deleteDynamicObjects
-void __cdecl deleteDynamicObjects(void)
+void __cdecl DeleteDynamicObjects(void)
 {
 	for(iter=dynamicObjects.begin();iter!=dynamicObjects.end();)
 	{
-		(*iter)->destroy();
+		(*iter)->Destroy();
 		delete (*iter);
 		iter = dynamicObjects.erase(iter);
 	}
 	for(iter=deactivatedDynamicObjects.begin();iter!=deactivatedDynamicObjects.end();)
 	{
-		(*iter)->destroy();
+		(*iter)->Destroy();
 		delete (*iter);
 		iter = deactivatedDynamicObjects.erase(iter);
 	}
 }
 #pragma endregion
 
-void maxParticles()
+#pragma region MaxParticles()
+void MaxParticles()
 {
 	while(particles.size()>1500)
 	{
 		particleIter = particles.begin();
-		(*particleIter)->destroy();
+		(*particleIter)->Destroy();
 		delete (*particleIter);
 		particleIter=particles.erase(particleIter);
 	}
 	while(deactivatedParticles.size()>5000)
 	{
 		particleIter = deactivatedParticles.begin();
-		(*particleIter)->destroy();
+		(*particleIter)->Destroy();
 		delete (*particleIter);
 		particleIter=deactivatedParticles.erase(particleIter);
 	}
 }
+#pragma endregion
 
-void __cdecl reserveSpace(char ID, int size)
+#pragma region ReserveSpace()
+void __cdecl ReserveSpace(char ID, int size)
 {
 	if(ID==0) //Dynamic Objects
 	{
@@ -979,5 +1001,5 @@ void __cdecl reserveSpace(char ID, int size)
 	}
 
 }
-
+#pragma endregion
 #pragma endregion

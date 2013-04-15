@@ -7,13 +7,13 @@ public:
 	obj_Double_Spike_Down(void);
 	~obj_Double_Spike_Down(void);
 
-	void init(float x, float y);
-	void update(bool *keys, bool *keys_pressed);
-	void draw();
-	void destroy();
+	void Init(float x, float y);
+	void Update();
+	void Draw();
+	void Destroy();
 	void Collided(GameObject *other);
 
-	void activate();
+	void Activate();
 
 private:
 	float startY;

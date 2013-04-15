@@ -5,7 +5,7 @@ class Wall : public StaticObject
 public:
 	Wall(void);
 	
-	void draw();
-	void destroy();
+	void Draw();
+	void Destroy();
 
 };

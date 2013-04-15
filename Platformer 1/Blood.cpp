@@ -4,7 +4,7 @@
 Blood::Blood(void)
 {
 	collided = false;
-	setAlive(true);
+	SetAlive(true);
 
 	boundUp=0;
 	boundDown=0;
@@ -13,8 +13,8 @@ Blood::Blood(void)
 	gravity = 1;
 	x = 0;
 	y = 0;
-	setID(PARTICLE);
-	setCollisionType(BB);
+	SetID(PARTICLE);
+	SetCollisionType(BB);
 	kind=rand()%2;
 	frame=rand()%2;
 }
@@ -25,16 +25,16 @@ Blood::~Blood(void)
 	
 }
 
-void Blood::init(float x, float y, float dir, float spd)
+void Blood::Init(float x, float y, float dir, float spd)
 {
-	image = ImageManager::getInstance().getImage(100);
+	image = ImageManager::GetInstance().GetImage(100);
 	frameCount=0;
 	frameDelay=rand()%5+5;
 	Particle::init(x,y,(cos(dir*PI/180.0))*spd,(sin(dir*PI/float(180.0)))*spd);
 	direction = rand()%360;
 }
 
-void Blood::update()
+void Blood::Update()
 {
 	if(!collided)	
 		velY+=gravity;
@@ -43,7 +43,7 @@ void Blood::update()
 
 }
 
-void Blood::draw()
+void Blood::Draw()
 {
 	//if(++frameCount > frameDelay)
 	//{
@@ -60,20 +60,20 @@ void Blood::draw()
 		al_draw_tinted_scaled_rotated_bitmap_region(image,12*frame,8,12,16,al_map_rgba(255,255,255,255),6,8,x-_camX,y-_camY,1,1,direction*PI/180,0);
 }
 
-void Blood::destroy()
+void Blood::Destroy()
 {
 
 }
 
 void Blood::Collided(GameObject *other)
 {
-	if(other->getID() == WALL || other->getID() == WALL_FADE)
+	if(other->GetID() == WALL || other->GetID() == WALL_FADE)
 	{
 		collided=true;
 		velX=0;
 		velY=0;
 	}
-	else if(other->getID() == SPIKE)
+	else if(other->GetID() == SPIKE)
 	{
 		velX/=1.5;
 		velY/=1.5;

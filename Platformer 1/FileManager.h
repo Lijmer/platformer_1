@@ -7,14 +7,14 @@ using namespace std;
 class FileManager
 {
 public:
-	FileManager(void(*createObject)(int ID, int x, int y), void(*deleteDynamicObjects)(void));
+	FileManager(void(*CreateObject)(int ID, int x, int y), void(*DeleteDynamicObjects)(void));
 
-	void loadLevel(char levelNum);
-	void restartLevel(char levelNum);
+	void LoadLevel(char levelNum);
+	void RestartLevel(char levelNum);
 
-	void save();
+	void Save();
 private:
-	void(*createObject)(int ID, int x, int y);
-	void(*deleteDynamicObjects)(void);
+	void(*CreateObject)(int ID, int x, int y);
+	void(*DeleteDynamicObjects)(void);
 };
 

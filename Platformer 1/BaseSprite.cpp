@@ -5,7 +5,7 @@ BaseSprite::BaseSprite(void)
 {
 }
 
-void BaseSprite::init(ALLEGRO_BITMAP *image, int spriteWidth, int spriteHeight, int imageCount, int frameDelay)
+void BaseSprite::Init(ALLEGRO_BITMAP *image, int spriteWidth, int spriteHeight, int imageCount, int frameDelay)
 {
 	if(image != NULL)
 		BaseSprite::image = image;

@@ -4,7 +4,7 @@ int Bullet::numBullets=0;
 
 Bullet::Bullet(void)
 {
-	setAlive(true);
+	SetAlive(true);
 	countFrame=0;
 	frameDelay=12;
 	color=true;
@@ -12,20 +12,20 @@ Bullet::Bullet(void)
 	boundDown=2;
 	boundLeft=2;
 	boundRight=2;
-	setCollisionType(BB);
+	SetCollisionType(BB);
 	numBullets++;
 }
 
-void Bullet::update(bool *keys, bool *keys_pressed)
+void Bullet::Update()
 {
 	x_previous = x;
 	y_previous = y;
 	x+=velX;
 	if(x<_camX || x>_camX+_SCREEN_WIDTH || y<_camY || y>_camY+_SCREEN_HEIGHT)
-		setAlive(false);
+		SetAlive(false);
 }
 
-void Bullet::draw()
+void Bullet::Draw()
 {
 	if(++countFrame >= frameDelay)
 	{
@@ -42,15 +42,15 @@ void Bullet::draw()
 		al_draw_filled_circle(x-_camX,y-_camY,1,al_map_rgb(239,227,0));
 }
 
-void Bullet::destroy()
+void Bullet::Destroy()
 {
 	numBullets--;
 }
 
 void Bullet::Collided(GameObject *other)
 {
-	if(other->getID() == WALL || other->getID()==SPIKE || other->getID()==SAVE || other->getID()==SAW)
+	if(other->GetID() == WALL || other->GetID()==SPIKE || other->GetID()==SAVE || other->GetID()==SAW)
 	{
-		setAlive(false);
+		SetAlive(false);
 	}
 }

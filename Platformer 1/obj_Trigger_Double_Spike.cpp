@@ -1,11 +1,11 @@
 #include "obj_Trigger_Double_Spike.h"
 
 
-obj_Trigger_Double_Spike::obj_Trigger_Double_Spike(obj_Double_Spike_Down*(*create_obj_Double_Spike_Down)(float x,float y),obj_Double_Spike_Up*(*create_obj_Double_Spike_Up)(float x,float y))
+obj_Trigger_Double_Spike::obj_Trigger_Double_Spike(obj_Double_Spike_Down*(*Create_obj_Double_Spike_Down)(float x,float y),obj_Double_Spike_Up*(*Create_obj_Double_Spike_Up)(float x,float y))
 {
-	setID(TRIGGER_DOUBLE_SPIKE);
-	obj_Trigger_Double_Spike::create_obj_Double_Spike_Down = create_obj_Double_Spike_Down;
-	obj_Trigger_Double_Spike::create_obj_Double_Spike_Up = create_obj_Double_Spike_Up;
+	SetID(TRIGGER_DOUBLE_SPIKE);
+	obj_Trigger_Double_Spike::Create_obj_Double_Spike_Down = Create_obj_Double_Spike_Down;
+	obj_Trigger_Double_Spike::Create_obj_Double_Spike_Up = Create_obj_Double_Spike_Up;
 	boundUp = 0;
 	boundDown = 128;
 	boundLeft = 0;
@@ -20,33 +20,33 @@ obj_Trigger_Double_Spike::~obj_Trigger_Double_Spike(void)
 }
 
 
-void obj_Trigger_Double_Spike::init(float x, float y)
+void obj_Trigger_Double_Spike::Init(float x, float y)
 {
 	image = NULL;
-	DynamicObject::init(x,y,0,0,getID(),0);
-	down = create_obj_Double_Spike_Down(x,y);
-	up = create_obj_Double_Spike_Up(x,y+96);
+	DynamicObject::Init(x,y,0,0,GetID(),0);
+	down = Create_obj_Double_Spike_Down(x,y);
+	up = Create_obj_Double_Spike_Up(x,y+96);
 }
 
-void obj_Trigger_Double_Spike::update(bool *keys, bool *keys_pressed)
+void obj_Trigger_Double_Spike::Update()
 {
 
 }
 
-void obj_Trigger_Double_Spike::draw()
+void obj_Trigger_Double_Spike::Draw()
 {
 }
 
-void obj_Trigger_Double_Spike::destroy()
+void obj_Trigger_Double_Spike::Destroy()
 {
 }
 
 void obj_Trigger_Double_Spike::Collided(GameObject *other)
 {
-	if(other->getID() == PLAYER)
+	if(other->GetID() == PLAYER)
 	{
-		down->activate();
-		up->activate();
+		down->Activate();
+		up->Activate();
 	}
 }
 

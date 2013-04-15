@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(bool(*placeFree)(float x, float y), void(*createObject)(int ID, int x, int y), void(*reserveSpace)(char ID, int size))
+Player::Player(bool(*PlaceFree)(float x, float y), void(*CreateObject)(int ID, int x, int y), void(*ReserveSpace)(char ID, int size))
 {
 	//All var inits;
 	collisionWallUp = false;
@@ -22,14 +22,14 @@ Player::Player(bool(*placeFree)(float x, float y), void(*createObject)(int ID, i
 
 	dir=true;
 	vertical_dir=true;
-	Player::placeFree = placeFree;
-	Player::createObject = createObject;
-	Player::reserveSpace = reserveSpace;
+	Player::PlaceFree = PlaceFree;
+	Player::CreateObject = CreateObject;
+	Player::ReserveSpace = ReserveSpace;
 
-	setCollisionType(BB);
+	SetCollisionType(BB);
 
-	setID(PLAYER);
-	setDepth(-11);
+	SetID(PLAYER);
+	SetDepth(-11);
 }
 
 Player::~Player()
@@ -37,13 +37,13 @@ Player::~Player()
 	
 }
 
-void Player::init(float x, float y)
+void Player::Init(float x, float y)
 {
 	Player::x=x;
 	Player::y=y;
 	
 	if(image!=NULL)
-		sprite.init(ImageManager::getInstance().getImage(0), 28, 26, 0, 2);
+		sprite.Init(ImageManager::GetInstance().GetImage(0), 28, 26, 0, 2);
 
 	jump=false;
 	direction = 270;
@@ -55,7 +55,7 @@ void Player::init(float x, float y)
 }
 
 
-void Player::update(bool *keys, bool *keys_pressed)
+void Player::Update()
 {
 
 	x_previous = x;
@@ -87,13 +87,13 @@ void Player::update(bool *keys, bool *keys_pressed)
 	velY+=gravity;
 
 	//Move Left
-	if(keys[LEFT] && !keys[RIGHT])
+	if(_keys[LEFT] && !_keys[RIGHT])
 	{
-		sprite.setDirection(false);
+		sprite.SetDirection(false);
 		dir=false;
 		idle=false;
 		int i = 0;
-		while(placeFree(x-3,y) == 1 && i<1)
+		while(PlaceFree(x-3,y) == 1 && i<1)
 		{
 			x-=3;
 			i++;
@@ -102,13 +102,13 @@ void Player::update(bool *keys, bool *keys_pressed)
 	}
 
 	//Move Right
-	if(keys[RIGHT] && !keys[LEFT])
+	if(_keys[RIGHT] && !_keys[LEFT])
 	{
-		sprite.setDirection(true);
+		sprite.SetDirection(true);
 		idle=false;
 		dir=true;
 		int i = 0;
-		while(placeFree(x+3,y) == 1 && i <1)
+		while(PlaceFree(x+3,y) == 1 && i <1)
 		{
 			x+=3;
 			i++;
@@ -116,18 +116,18 @@ void Player::update(bool *keys, bool *keys_pressed)
 	}
 
 	//Jump
-	if(keys_pressed[Z_KEY])
+	if(_keys_pressed[Z_KEY])
 	{
 		if(vertical_dir)
 		{
 			if(collisionWallDown)
 			{
-				SoundManager::GetInstance().play(JUMP1);
+				SoundManager::GetInstance().Play(JUMP1);
 				velY=-6.5;
 			}
 			else if(jump)
 			{
-				SoundManager::GetInstance().play(JUMP2);
+				SoundManager::GetInstance().Play(JUMP2);
 				velY=-6.5;
 				jump=false;
 			}
@@ -136,12 +136,12 @@ void Player::update(bool *keys, bool *keys_pressed)
 		{
 			if(collisionWallUp)
 			{
-				SoundManager::GetInstance().play(JUMP1);
+				SoundManager::GetInstance().Play(JUMP1);
 				velY=6.5;
 			}
 			else if(jump)
 			{
-				SoundManager::GetInstance().play(JUMP2);
+				SoundManager::GetInstance().Play(JUMP2);
 				velY=6.5;
 				jump=false;
 			}
@@ -149,16 +149,16 @@ void Player::update(bool *keys, bool *keys_pressed)
 	}
 	if(vertical_dir)
 	{
-		if(keys[Z_KEY] && velY<0)
+		if(_keys[Z_KEY] && velY<0)
 			velY-=.35;
 	}
 	else if(!vertical_dir)
 	{
-		if(keys[Z_KEY] && velY>0)
+		if(_keys[Z_KEY] && velY>0)
 			velY+=.35;
 	}
 
-	if(keys[SPACE])
+	if(_keys[SPACE])
 	{
 		if(vertical_dir && collisionWallDown)
 			vertical_dir=false;
@@ -174,13 +174,13 @@ void Player::update(bool *keys, bool *keys_pressed)
 
 	if(velY==0)
 		if(idle)
-			sprite.setRow(2);
+			sprite.SetRow(2);
 		else
-			sprite.setRow(3);
+			sprite.SetRow(3);
 	else if(velY>0)
-		sprite.setRow(1);
+		sprite.SetRow(1);
 	else if(velY<0)
-		sprite.setRow(0);
+		sprite.SetRow(0);
 	
 	//Reset Collision Vars
 	collisionWallUp = false;
@@ -193,49 +193,51 @@ void Player::update(bool *keys, bool *keys_pressed)
 	y+=velY;
 
 	//Update Sprite
-	sprite.update();
+	sprite.Update();
 
 	//Update Cam
 	_camX = int(x/_SCREEN_WIDTH)*_SCREEN_WIDTH;
 	_camY = int(y/_SCREEN_HEIGHT)*_SCREEN_HEIGHT;
 
-	sprite.setVertical_Direction(vertical_dir);
+	sprite.SetVertical_Direction(vertical_dir);
 }
 
-void Player::draw()
+void Player::Draw()
 {
-	sprite.draw(x,y);
+	sprite.Draw(x,y);
 }
 
-void Player::kill()
+void Player::Kill()
 {
-	SoundManager::GetInstance().play(SPLAT);
+	SoundManager::GetInstance().Play(SPLAT);
+	//Create normal blood
 	for(int i=0; i<125; i++)
-		createObject(100,x,y);
-	createObject(101,x,y);
-	createObject(102,x,y);
-	destroy();
+		CreateObject(100,x,y);
+	//create head, torso, arms and feet
+	CreateObject(101,x,y);
+	CreateObject(102,x,y);
+	Destroy();
 }
 
-void Player::destroy()
+void Player::Destroy()
 {
-	GameObject::destroy();
+	GameObject::Destroy();
 }
 
 void Player::Collided(GameObject *other)
 {
-	if(other->getID()==WALL || other->getID()==WALL_FADE || other->getID()==SAVE)
+	if(other->GetID()==WALL || other->GetID()==WALL_FADE || other->GetID()==SAVE)
 	{
-		if(y >= other->getY())
+		if(y >= other->GetY())
 			collisionWallUp = true;
 
-		if(y <= other->getY())
+		if(y <= other->GetY())
 			collisionWallDown = true;
 		
 		int i=0;
 		if(velY<0)
 		{
-			while(y-boundUp <= other->getY() + other->getBoundDown() && i<120)
+			while(y-boundUp <= other->GetY() + other->GetBoundDown() && i<120)
 			{
 				i++;
 				y+=.1;
@@ -246,7 +248,7 @@ void Player::Collided(GameObject *other)
 		else if(velY>0)
 		{
 			while(y+boundDown 
-				>= other->getY() - other->getBoundUp() && i<120)
+				>= other->GetY() - other->GetBoundUp() && i<120)
 			{
 				i++;
 				y-=.1;
@@ -257,9 +259,9 @@ void Player::Collided(GameObject *other)
 
 		velY=0;
 	}
-	else if(other->getID() == SPIKE || other->getID() == SAW)
+	else if(other->GetID() == SPIKE || other->GetID() == SAW)
 	{
-		kill();
-		setAlive(false);
+		Kill();
+		SetAlive(false);
 	}
 }

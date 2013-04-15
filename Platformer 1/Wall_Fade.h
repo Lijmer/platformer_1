@@ -5,11 +5,11 @@ class Wall_Fade : public DynamicObject
 public:
 	Wall_Fade(void);
 
-	void init(float x, float y);
+	void Init(float x, float y);
 
-	void update(bool *keys, bool *keys_pressed);
-	void draw();
-	void destroy();
+	void Update();
+	void Draw();
+	void Destroy();
 	void Collided(GameObject *other);
 private:
 	bool activated;

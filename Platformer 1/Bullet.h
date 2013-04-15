@@ -4,9 +4,9 @@ class Bullet : public DynamicObject
 {
 public:
 	Bullet();
-	void update(bool *keys, bool *keys_pressed);
-	void draw();
-	void destroy();
+	void Update();
+	void Draw();
+	void Destroy();
 
 	void Collided(GameObject *other);
 

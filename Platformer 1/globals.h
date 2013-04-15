@@ -1,7 +1,5 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
-#include "SoundManager.h"
-
 
 const float PI = (float)3.141592;
 
@@ -17,5 +15,6 @@ enum _DIFFICULTY{EASY=0, MEDIUM, HARD, IMPOSSIBLE};
 
 extern int _camX, _camY, _camX_prev, _camY_prev;
 extern char _difficulty, _currentLevel;
+extern bool _keys[], _keys_pressed[], _keys_released[];
 
 #endif

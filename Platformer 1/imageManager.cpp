@@ -11,14 +11,15 @@ ImageManager::~ImageManager(void)
 }
 
 
-ImageManager &ImageManager::getInstance()
+ImageManager &ImageManager::GetInstance()
 {
 	static ImageManager instance;
 	return instance;
 }
 
-void ImageManager::init()
+void ImageManager::Init()
 {
+	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	al_init_image_addon();
 	img_player = al_load_bitmap("img/player/sprite_sheet.png");
 	img_wall = al_load_bitmap("img/tiles/32x32/wall.png");
@@ -37,7 +38,7 @@ void ImageManager::init()
 	img_blood_foot = al_load_bitmap("img/player/blood/foot.png");
 }
 
-void ImageManager::clean()
+void ImageManager::Clean()
 {
 	al_destroy_bitmap(img_player);
 	al_destroy_bitmap(img_wall);
@@ -56,13 +57,12 @@ void ImageManager::clean()
 	al_destroy_bitmap(img_blood_foot);
 }
 
-ALLEGRO_BITMAP* ImageManager::getImage(char ID)
+ALLEGRO_BITMAP* ImageManager::GetImage(char ID)
 {
 	switch(ID)
 	{
 	case -1:
-		std::cout << "error\n";
-		std::cin.ignore();
+		al_show_native_message_box(NULL, "Error!", "ImageManager", "-1 passed into image manager", "", 0);
 		break;
 	case 0:
 		return img_player;
@@ -107,7 +107,7 @@ ALLEGRO_BITMAP* ImageManager::getImage(char ID)
 		return img_blood_foot;
 		break;
 	}
-	std::cout << "Critical error in ImageManager, or NULL has passed in getImage\n";
-	std::cin.ignore();
+	al_show_native_message_box(NULL, "Error!", "ImageManager", "NULL passed into image manager", "", 0);
+	//std::cin.ignore();
 	return NULL;
 }

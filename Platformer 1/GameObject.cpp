@@ -12,12 +12,23 @@ GameObject::GameObject()
 	yPoint2 = 0;
 	xPoint3 = 0;
 	yPoint3 = 0;
+	boundUp = 0;
+	boundDown = 0;
+	boundLeft = 0;
+	boundRight = 0;
+	x=0;
+	y=0;
+	depth=0;
+	activated = true;
+	collidable=true;
+	collisionType = BB;
 	radius=0;
 	ID=UNDEFINED;
+
 }
 
 
-void GameObject::init(float x, float y, int ID, int depth)
+void GameObject::Init(float x, float y, int ID, int depth)
 {
 	GameObject::x=x;
 	GameObject::y=y;
@@ -27,19 +38,19 @@ void GameObject::init(float x, float y, int ID, int depth)
 	collidable=true;
 }
 
-void GameObject::activate()
+void GameObject::Activate()
 {
 	if(x>_camX-64 && x<_camX+_SCREEN_WIDTH+64 && y>_camY-64 && y<_camY+_SCREEN_HEIGHT+64)
 		activated = true;
 }
 
-void GameObject::deactivate()
+void GameObject::Deactivate()
 {
 	if(x<_camX-64 || x>_camX+_SCREEN_WIDTH+64 || y<_camY-64 || y>_camY+_SCREEN_HEIGHT+64)
 		activated = false;
 }
 
-void GameObject::draw()
+void GameObject::Draw()
 {}
-void GameObject::destroy()
+void GameObject::Destroy()
 {}

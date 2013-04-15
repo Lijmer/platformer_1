@@ -17,7 +17,7 @@ SoundManager::~SoundManager(void)
 
 
 
-void SoundManager::init()
+void SoundManager::Init()
 {
 	al_install_audio();
 	al_init_acodec_addon();
@@ -31,7 +31,7 @@ void SoundManager::init()
 	//SoundManager::music_level1 = al_load_sample("snd/music/level1.ogg");
 }
 
-void SoundManager::clean()
+void SoundManager::Clean()
 {
 	al_destroy_sample(snd_shoot);
 	al_destroy_sample(snd_jump1);
@@ -40,7 +40,7 @@ void SoundManager::clean()
 	//al_destroy_sample(music_level1);
 }
 
-void SoundManager::play(int num)
+void SoundManager::Play(int num)
 {
 	if(num == SHOOT)
 	al_play_sample(snd_shoot,1,0,1,ALLEGRO_PLAYMODE_ONCE,0); 

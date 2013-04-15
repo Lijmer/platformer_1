@@ -9,10 +9,10 @@ public:
 	static FontManager& GetInstance();
 	~FontManager(void);
 
-	void init();
-	void clean();
+	void Init();
+	void Clean();
 
-	ALLEGRO_FONT* getFont(char ID);
+	ALLEGRO_FONT* GetFont(char ID);
 	
 private:
 	ALLEGRO_FONT *nokiafc22_18;

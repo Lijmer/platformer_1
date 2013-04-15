@@ -1,31 +1,32 @@
 #include "Save.h"
 
 
-Save::Save(void(*createObject)(int ID, int x, int y))
+Save::Save(void(*CreateObject)(int ID, int x, int y))
 {
 	active = false;
-	setCollisionType(BB);
+	SetCollisionType(BB);
 	boundUp=0;
 	boundDown=31;
 	boundLeft=0;
 	boundRight=28;
-	setID(SAVE);
-	Save::createObject = createObject;
+	SetID(SAVE);
+	Save::CreateObject = CreateObject;
 }
 
-void Save::init(float x, float y, char difficulty)
+void Save::Init(float x, float y, char difficulty)
 {
-	image = ImageManager::getInstance().getImage(7);
-	DynamicObject::init(x,y,0,0,SAVE,0);
+	image = ImageManager::GetInstance().GetImage(7);
+	DynamicObject::Init(x,y,0,0,SAVE,0);
 
+	//If the difficulty is not the same as this object, it will create a wall in its place
 	if(difficulty < _difficulty)
 	{
-		createObject(0,x,y);
-		setAlive(false);
+		CreateObject(0,x,y);
+		SetAlive(false);
 	}
 }
 
-void Save::update(bool *keys, bool *keys_pressed)
+void Save::Update()
 {
 	if(active)
 	{
@@ -37,7 +38,7 @@ void Save::update(bool *keys, bool *keys_pressed)
 	}
 }
 
-void Save::draw()
+void Save::Draw()
 {
 	if(!active)
 		al_draw_bitmap_region(image, 0, 0, 28, 31, x-_camX, y-_camY, 0);
@@ -45,14 +46,14 @@ void Save::draw()
 		al_draw_bitmap_region(image, 28, 0, 28, 31, x-_camX, y-_camY, 0);
 }
 
-void Save::destroy()
+void Save::Destroy()
 {
 
 }
 
 void Save::Collided(GameObject *other)
 {
-	if(other->getID() == BULLET)
+	if(other->GetID() == BULLET)
 	{
 		count = 0;
 		active=true;

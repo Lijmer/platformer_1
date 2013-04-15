@@ -3,8 +3,8 @@
 
 Particle::Particle(void)
 {
-	setID(PARTICLE);
-	setCollisionType(BB);
+	SetID(PARTICLE);
+	SetCollisionType(BB);
 }
 
 void Particle::init(float x, float y, float velX, float velY)
@@ -19,32 +19,25 @@ Particle::~Particle(void)
 {
 }
 
-void Particle::update()
+void Particle::Update()
+{}
+
+void Particle::Draw()
+{}
+
+void Particle::Destroy()
+{}
+
+bool Particle::CheckCollision(GameObject *other)
 {
-
-}
-
-void Particle::draw()
-{
-
-
-}
-
-void Particle::destroy()
-{
-
-}
-
-bool Particle::checkCollision(GameObject *other)
-{
-	if(getCollisionType() == BB && other->getCollisionType() == BB)
+	if(GetCollisionType() == BB && other->GetCollisionType() == BB)
 	{
-		int otherX = other->getX();
-		int otherY = other->getY();
-		int otherBoundUp = other->getBoundUp();
-		int otherBoundDown = other->getBoundDown();
-		int otherBoundLeft = other->getBoundLeft();
-		int otherBoundRight = other->getBoundRight();
+		int otherX = other->GetX();
+		int otherY = other->GetY();
+		int otherBoundUp = other->GetBoundUp();
+		int otherBoundDown = other->GetBoundDown();
+		int otherBoundLeft = other->GetBoundLeft();
+		int otherBoundRight = other->GetBoundRight();
 	
 		if(x + boundRight >= otherX - otherBoundLeft &&
 		   x - boundLeft <= otherX + otherBoundRight &&
@@ -54,15 +47,15 @@ bool Particle::checkCollision(GameObject *other)
 		else
 			return false;
 	}
-	else if(getCollisionType() == BB && other->getCollisionType() == TBB)
+	else if(GetCollisionType() == BB && other->GetCollisionType() == TBB)
 	{
 		
-		int xPoint1 = other->getXPoint1();
-		int yPoint1 = other->getYPoint1();
-		int xPoint2 = other->getXPoint2();
-		int yPoint2 = other->getYPoint2();
-		int xPoint3 = other->getXPoint3();
-		int yPoint3 = other->getYPoint3();
+		int xPoint1 = other->GetXPoint1();
+		int yPoint1 = other->GetYPoint1();
+		int xPoint2 = other->GetXPoint2();
+		int yPoint2 = other->GetYPoint2();
+		int xPoint3 = other->GetXPoint3();
+		int yPoint3 = other->GetYPoint3();
 
 		
 
@@ -97,22 +90,22 @@ bool Particle::checkCollision(GameObject *other)
 		Px = x-boundLeft;
 		Py = y-boundUp;
 		
-		if(is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
+		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
 			return true;
 		
 		Px = x+boundRight;
 
-		if(is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
+		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
 			return true;
 
 		Py = y+boundDown;
 
-		if(is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
+		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
 			return true;
 
 		Px = x-boundLeft;
 
-		if(is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
+		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
 			return true;
 		return false;
 	}
@@ -123,7 +116,7 @@ void Particle::Collided(GameObject *other)
 {
 }
 
-bool Particle::is_p_in_triangle(float xPoint1, float yPoint1, float xPoint2, float yPoint2, float xPoint3, float yPoint3, float Px, float Py)
+bool Particle::Is_p_in_triangle(float xPoint1, float yPoint1, float xPoint2, float yPoint2, float xPoint3, float yPoint3, float Px, float Py)
 {
 	float A = abs((xPoint1*(yPoint2-yPoint3) + xPoint2*(yPoint3-yPoint1) + xPoint3*(yPoint1-yPoint2))/2.0);
 	//bereken oppervlaktes van driehoeken: ABP, BCP en ACP

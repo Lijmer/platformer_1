@@ -6,10 +6,10 @@ public:
 	obj_Saw_Small(void);
 	~obj_Saw_Small(void);
 	
-	void init(float x, float y);
-	void update(bool *keys, bool *keys_pressed);
-	void draw();
-	void destroy();
+	void Init(float x, float y);
+	void Update();
+	void Draw();
+	void Destroy();
 
 private:
 	float direction;

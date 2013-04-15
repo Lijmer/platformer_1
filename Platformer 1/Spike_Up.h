@@ -4,8 +4,8 @@ class Spike_Up : public Spike
 {
 public:
 	Spike_Up(void);
-	void Spike_Up::init(float x, float y);
-	void draw();
-	void destroy();
+	void Spike_Up::Init(float x, float y);
+	void Draw();
+	void Destroy();
 
 };

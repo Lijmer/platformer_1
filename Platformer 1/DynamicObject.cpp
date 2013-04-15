@@ -2,38 +2,38 @@
 
 DynamicObject::DynamicObject(void)
 {
-	setCollisionType(BB);
+	SetCollisionType(BB);
 }
 
-void DynamicObject::init(float x, float y, float velX, float velY, int ID, int depth)
+void DynamicObject::Init(float x, float y, float velX, float velY, int ID, int depth)
 {
 	DynamicObject::velX = velX;
 	DynamicObject::velY = velY;
-	GameObject::init(x,y,ID,depth);
+	GameObject::Init(x,y,ID,depth);
 }
 
-void DynamicObject::update(bool *keys, bool *keys_pressed)
+void DynamicObject::Update()
 {
 	x_previous=x;
 	y_previous=y;
 }
 
-void DynamicObject::draw()
+void DynamicObject::Draw()
 {}
 
-void DynamicObject::destroy()
+void DynamicObject::Destroy()
 {}
 
-bool DynamicObject::checkCollision(GameObject *other)
+bool DynamicObject::CheckCollision(GameObject *other)
 {
-	if(getCollisionType() == BB && other->getCollisionType() == BB)
+	if(GetCollisionType() == BB && other->GetCollisionType() == BB)
 	{
-		float otherX = other->getX();
-		float otherY = other->getY();
-		int otherBoundUp = other->getBoundUp();
-		int otherBoundDown = other->getBoundDown();
-		int otherBoundLeft = other->getBoundLeft();
-		int otherBoundRight = other->getBoundRight();
+		float otherX = other->GetX();
+		float otherY = other->GetY();
+		int otherBoundUp = other->GetBoundUp();
+		int otherBoundDown = other->GetBoundDown();
+		int otherBoundLeft = other->GetBoundLeft();
+		int otherBoundRight = other->GetBoundRight();
 		
 		//The +1 and -1 is that if there is a gap of 0px between the objects, it will still count as a collision
 		if(x + boundRight + 1 > otherX - otherBoundLeft &&
@@ -44,15 +44,15 @@ bool DynamicObject::checkCollision(GameObject *other)
 		else
 			return false;
 	}
-	else if(getCollisionType() == BB && other->getCollisionType() == TBB && (x_previous != x || y_previous !=y))
+	else if(GetCollisionType() == BB && other->GetCollisionType() == TBB && (x_previous != x || y_previous !=y))
 	{
 		
-		int xPoint1 = other->getXPoint1();
-		int yPoint1 = other->getYPoint1();
-		int xPoint2 = other->getXPoint2();
-		int yPoint2 = other->getYPoint2();
-		int xPoint3 = other->getXPoint3();
-		int yPoint3 = other->getYPoint3();
+		int xPoint1 = other->GetXPoint1();
+		int yPoint1 = other->GetYPoint1();
+		int xPoint2 = other->GetXPoint2();
+		int yPoint2 = other->GetYPoint2();
+		int xPoint3 = other->GetXPoint3();
+		int yPoint3 = other->GetYPoint3();
 
 		
 
@@ -87,22 +87,22 @@ bool DynamicObject::checkCollision(GameObject *other)
 		Px = x-boundLeft;
 		Py = y-boundUp;
 		
-		if(is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
+		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
 			return true;
 		
 		Px = x+boundRight;
 
-		if(is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
+		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
 			return true;
 
 		Py = y+boundDown;
 
-		if(is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
+		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
 			return true;
 
 		Px = x-boundLeft;
 
-		if(is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
+		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
 			return true;
 
 		//**************************************************************************************************************************************************************\\
@@ -182,7 +182,7 @@ bool DynamicObject::checkCollision(GameObject *other)
 			*/
 		return false;
 	}
-	else if(getCollisionType() == BB && other->getCollisionType() == CBB)
+	else if(GetCollisionType() == BB && other->GetCollisionType() == CBB)
 	{
 		//Use theorem of Pythagoras A^2=B^2+C^2
 		//Check for 8 points in de bounding box (the * on the box)
@@ -193,21 +193,21 @@ bool DynamicObject::checkCollision(GameObject *other)
 			|         |
 			*----*----*
 		*/
-		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x-boundLeft,y-boundUp))
+		if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x-boundLeft,y-boundUp))
 			return true;
-		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x,y-boundUp))
+		if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x,y-boundUp))
 			return true;
-		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x+boundLeft,y-boundUp))
+		if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x+boundLeft,y-boundUp))
 			return true;
-		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x-boundLeft,y))
+		if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x-boundLeft,y))
 			return true;
-		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x+boundLeft,y))
+		if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x+boundLeft,y))
 			return true;
-		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x-boundLeft,y+boundUp))
+		if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x-boundLeft,y+boundUp))
 			return true;
-		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x,y+boundUp))
+		if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x,y+boundUp))
 			return true;
-		if(is_p_in_circle(other->getX(), other->getY(),other->getRadius(),x+boundLeft,y+boundUp))
+		if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x+boundLeft,y+boundUp))
 			return true;
 	}
 	return false;
@@ -217,7 +217,7 @@ void DynamicObject::Collided(GameObject *other)
 {}
 
 
-bool DynamicObject::is_p_in_triangle(float xPoint1, float yPoint1, float xPoint2, float yPoint2, float xPoint3, float yPoint3, float Px, float Py)
+bool DynamicObject::Is_p_in_triangle(float xPoint1, float yPoint1, float xPoint2, float yPoint2, float xPoint3, float yPoint3, float Px, float Py)
 {
 	float A = abs((xPoint1*(yPoint2-yPoint3) + xPoint2*(yPoint3-yPoint1) + xPoint3*(yPoint1-yPoint2))/2.0);
 	//bereken oppervlaktes van driehoeken: ABP, BCP en ACP
@@ -230,7 +230,7 @@ bool DynamicObject::is_p_in_triangle(float xPoint1, float yPoint1, float xPoint2
 		return false;
 }
 
-bool DynamicObject::is_p_in_circle(float xCircle, float yCircle, float radiusCircle, float Px, float Py)
+bool DynamicObject::Is_p_in_circle(float xCircle, float yCircle, float radiusCircle, float Px, float Py)
 {
 	if((Px-xCircle)*(Px-xCircle) + (Py-yCircle)*(Py-yCircle) < radiusCircle*radiusCircle)
 		return true;

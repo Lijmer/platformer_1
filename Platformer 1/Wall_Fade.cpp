@@ -11,37 +11,37 @@ Wall_Fade::Wall_Fade(void)
 	boundRight=32;
 }
 
-void Wall_Fade::init(float x, float y)
+void Wall_Fade::Init(float x, float y)
 {
-	image = ImageManager::getInstance().getImage(2);
-	DynamicObject::init(x,y,0,0,WALL_FADE,0);
+	image = ImageManager::GetInstance().GetImage(2);
+	DynamicObject::Init(x,y,0,0,WALL_FADE,0);
 }
 
-void Wall_Fade::update(bool *keys, bool *keys_pressed)
+void Wall_Fade::Update()
 {
 	if(activated)
 	{
 		opacity-=0.2;
 	}
 	if(opacity<=0)
-		setAlive(false);
+		SetAlive(false);
 }
 
-void Wall_Fade::draw()
+void Wall_Fade::Draw()
 {
 	al_draw_tinted_bitmap(image,al_map_rgba(opacity*255.0,opacity*255.0,opacity*255.0,opacity*255.0),x-_camX,y-_camY,0);
 }
 
-void Wall_Fade::destroy()
+void Wall_Fade::Destroy()
 {
 
 }
 
 void Wall_Fade::Collided(GameObject *other)
 {
-	if(other->getID() == PLAYER)
+	if(other->GetID() == PLAYER)
 	{
-		if(other->getY()<y)
+		if(other->GetY()<y)
 			activated=true;
 	}
 }

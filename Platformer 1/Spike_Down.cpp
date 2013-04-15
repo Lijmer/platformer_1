@@ -3,28 +3,28 @@
 
 Spike_Down::Spike_Down(void)
 {
-	setDepth(0);
+	SetDepth(0);
 }
 
-void Spike_Down::init(float x, float y)
+void Spike_Down::Init(float x, float y)
 {
-	StaticObject::init(x,y);
+	StaticObject::Init(x,y);
 	xPoint1 = x+1;
 	yPoint1 = y+1;
 	xPoint2 = x+31;
 	yPoint2 = y+1;
 	xPoint3 = x+15;
 	yPoint3 = y+31;
-	setCollisionType(TBB);
-	image = ImageManager::getInstance().getImage(4);
+	SetCollisionType(TBB);
+	image = ImageManager::GetInstance().GetImage(4);
 }
 
-void Spike_Down::draw()
+void Spike_Down::Draw()
 {
 	al_draw_bitmap(image,x-_camX,y-_camY,0);
 }
 
-void Spike_Down::destroy()
+void Spike_Down::Destroy()
 {
 
 }

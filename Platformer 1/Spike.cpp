@@ -7,16 +7,16 @@ Spike::Spike(void)
 	boundDown = 32;
 	boundLeft = 0;
 	boundRight = 32;
-	setID(SPIKE);
-	setDepth(0);
-	setCollisionType(TBB);
+	SetID(SPIKE);
+	SetDepth(0);
+	SetCollisionType(TBB);
 }
 
-void Spike::draw()
+void Spike::Draw()
 {
 }
 
-void Spike::destroy()
+void Spike::Destroy()
 {
 
 }

@@ -17,48 +17,48 @@ public:
 	 *PPC = Pixel Perfect Collision
 	*/
 
-	void init(float x, float y, int ID, int depth);
-	void activate();
-	void deactivate();
-	void virtual draw();
-	void virtual destroy();
+	void Init(float x, float y, int ID, int depth);
+	void Activate();
+	void Deactivate();
+	void virtual Draw();
+	void virtual Destroy();
 
 	static int lastID;
 
 	//get variables
-	float getX()								{return x;}
-	float getY()								{return y;}
-	int getBoundUp()							{return boundUp;}
-	int getBoundDown()							{return boundDown;}
-	int getBoundLeft()							{return boundLeft;}
-	int getBoundRight()							{return boundRight;}
-	float getXPoint1()							{return xPoint1;}
-	float getYPoint1()							{return yPoint1;}
-	float getXPoint2()							{return xPoint2;}
-	float getYPoint2()							{return yPoint2;}
-	float getXPoint3()							{return xPoint3;}
-	float getYPoint3()							{return yPoint3;}
-	unsigned char getRadius()					{return radius;}
-	int getID()									{return ID;}
-	int getDepth()								{return depth;}
-	bool getAlive()								{return alive;}
-	bool getActivated()							{return activated;}
-	bool getCollidable()						{return collidable;}
-	int getCollisionType()						{return collisionType;}
+	float GetX()								{return x;}
+	float GetY()								{return y;}
+	int GetBoundUp()							{return boundUp;}
+	int GetBoundDown()							{return boundDown;}
+	int GetBoundLeft()							{return boundLeft;}
+	int GetBoundRight()							{return boundRight;}
+	float GetXPoint1()							{return xPoint1;}
+	float GetYPoint1()							{return yPoint1;}
+	float GetXPoint2()							{return xPoint2;}
+	float GetYPoint2()							{return yPoint2;}
+	float GetXPoint3()							{return xPoint3;}
+	float GetYPoint3()							{return yPoint3;}
+	unsigned char GetRadius()					{return radius;}
+	int GetID()									{return ID;}
+	int GetDepth()								{return depth;}
+	bool GetAlive()								{return alive;}
+	bool GetActivated()							{return activated;}
+	bool GetCollidable()						{return collidable;}
+	int GetCollisionType()						{return collisionType;}
 
 	//set variables
-	void setX(float x)							{GameObject::x = x;}
-	void setY(float y)							{GameObject::y = y;}
-	void setBoundUp(int boundUp)				{GameObject::boundUp = boundUp;}
-	void setBoundDown(int boundDown)			{GameObject::boundDown = boundDown;}
-	void setBoundLeft(int boundLeft)			{GameObject::boundLeft = boundLeft;}
-	void setBoundRight(int boundRight)			{GameObject::boundRight = boundRight;}
-	void setID(int ID)							{GameObject::ID = ID;}
-	void setDepth(int depth)					{GameObject::depth = depth;}
-	void setAlive(bool alive)					{GameObject::alive = alive;}
-	void setActivated(bool activated)			{GameObject::activated = activated;}
-	void setCollidable(bool collidable)			{GameObject::collidable = collidable;}
-	void setCollisionType(int collisionType)	{GameObject::collisionType = collisionType;}
+	void SetX(float x)							{GameObject::x = x;}
+	void SetY(float y)							{GameObject::y = y;}
+	void SetBoundUp(int boundUp)				{GameObject::boundUp = boundUp;}
+	void SetBoundDown(int boundDown)			{GameObject::boundDown = boundDown;}
+	void SetBoundLeft(int boundLeft)			{GameObject::boundLeft = boundLeft;}
+	void SetBoundRight(int boundRight)			{GameObject::boundRight = boundRight;}
+	void SetID(int ID)							{GameObject::ID = ID;}
+	void SetDepth(int depth)					{GameObject::depth = depth;}
+	void SetAlive(bool alive)					{GameObject::alive = alive;}
+	void SetActivated(bool activated)			{GameObject::activated = activated;}
+	void SetCollidable(bool collidable)			{GameObject::collidable = collidable;}
+	void SetCollisionType(int collisionType)	{GameObject::collisionType = collisionType;}
 
 	
 protected:

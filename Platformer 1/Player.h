@@ -7,24 +7,24 @@
 class Player : public DynamicObject
 {
 public:
-	Player(bool(*placeFree)(float x, float y), void(*createObject)(int ID, int x, int y), void(*reserveSpace)(char ID, int size));
+	Player(bool(*PlaceFree)(float x, float y), void(*CreateObject)(int ID, int x, int y), void(*ReserveSpace)(char ID, int size));
 	~Player();
 	
-	void init(float x, float y);
-	void update(bool *keys, bool *keys_pressed);
-	void draw();
-	void kill();
-	void destroy();
+	void Init(float x, float y);
+	void Update();
+	void Draw();
+	void Kill();
+	void Destroy();
 	void Collided(GameObject *other);
 
-	bool(*placeFree)(float x, float y);
+	bool(*PlaceFree)(float x, float y);
 
-	float getGravity()				{return gravity;}
-	bool getCollisionWallUp()		{return collisionWallUp;}
-	bool getCollisionWallDown()		{return collisionWallDown;}
-	bool getCollisionWallLeft()		{return collisionWallLeft;}
-	bool getCollisionWallRight()	{return collisionWallRight;}
-	bool getDir()					{return dir;}
+	float GetGravity()				{return gravity;}
+	bool GetCollisionWallUp()		{return collisionWallUp;}
+	bool GetCollisionWallDown()		{return collisionWallDown;}
+	bool GetCollisionWallLeft()		{return collisionWallLeft;}
+	bool GetCollisionWallRight()	{return collisionWallRight;}
+	bool GetDir()					{return dir;}
 
 private:
 	bool collisionWallUp;
@@ -42,6 +42,6 @@ private:
 	int direction;
 	bool jump;
 
-	void(*createObject)(int ID, int x, int y);
-	void(*reserveSpace)(char ID, int size);
+	void(*CreateObject)(int ID, int x, int y);
+	void(*ReserveSpace)(char ID, int size);
 };

@@ -1,32 +1,54 @@
 #include "FileManager.h"
 
 
-FileManager::FileManager(void(*createObject)(int ID, int x, int y), void(*deleteDynamicObjects)(void))
+FileManager::FileManager(void(*CreateObject)(int ID, int x, int y), void(*DeleteDynamicObjects)(void))
 {
-	FileManager::createObject = createObject;
-	FileManager::deleteDynamicObjects = deleteDynamicObjects;
+	FileManager::CreateObject = CreateObject;
+	FileManager::DeleteDynamicObjects = DeleteDynamicObjects;
 }
 
-void FileManager::loadLevel(char levelNum)
+void FileManager::LoadLevel(char levelNum)
 {
+	/* General information about this function
+	 * 
+	 * 1. Create variables and open file
+	 * 2. getline, save that in to temp
+	 * 3. temp gets pushed in to the lvl vector
+	 * 4. A for loop will loop through the lvl vector, to find [properties], [map] and END.
+	 * 5. When [properties] is found, it will read the data and set the variables to the data.
+	 * 6. When [map] is found, it will loop through the vector until it finds a ; Whenever it finds a space of a | it will save the number that comes before in the string temp.
+	      The CreateObject function gets called. The values getting passed in to the function are based on what is in the string temp
+	 * 7. When END is found, it will exit initial for loop.
+	 * 8. The file gets closed.
+	 */
+
+
+	//Create ifstream object, this will be used to read data out of the file
 	ifstream levelFile;
+	//Open the file based on the value passed in
 	if(levelNum == 0)
 		levelFile.open("levels/level1.lvl");
+
+	//Declaring some variables and iterators
 	string temp;
 	vector<string> lvl;
 	vector<string>::iterator iter;
 	vector<string>::iterator iter2;
 
+	//Declaring variables, which setting that will be read from the [properties] part will be stored.
 	int lvlWidth=-1, lvlHeight=-1, tileWidth=-1, tileHeight=-1;
 
+	//READ ALL THE DATA!
 	while(getline(levelFile,temp))
 	{
 		lvl.push_back(temp);
 	}
 
-	//read every line
+	//This is the main for loop in this function. It loops through the lvl vector.
 	for(iter = lvl.begin(); iter!=lvl.end(); iter++)
 	{
+		//When it finds the properties section it will look for the appropriate data and sets it to the right variables. These will be used in the map section
+		//When it finds a ; after it will look for the next section
 		if((*iter) == "[properties]")
 		{
 			for(iter2 = iter+1; iter2!=lvl.end(); iter2++)
@@ -59,6 +81,9 @@ void FileManager::loadLevel(char levelNum)
 				}
 			}
 		}
+		//When the map section get found, it will loop trough the data, everytime it finds a space or a | it will run the CreateObject fuction with the right parameter
+		//When x is greater than lvlWidth, it will increase y by 1 and set x to 0
+		//When it finds ; it will stop the map section and start looking for the next one
 		else if((*iter) == "[map]")
 		{
 			int x=0,y=0;
@@ -76,35 +101,35 @@ void FileManager::loadLevel(char levelNum)
 						else
 						{
 							if(temp == "00")
-								createObject(0,x*tileWidth,y*tileHeight);
+								CreateObject(0,x*tileWidth,y*tileHeight);
 							else if(temp == "01")
-								createObject(1,x*tileWidth,y*tileHeight);
+								CreateObject(1,x*tileWidth,y*tileHeight);
 							else if(temp == "02")
-								createObject(2,x*tileWidth,y*tileHeight);
+								CreateObject(2,x*tileWidth,y*tileHeight);
 							else if(temp == "03")
-								createObject(3,x*tileWidth,y*tileHeight);
+								CreateObject(3,x*tileWidth,y*tileHeight);
 							else if(temp == "04")
-								createObject(4,x*tileWidth,y*tileHeight);
+								CreateObject(4,x*tileWidth,y*tileHeight);
 							else if(temp == "05")
-								createObject(5,x*tileWidth,y*tileHeight);
+								CreateObject(5,x*tileWidth,y*tileHeight);
 							else if(temp == "06")
-								createObject(6,x*tileWidth,y*tileHeight);
+								CreateObject(6,x*tileWidth,y*tileHeight);
 							else if(temp == "07")
-								createObject(7,x*tileWidth,y*tileHeight);
+								CreateObject(7,x*tileWidth,y*tileHeight);
 							else if(temp == "08")
-								createObject(8,x*tileWidth,y*tileHeight);
+								CreateObject(8,x*tileWidth,y*tileHeight);
 							else if(temp == "09")
-								createObject(9,x*tileWidth,y*tileHeight);
+								CreateObject(9,x*tileWidth,y*tileHeight);
 							else if(temp == "10")
-								createObject(10,x*tileWidth,y*tileHeight);
+								CreateObject(10,x*tileWidth,y*tileHeight);
 							else if(temp == "96")
-								createObject(96,x*tileWidth,y*tileHeight);
+								CreateObject(96,x*tileWidth,y*tileHeight);
 							else if(temp == "97")
-								createObject(97,x*tileWidth,y*tileHeight);
+								CreateObject(97,x*tileWidth,y*tileHeight);
 							else if(temp == "98")
-								createObject(98,x*tileWidth,y*tileHeight);
+								CreateObject(98,x*tileWidth,y*tileHeight);
 							else if(temp == "99")
-								createObject(99,x*tileWidth,y*tileHeight);
+								CreateObject(99,x*tileWidth,y*tileHeight);
 							else if(temp=="--")
 							{
 								temp="";
@@ -120,16 +145,18 @@ void FileManager::loadLevel(char levelNum)
 
 			}
 		}
+		//When END is found, it will en the for loop and stop reading the file
 		else if((*iter) == "END")
 			break;
 	}
-	
+	//Close the file
 	levelFile.close();
 }
 
-void FileManager::restartLevel(char levelNum)
+void FileManager::RestartLevel(char levelNum)
 {
-	deleteDynamicObjects();
+	//This does he exact same thing as LoadLevel, but it only creates DynamicObjects
+	DeleteDynamicObjects();
 	ifstream levelFile;
 	if(levelNum == 0)
 		levelFile.open("levels/level1.lvl");
@@ -197,23 +224,23 @@ void FileManager::restartLevel(char levelNum)
 						else
 						{
 							if(temp == "05")
-								createObject(5,x*tileWidth,y*tileHeight);
+								CreateObject(5,x*tileWidth,y*tileHeight);
 							else if(temp == "07")
-								createObject(7,x*tileWidth,y*tileHeight);
+								CreateObject(7,x*tileWidth,y*tileHeight);
 							else if(temp == "08")
-								createObject(8,x*tileWidth,y*tileHeight);
+								CreateObject(8,x*tileWidth,y*tileHeight);
 							else if(temp == "09")
-								createObject(9,x*tileWidth,y*tileHeight);
+								CreateObject(9,x*tileWidth,y*tileHeight);
 							else if(temp == "10")
-								createObject(10,x*tileWidth,y*tileHeight);
+								CreateObject(10,x*tileWidth,y*tileHeight);
 							else if(temp == "96")
-								createObject(96,x*tileWidth,y*tileHeight);
+								CreateObject(96,x*tileWidth,y*tileHeight);
 							else if(temp == "97")
-								createObject(97,x*tileWidth,y*tileHeight);
+								CreateObject(97,x*tileWidth,y*tileHeight);
 							else if(temp == "98")
-								createObject(98,x*tileWidth,y*tileHeight);
+								CreateObject(98,x*tileWidth,y*tileHeight);
 							else if(temp == "99")
-								createObject(99,x*tileWidth,y*tileHeight);
+								CreateObject(99,x*tileWidth,y*tileHeight);
 							else if(temp=="--")
 							{
 								temp="";
@@ -236,7 +263,7 @@ void FileManager::restartLevel(char levelNum)
 	levelFile.close();
 }
 
-void FileManager::save()
+void FileManager::Save()
 {
 
 }

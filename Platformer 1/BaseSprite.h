@@ -7,16 +7,16 @@ class BaseSprite
 public:
 	BaseSprite(void);
 
-	void init(ALLEGRO_BITMAP *image = NULL, int spriteWidth = 0, int spriteHeight = 0, int imageCount = 0, int frameDelay = 0);
+	void Init(ALLEGRO_BITMAP *image = NULL, int spriteWidth = 0, int spriteHeight = 0, int imageCount = 0, int frameDelay = 0);
 
 	//get vars
-	int getSpiteWidth()		{return spriteWidth;}
-	int getSpiteHeight()	{return spriteHeight;}
-	int getImageCount()		{return imageCount;}
-	int getImageIndex()		{return imageIndex;}
+	int GetSpiteWidth()		{return spriteWidth;}
+	int GetSpiteHeight()	{return spriteHeight;}
+	int GetImageCount()		{return imageCount;}
+	int GetImageIndex()		{return imageIndex;}
 
 	//set vars
-	void setFrameDelay(int frameDelay)	{BaseSprite::frameDelay = frameDelay;}
+	void SetFrameDelay(int frameDelay)	{BaseSprite::frameDelay = frameDelay;}
 protected:
 	int spriteWidth;
 	int spriteHeight;

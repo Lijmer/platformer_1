@@ -6,10 +6,10 @@ public:
 	Blood_Head(void);
 	~Blood_Head(void);
 
-	void init(float x, float y, float dir, float spd);
-	void update();
-	void draw();
-	void destroy();
+	void Init(float x, float y, float dir, float spd);
+	void Update();
+	void Draw();
+	void Destroy();
 	void Collided(GameObject *other);
 private:
 	bool collided;
