@@ -61,6 +61,12 @@
     <Filter Include="Source Files\Objects\Saw">
       <UniqueIdentifier>{0fa37b26-f085-4b0a-8a2f-8a08b684bd3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Objects\Platform">
+      <UniqueIdentifier>{3a94fa03-e705-4c2f-9470-3889278a5bca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects\Platform">
+      <UniqueIdentifier>{7f16561e-caa7-4481-bbcb-c6593d9857dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -159,6 +165,15 @@
     <ClCompile Include="Blood_Torso.cpp">
       <Filter>Source Files\Particles</Filter>
     </ClCompile>
+    <ClCompile Include="obj_Platform_Vertical.cpp">
+      <Filter>Source Files\Objects\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="DisplayManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="obj_Platform_Horizontal.cpp">
+      <Filter>Source Files\Objects\Platform</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="globals.h">
@@ -253,6 +268,15 @@
     </ClInclude>
     <ClInclude Include="Blood_Torso.h">
       <Filter>Header Files\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="obj_Platform_Vertical.h">
+      <Filter>Header Files\Objects\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="obj_Platform_Horizontal.h">
+      <Filter>Header Files\Objects\Platform</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

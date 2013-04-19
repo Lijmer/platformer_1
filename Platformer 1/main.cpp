@@ -1,5 +1,12 @@
 #pragma region Include
+#include <allegro5/allegro.h>
 #include <allegro5/allegro_native_dialog.h>
+#include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_image.h>
+#include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_acodec.h>
+#include <allegro5/allegro_audio.h>
 //Basic Stuff
 #include <vector>
 #include <iostream>
@@ -12,6 +19,7 @@
 #include "SoundManager.h"
 #include "imageManager.h"
 #include "FontManager.h"
+#include "DisplayManager.h"
 
 //Game Objects:
 #include "GameObject.h"
@@ -34,6 +42,8 @@
 #include "obj_Saw.h"
 #include "obj_Saw_Small.h"
 #include "obj_Saw_Bar.h"
+#include "obj_Platform_Vertical.h"
+#include "obj_Platform_Horizontal.h"
 
 #include "Blood.h"
 #include "Blood_Head.h"
@@ -59,10 +69,12 @@ vector<Particle *> deactivatedParticles;
 
 vector<DynamicObject *>::iterator iter;
 vector<DynamicObject *>::iterator iter2;
+vector<DynamicObject *>::iterator dynamicPlaceFreeIter;
 vector<DynamicObject *>::reverse_iterator r_iter; 
 vector<DynamicObject *>::reverse_iterator r_iter2;
 vector<StaticObject *>::iterator iter3;
 vector<StaticObject *>::iterator iter4;
+vector<StaticObject *>::iterator staticPlaceFreeIter;
 vector<StaticObject *>::reverse_iterator r_iter3;
 vector<Particle *>::iterator particleIter;
 
@@ -82,6 +94,8 @@ obj_Double_Spike_Up *obj_double_spike_up = NULL;
 obj_Saw *obj_saw = NULL;
 obj_Saw_Small *obj_saw_small = NULL;
 obj_Saw_Bar *obj_saw_bar = NULL;
+obj_Platform_Vertical *obj_platform_vertical = NULL;
+obj_Platform_Horizontal *obj_platform_horizontal = NULL;
 
 Blood *blood = NULL;
 Blood_Head *blood_head = NULL;
@@ -93,19 +107,20 @@ int stillParticlesSize = -1;
 
 #pragma region Prototypes
 //prototypes
-bool __cdecl PlaceFree(float x, float y);
+bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs);
 int SortFunction(GameObject *i, GameObject *j) {return (i->GetDepth()<j->GetDepth());}
 bool D_object_exists(int ID);
-void __cdecl CreateObject(int ID,int x,int y);
-GameObject* __cdecl CreateObjectWithPointer(int ID,int x,int y);
+//void __cdecl CreateObject(int ID,int x,int y);
+GameObject* __cdecl CreateObject(int ID,int x,int y);
 obj_Double_Spike_Down* __cdecl Create_obj_Double_Spike_Down(float x,float y);
 obj_Double_Spike_Up* __cdecl Create_obj_Double_Spike_Up(float x,float y);
 void __cdecl DeleteDynamicObjects(void);
 void __cdecl ReserveSpace(char ID, int size);
 void MaxParticles();
+void __cdecl Shoot(bool dir, float x, float y, float velX);
 #pragma endregion All protypes are in here
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  This applications doesn't take parameters...
 {
 	#pragma region Setup
 	//==============================================
@@ -113,14 +128,12 @@ int main(int argc, char *argv[])
 	//==============================================
 	bool done = false;
 	bool render = false;
-
 	int gameTime = 0;
 	int frames = 0;
 	float gameFPS = 0;
-	int APM = 0, APS = 0;
-
-
+	//int APM = 0, APS = 0;
 	srand(time(unsigned int(0)));
+
 	//==============================================
 	//PROJECT VARIABLES
 	//==============================================
@@ -131,73 +144,40 @@ int main(int argc, char *argv[])
 	//==============================================
 	//ALLEGRO VARIABLES
 	//==============================================
-	ALLEGRO_DISPLAY *display = NULL;
-	ALLEGRO_DISPLAY_MODE disp_data;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer;
-	ALLEGRO_TRANSFORM camera;
 	ALLEGRO_BITMAP *staticCanvas = NULL;
 	ALLEGRO_BITMAP *stillParticleCanvas = NULL;
 	
-	al_show_native_message_box(NULL, "Test!", "Test!", "Test", "Ok Sok", 0);
-
 	//==============================================
 	//ALLEGRO INIT FUNCTIONS
 	//==============================================
 	if(!al_init())	//initialize Allegro
 	{
-		al_show_native_message_box(NULL, "Error!", "Error!", "Couldn't init allegro 5", "Ok Sok", 0);
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "Error!", "Couldn't initialize allegro 5", "Ok Sok", 0);
 		return -1;
 	}
-	#pragma region Display
-	al_get_display_mode(al_get_num_display_modes() - 1, &disp_data);
-	al_set_new_display_flags(ALLEGRO_FULLSCREEN);
-	display = al_create_display(disp_data.width, disp_data.height);	//create our display object
-
-	float scaleScreenWidth = disp_data.width / (float)_SCREEN_WIDTH;
-	float scaleScreenHeight = disp_data.height / (float)_SCREEN_HEIGHT;
-	float scaleScreen = min(scaleScreenWidth, scaleScreenHeight);
-
-	al_identity_transform(&camera);
-	al_scale_transform(&camera, scaleScreen, scaleScreen);
-	al_translate_transform(&camera, (disp_data.width - (_SCREEN_WIDTH * scaleScreen))/2.0, (disp_data.height - (_SCREEN_HEIGHT * scaleScreen))/2.0);
-	al_use_transform(&camera);
-
-	if(!display)			//test display object
-	{
-		al_show_native_message_box(NULL, "Error!", "Error!", "Couldn't create display", "Ok Sok", 0);
+	if(!DisplayManager::GetInstance().CreateDisplay()) //Create display (if display there is a problem the application will terminate)
 		return -1;
-	}
 
-	#pragma endregion
-
-	//
 	//==============================================
 	//ADDON INSTALL
 	//==============================================
 	al_install_keyboard();
 	al_init_primitives_addon();
-	//al_install_joystick();
-	//al_reconfigure_joysticks();
-    //joystick=al_get_joystick(al_get_num_joysticks()-1);
-
+	
 	//==============================================
 	//PROJECT INIT
 	//==============================================
-	
-	//font
 	FontManager::GetInstance().Init();
-	//images
 	ImageManager::GetInstance().Init();
-	//sound
 	SoundManager::GetInstance().Init();
+	//Play Music
 	SoundManager::GetInstance().Play(50);
-
 	//Map
 	FileManager fmanager(&CreateObject, &DeleteDynamicObjects);
-	fmanager.LoadLevel(_currentLevel); 
-	
-	
+	fmanager.LoadLevel(_currentLevel);
+
 	//==============================================
 	//TIMER INIT AND STARTUP
 	//==============================================
@@ -208,12 +188,13 @@ int main(int argc, char *argv[])
 
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
-	al_register_event_source(event_queue, al_get_display_event_source(display));
+	al_register_event_source(event_queue, al_get_display_event_source(DisplayManager::GetInstance().GetDisplay()));
 
 	al_start_timer(timer);
 	gameTime = al_current_time();
 	#pragma endregion Setting up the game before entering the loop (declaring variables, initing allegro, installing addons, registering even sources)
-	
+
+	#pragma region Main Game Loop
 	while(!done)
 	{
 		ALLEGRO_EVENT ev;
@@ -236,12 +217,15 @@ int main(int argc, char *argv[])
 				_keys[RIGHT] = true;
 				break;
 			case ALLEGRO_KEY_UP:
+				_keys_pressed[UP] = true;
 				_keys[UP] = true;
 				break;
 			case ALLEGRO_KEY_DOWN:
+				_keys_pressed[DOWN] = true;
 				_keys[DOWN] = true;
 				break;
 			case ALLEGRO_KEY_SPACE:
+				_keys_pressed[SPACE] = true;
 				_keys[SPACE] = true;
 				break;
 			case ALLEGRO_KEY_Z:
@@ -251,17 +235,6 @@ int main(int argc, char *argv[])
 			case ALLEGRO_KEY_X:
 				_keys_pressed[X_KEY]=true;
 				_keys[X_KEY] = true;
-				if(Bullet::getNumBullets() < 10 && D_object_exists(PLAYER))
-				{
-					bool dir = player->GetDir();
-					bullet = new Bullet();
-					SoundManager::GetInstance().Play(SHOOT);
-					if(dir)
-						bullet->Init(player->GetX()+13,player->GetY()-1,player->GetVelX()+10,0,BULLET,0);
-					else
-						bullet->Init(player->GetX()-13,player->GetY()-1,player->GetVelX()-10,0,BULLET,0);
-					dynamicObjects.push_back(bullet);
-				}
 				break;
 			case ALLEGRO_KEY_R:
 				_keys_pressed[R_KEY]=true;
@@ -276,6 +249,14 @@ int main(int argc, char *argv[])
 					player->Kill();
 					player->SetAlive(false);
 				}
+				break;
+			case ALLEGRO_KEY_ALT:
+				_keys[ALT] = true;
+				_keys_pressed[ALT]=true;
+				break;
+			case ALLEGRO_KEY_ENTER:
+				if(_keys[ALT])
+					DisplayManager::GetInstance().ChangeState();
 				break;
 			}
 		}
@@ -309,6 +290,9 @@ int main(int argc, char *argv[])
 				_keys_released[X_KEY]=true;
 				_keys[X_KEY] = false;
 				break;
+			case ALLEGRO_KEY_ALT:
+				_keys[ALT] = false;
+				break;
 			}
 		}
 		else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
@@ -327,13 +311,15 @@ int main(int argc, char *argv[])
 				(*iter)->Update();
 			for(particleIter = particles.begin(); particleIter!=particles.end(); particleIter++)
 				(*particleIter)->Update();
-			#pragma endregion
+			#pragma endregion Run the update function for all objects
 
 			#pragma region Collisions
 			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
 			{
-				for(iter2 = dynamicObjects.begin(); iter2!=dynamicObjects.end(); iter2++)
+				//Check for collision with other dynamic objects
+				for(iter2 = iter; iter2!=dynamicObjects.end(); iter2++)
 				{
+					if((*iter)->GetInstanceID() == (*iter2)->GetInstanceID()) continue;
 					if((*iter)->GetID() == (*iter2)->GetID()) continue;
 					if(!(*iter)->CheckCollision((*iter2)))	continue;
 					(*iter)->Collided(*iter2);
@@ -341,7 +327,8 @@ int main(int argc, char *argv[])
 				}
 				for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); iter3++)
 				{
-					if(!(*iter)->CheckCollision((*iter3)))	continue;
+					if(!(*iter)->CheckCollision((*iter3)))
+						continue;
 					(*iter)->Collided(*iter3);
 				}
 			}
@@ -360,7 +347,7 @@ int main(int argc, char *argv[])
 						(*particleIter)->Collided(*iter);
 				}
 			}
-			#pragma endregion
+			#pragma endregion Check for collions
 
 			#pragma region Activate and Deactivate
 			if(_camX!=_camX_prev || _camY!=_camY_prev)
@@ -441,6 +428,7 @@ int main(int argc, char *argv[])
 				}
 
 				//Draw all staticobjects on the staticCanvas, This is so there will be less looping through the staticObjectsvector
+				sort(staticObjects.begin(),staticObjects.end(), SortFunction);
 				al_set_target_bitmap(staticCanvas);
 				al_clear_to_color(al_map_rgba(0,0,0,0));
 				for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); iter3++)
@@ -448,7 +436,7 @@ int main(int argc, char *argv[])
 					(*iter3)->Draw();
 				}
 			}
-			#pragma endregion
+			#pragma endregion All objects that are outside of the screen get put in a different vector.
 
 			#pragma region Not moving particles
 			for(particleIter=particles.begin(); particleIter!=particles.end(); )
@@ -478,7 +466,7 @@ int main(int argc, char *argv[])
 				for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end(); particleIter++)
 					(*particleIter)->Draw();
 			}
-			#pragma endregion
+			#pragma endregion Find which particles are not moving, put theme in a seperate vector and draw them on a different bitmap
 
 			#pragma region Cleaning
 			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); )
@@ -506,7 +494,7 @@ int main(int argc, char *argv[])
 			}
 			MaxParticles();
 
-			#pragma endregion
+			#pragma endregion Deletes all objects where alive == false
 			
 			_camX_prev=_camX;
 			_camY_prev=_camY;
@@ -531,21 +519,26 @@ int main(int argc, char *argv[])
 
 			render = false;
 			
-			al_set_target_backbuffer(display);
+			al_set_target_backbuffer(DisplayManager::GetInstance().GetDisplay());
 			al_clear_to_color(al_map_rgb(192,192,192));
 
 			//BEGIN PROJECT RENDER=============================================================================================
-			//sort(staticObjects.begin(),staticObjects.end(), sortFunction);
+			
 			sort(dynamicObjects.begin(),dynamicObjects.end(), SortFunction);
+			//Draw static objects
 			al_draw_bitmap(staticCanvas,0,0,0);
-			for(r_iter = dynamicObjects.rbegin(); r_iter!=dynamicObjects.rend(); r_iter++)
-				(*r_iter)->Draw();
+			//Draw Particles
 			for(particleIter = stillParticlesBuffer.begin(); particleIter!=stillParticlesBuffer.end(); particleIter++)
 				(*particleIter)->Draw();
 			for(particleIter = particles.begin(); particleIter!=particles.end(); particleIter++)
 				(*particleIter)->Draw();
-			
 			al_draw_bitmap(stillParticleCanvas,0,0,0);
+			//Draw dynamic objects
+			for(r_iter = dynamicObjects.rbegin(); r_iter!=dynamicObjects.rend(); r_iter++)
+				(*r_iter)->Draw();
+			
+			
+			
 			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,5,0,"FPS: %f", gameFPS);
 			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,85,0,"_camX: %i\t_camY: %i", _camX, _camY);
 			if(D_object_exists(PLAYER))
@@ -557,16 +550,17 @@ int main(int argc, char *argv[])
 			}
 
 			//Draw borders
-			al_draw_filled_rectangle(-(disp_data.width - (_SCREEN_WIDTH * scaleScreen))/2.0, 0, 0, _SCREEN_HEIGHT,al_map_rgb(0,0,0));
-			al_draw_filled_rectangle(_SCREEN_WIDTH + (disp_data.width - (_SCREEN_WIDTH * scaleScreen))/2.0, 0, _SCREEN_WIDTH, _SCREEN_HEIGHT, al_map_rgb(0,0,0));
-			al_draw_filled_rectangle(0, -(disp_data.height - (_SCREEN_HEIGHT * scaleScreen))/2.0, _SCREEN_WIDTH, 0, al_map_rgb(0,0,0));
-			al_draw_filled_rectangle(0, _SCREEN_HEIGHT + (disp_data.height - (_SCREEN_HEIGHT * scaleScreen))/2.0, _SCREEN_WIDTH, _SCREEN_HEIGHT, al_map_rgb(0,0,0));
+			al_draw_filled_rectangle(-(_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0, 0, 0, _SCREEN_HEIGHT,al_map_rgb(0,0,0));
+			al_draw_filled_rectangle(_SCREEN_WIDTH + (_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0, 0, _SCREEN_WIDTH, _SCREEN_HEIGHT, al_map_rgb(0,0,0));
+			al_draw_filled_rectangle(0, -(_monitorHeight - (_SCREEN_HEIGHT * _scaleScreen))/2.0, _SCREEN_WIDTH, 0, al_map_rgb(0,0,0));
+			al_draw_filled_rectangle(0, _SCREEN_HEIGHT + (_monitorHeight - (_SCREEN_HEIGHT * _scaleScreen))/2.0, _SCREEN_WIDTH, _SCREEN_HEIGHT, al_map_rgb(0,0,0));
 
 			//FLIP BUFFERS========================
 			al_flip_display();
 		}
 		#pragma endregion All drawing stuff happens in here
 	}
+	#pragma endregion
 
 	#pragma region Clean up
 	//==============================================
@@ -618,11 +612,11 @@ int main(int argc, char *argv[])
 	FontManager::GetInstance().Clean();
 	SoundManager::GetInstance().Clean();
 	ImageManager::GetInstance().Clean();
+	DisplayManager::GetInstance().Clean();
 
 	//SHELL OBJECTS=================================
 	al_destroy_timer(timer);
 	al_destroy_event_queue(event_queue);
-	al_destroy_display(display);
 	#pragma endregion This destroys all objects and variables made in the platformer
 
 	return 0;
@@ -631,28 +625,45 @@ int main(int argc, char *argv[])
 #pragma region Functions
 
 #pragma region PlaceFree
-bool __cdecl PlaceFree(float x, float y)
+bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs)
 {
-	for(iter3 = staticObjects.begin(); iter3 != staticObjects.end(); iter3++)
+	for(staticPlaceFreeIter = staticObjects.begin(); staticPlaceFreeIter != staticObjects.end(); staticPlaceFreeIter++)
 	{		
-		if((*iter3)->GetID() != WALL) continue;
-		if(x + player->GetBoundRight() >= (*iter3)->GetX() - (*iter3)->GetBoundLeft() &&
-			x - player->GetBoundLeft() <= (*iter3)->GetX() + (*iter3)->GetBoundRight() &&
-			y + player->GetBoundDown() -1 > (*iter3)->GetY() - (*iter3)->GetBoundUp() &&
-			y - player->GetBoundUp() +1 < (*iter3)->GetY() + (*iter3)->GetBoundDown())
+		if((*staticPlaceFreeIter)->GetID() != WALL) continue;
+		if(x + boundRight  >= (*staticPlaceFreeIter)->GetX() - (*staticPlaceFreeIter)->GetBoundLeft() &&
+			x - boundLeft  <= (*staticPlaceFreeIter)->GetX() + (*staticPlaceFreeIter)->GetBoundRight() &&
+			y + boundDown  >= (*staticPlaceFreeIter)->GetY() - (*staticPlaceFreeIter)->GetBoundUp() &&
+			y - boundUp  <= (*staticPlaceFreeIter)->GetY() + (*staticPlaceFreeIter)->GetBoundDown())
 		{
 			return false;
 		}
 		else
 			continue;
 	}
-	for(iter2 = dynamicObjects.begin(); iter2 != dynamicObjects.end(); iter2++)
+	for(dynamicPlaceFreeIter = dynamicObjects.begin(); dynamicPlaceFreeIter != dynamicObjects.end(); dynamicPlaceFreeIter++)
 	{		
-		if((*iter2)->GetID() != WALL_FADE && (*iter2)->GetID()!= SAVE) continue;
-		if(x + player->GetBoundRight() >= (*iter2)->GetX() - (*iter2)->GetBoundLeft() &&
-			x - player->GetBoundLeft() <= (*iter2)->GetX() + (*iter2)->GetBoundRight() &&
-			y + player->GetBoundDown() -1 > (*iter2)->GetY() - (*iter2)->GetBoundUp() &&
-			y - player->GetBoundUp() +1 < (*iter2)->GetY() + (*iter2)->GetBoundDown())
+		/*if((*dynamicPlaceFreeIter)->GetID() != WALL_FADE && (*dynamicPlaceFreeIter)->GetID()!= SAVE && (*dynamicPlaceFreeIter)->GetID()!=PLAYER &&
+		(*dynamicPlaceFreeIter)->GetID()!=HORIZONTAL_PLATFORM && (*dynamicPlaceFreeIter)->GetID()!=VERTICAL_PLATFORM 
+			|| (*dynamicPlaceFreeIter)->GetInstanceID() == instanceID)
+		continue;*/
+		bool cont = true;
+
+		for(int i=0; i<sizeof(exceptionIDs)/sizeof(int); i++)
+		{
+			if((*dynamicPlaceFreeIter)->GetID() == exceptionIDs[i])
+			{
+				cont = false;
+				break;
+			}
+		}
+
+		if(cont)
+			continue;
+
+		if(x + boundRight  >= (*dynamicPlaceFreeIter)->GetX() - (*dynamicPlaceFreeIter)->GetBoundLeft() &&
+			x - boundLeft  <= (*dynamicPlaceFreeIter)->GetX() + (*dynamicPlaceFreeIter)->GetBoundRight() &&
+			y + boundDown  >= (*dynamicPlaceFreeIter)->GetY() - (*dynamicPlaceFreeIter)->GetBoundUp() &&
+			y - boundUp  <= (*dynamicPlaceFreeIter)->GetY() + (*dynamicPlaceFreeIter)->GetBoundDown())
 		{
 			return false;
 		}
@@ -681,120 +692,8 @@ bool D_object_exists(int ID)
 #pragma endregion Check if dynamic object with ID exists
 
 #pragma region CreateObject
-void __cdecl CreateObject(int ID,int x,int y)
-{
-	if(ID==0)
-	{
-		wall = new Wall();
-		wall->Init(x,y);
-		staticObjects.push_back(wall);
-	}
-	else if(ID==1)
-	{
-		spike_up = new Spike_Up();
-		spike_up->Init(x,y);
-		staticObjects.push_back(spike_up);
-	}
-	else if(ID==2)
-	{
-		spike_down = new Spike_Down();
-		spike_down->Init(x,y);
-		staticObjects.push_back(spike_down);
-	}
-	else if(ID==3)
-	{
-		spike_left = new Spike_Left();
-		spike_left->Init(x,y);
-		staticObjects.push_back(spike_left);
-	}
-	else if(ID==4)
-	{
-		spike_right = new Spike_Right();
-		spike_right->Init(x,y);
-		staticObjects.push_back(spike_right);
-	}
-	else if(ID==5)
-	{
-		wall_fade = new Wall_Fade();
-		wall_fade->Init(x,y);
-		dynamicObjects.push_back(wall_fade);
-	}
-	else if(ID==6)
-	{
-		wall_fake = new Wall_Fake();
-		wall_fake->Init(x,y);
-		staticObjects.push_back(wall_fake);
-	}
-	else if(ID==7)
-	{
-		obj_trigger_double_spike = new obj_Trigger_Double_Spike(&Create_obj_Double_Spike_Down, &Create_obj_Double_Spike_Up);
-		obj_trigger_double_spike->Init(x,y);
-		dynamicObjects.push_back(obj_trigger_double_spike);
-	}
-	else if(ID==8)
-	{
-		obj_saw = new obj_Saw();
-		obj_saw->Init(x,y);
-		dynamicObjects.push_back(obj_saw);
-	}
-	else if(ID==9)
-	{
-		obj_saw_small = new obj_Saw_Small();
-		obj_saw_small->Init(x,y);
-		dynamicObjects.push_back(obj_saw_small);
-	}
-	else if(ID==10)
-	{
-		obj_saw_bar = new obj_Saw_Bar(&CreateObjectWithPointer);
-		obj_saw_bar->Init(x,y);
-		dynamicObjects.push_back(obj_saw_bar);
-	}
-	else if(ID==96)
-	{
-		save = new Save(&CreateObject);
-		save->Init(x,y,0);
-		dynamicObjects.push_back(save);
-	}
-	else if(ID==97)
-	{
-		save = new Save(&CreateObject);
-		save->Init(x,y,1);
-		dynamicObjects.push_back(save);
-	}
-	else if(ID==98)
-	{
-		save = new Save(&CreateObject);
-		save->Init(x,y,2);
-		dynamicObjects.push_back(save);
-	}
-	else if(ID==99)
-	{
-		player = new Player(&PlaceFree, &CreateObject, &ReserveSpace);
-		player->Init(x,y);
-		dynamicObjects.push_back(player);
-	}
 
-	else if(ID==100)
-	{
-		blood = new Blood();
-		blood->Init(x,y,rand()%360,(((float)rand()/(float)RAND_MAX)*30.0));
-		particles.push_back(blood);
-	}
-	else if(ID==101)
-	{
-		blood_head = new Blood_Head();
-		blood_head->Init(x,y,270,10);
-		particles.push_back(blood_head);
-	}
-	else if(ID==102)
-	{
-		blood_torso = new Blood_Torso();
-		blood_torso->Init(x,y,rand()%360,((float)rand()/(float)RAND_MAX)*30.0);
-		particles.push_back(blood_torso);
-	}
-}
-
-GameObject* __cdecl CreateObjectWithPointer(int ID,int x,int y)
+GameObject* __cdecl CreateObject(int ID,int x,int y)
 {
 	if(ID==0)
 	{
@@ -868,10 +767,24 @@ GameObject* __cdecl CreateObjectWithPointer(int ID,int x,int y)
 	}
 	else if(ID==10)
 	{
-		obj_saw_bar = new obj_Saw_Bar(&CreateObjectWithPointer);
+		obj_saw_bar = new obj_Saw_Bar(&CreateObject);
 		obj_saw_bar->Init(x,y);
 		dynamicObjects.push_back(obj_saw_bar);
 		return obj_saw_bar;
+	}
+	else if(ID==11)
+	{
+		obj_platform_vertical = new obj_Platform_Vertical(&PlaceFree);
+		obj_platform_vertical->Init(x,y,0,-2);
+		dynamicObjects.push_back(obj_platform_vertical);
+		return obj_platform_vertical;
+	}
+	else if(ID==12)
+	{
+		obj_platform_horizontal = new obj_Platform_Horizontal(&PlaceFree);
+		obj_platform_horizontal->Init(x,y,2,0);
+		dynamicObjects.push_back(obj_platform_horizontal);
+		return obj_platform_horizontal;
 	}
 	else if(ID==96)
 	{
@@ -896,7 +809,7 @@ GameObject* __cdecl CreateObjectWithPointer(int ID,int x,int y)
 	}
 	else if(ID==99)
 	{
-		player = new Player(&PlaceFree, &CreateObject, &ReserveSpace);
+		player = new Player(&PlaceFree, &CreateObject, &ReserveSpace, &Shoot);
 		player->Init(x,y);
 		dynamicObjects.push_back(player);
 		return player;
@@ -914,8 +827,15 @@ GameObject* __cdecl CreateObjectWithPointer(int ID,int x,int y)
 		blood_head = new Blood_Head();
 		blood_head->Init(x,y,270,20);
 		particles.push_back(blood_head);
+		return blood_head;
 	}
-	
+	else if(ID==102)
+	{
+		blood_torso = new Blood_Torso();
+		blood_torso->Init(x,y,rand()%360,((float)rand()/(float)RAND_MAX)*30.0);
+		particles.push_back(blood_torso);
+		return blood_torso;
+	}
 	return NULL;
 }
 #pragma endregion
@@ -1002,4 +922,17 @@ void __cdecl ReserveSpace(char ID, int size)
 
 }
 #pragma endregion
-#pragma endregion
+
+#pragma region Shoot
+void __cdecl Shoot(bool dir, float x, float y, float velX)
+{
+	bullet = new Bullet();
+	if(dir)
+		bullet->Init(x+13, y-1, velX+10);
+	else
+		bullet->Init(x-13, y-1, velX-10);
+	dynamicObjects.push_back(bullet);
+}
+#pragma endregion This functions will be called by the player object and shoot a bullet
+
+#pragma endregion All functions (except for main) in this file are here :D

@@ -1,7 +1,7 @@
 #include "FileManager.h"
 
 
-FileManager::FileManager(void(*CreateObject)(int ID, int x, int y), void(*DeleteDynamicObjects)(void))
+FileManager::FileManager(GameObject*(*CreateObject)(int ID, int x, int y), void(*DeleteDynamicObjects)(void))
 {
 	FileManager::CreateObject = CreateObject;
 	FileManager::DeleteDynamicObjects = DeleteDynamicObjects;
@@ -25,9 +25,15 @@ void FileManager::LoadLevel(char levelNum)
 
 	//Create ifstream object, this will be used to read data out of the file
 	ifstream levelFile;
+	
 	//Open the file based on the value passed in
 	if(levelNum == 0)
 		levelFile.open("levels/level1.lvl");
+	if(!levelFile.is_open())
+	{
+		al_show_native_message_box(NULL, "Error!", "FileManager", "Couldn't open the level file","Ok",ALLEGRO_MESSAGEBOX_ERROR);
+		return;
+	}
 
 	//Declaring some variables and iterators
 	string temp;
@@ -100,7 +106,9 @@ void FileManager::LoadLevel(char levelNum)
 							temp += (*iter2)[i];
 						else
 						{
-							if(temp == "00")
+							if(temp=="-1")
+							{}//If temp == -1 the rest doesn't have to be checked, since most is -1 it is at the top
+							else if(temp == "00")
 								CreateObject(0,x*tileWidth,y*tileHeight);
 							else if(temp == "01")
 								CreateObject(1,x*tileWidth,y*tileHeight);
@@ -122,6 +130,10 @@ void FileManager::LoadLevel(char levelNum)
 								CreateObject(9,x*tileWidth,y*tileHeight);
 							else if(temp == "10")
 								CreateObject(10,x*tileWidth,y*tileHeight);
+							else if(temp == "11")
+								CreateObject(11,x*tileWidth,y*tileHeight);
+							else if(temp == "12")
+								CreateObject(12,x*tileWidth,y*tileHeight);
 							else if(temp == "96")
 								CreateObject(96,x*tileWidth,y*tileHeight);
 							else if(temp == "97")
@@ -134,6 +146,11 @@ void FileManager::LoadLevel(char levelNum)
 							{
 								temp="";
 								continue;
+							}
+							else
+							{
+								string error = "Unknown object ID: " + temp;
+								al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "FileManager", error.c_str() , "OkSok", 0);
 							}
 							if(++x>=lvlWidth)
 							{x=0; y++;}
@@ -151,6 +168,8 @@ void FileManager::LoadLevel(char levelNum)
 	}
 	//Close the file
 	levelFile.close();
+	if(levelFile.is_open())
+		al_show_native_message_box(NULL, "Error!", "FileManager", "Couldn't close the level file", "Ok", ALLEGRO_MESSAGEBOX_ERROR);
 }
 
 void FileManager::RestartLevel(char levelNum)
@@ -233,6 +252,10 @@ void FileManager::RestartLevel(char levelNum)
 								CreateObject(9,x*tileWidth,y*tileHeight);
 							else if(temp == "10")
 								CreateObject(10,x*tileWidth,y*tileHeight);
+							else if(temp == "11")
+								CreateObject(11,x*tileWidth,y*tileHeight);
+							else if(temp == "12")
+								CreateObject(12,x*tileWidth,y*tileHeight);
 							else if(temp == "96")
 								CreateObject(96,x*tileWidth,y*tileHeight);
 							else if(temp == "97")

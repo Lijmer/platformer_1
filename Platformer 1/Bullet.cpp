@@ -5,6 +5,8 @@ int Bullet::numBullets=0;
 Bullet::Bullet(void)
 {
 	SetAlive(true);
+	SetDepth(-100);
+	SetID(BULLET);
 	countFrame=0;
 	frameDelay=12;
 	color=true;
@@ -14,6 +16,13 @@ Bullet::Bullet(void)
 	boundRight=2;
 	SetCollisionType(BB);
 	numBullets++;
+}
+
+void Bullet::Init(float x, float y, float velX)
+{
+	Bullet::x = x;
+	Bullet::y = y;
+	Bullet::velX = velX;
 }
 
 void Bullet::Update()

@@ -1,7 +1,7 @@
 #include "Save.h"
 
 
-Save::Save(void(*CreateObject)(int ID, int x, int y))
+Save::Save(GameObject*(*CreateObject)(int ID, int x, int y))
 {
 	active = false;
 	SetCollisionType(BB);
@@ -16,7 +16,7 @@ Save::Save(void(*CreateObject)(int ID, int x, int y))
 void Save::Init(float x, float y, char difficulty)
 {
 	image = ImageManager::GetInstance().GetImage(7);
-	DynamicObject::Init(x,y,0,0,SAVE,0);
+	DynamicObject::Init(x,y,0,0);
 
 	//If the difficulty is not the same as this object, it will create a wall in its place
 	if(difficulty < _difficulty)

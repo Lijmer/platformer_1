@@ -10,7 +10,7 @@ Blood::Blood(void)
 	boundDown=0;
 	boundLeft=0;
 	boundRight=0;
-	gravity = 1;
+	gravity = .62;
 	x = 0;
 	y = 0;
 	SetID(PARTICLE);
@@ -75,7 +75,7 @@ void Blood::Collided(GameObject *other)
 	}
 	else if(other->GetID() == SPIKE)
 	{
-		velX/=1.5;
-		velY/=1.5;
+		velX/=2;
+		velY=0;
 	}
 }

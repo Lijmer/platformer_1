@@ -23,7 +23,7 @@ obj_Trigger_Double_Spike::~obj_Trigger_Double_Spike(void)
 void obj_Trigger_Double_Spike::Init(float x, float y)
 {
 	image = NULL;
-	DynamicObject::Init(x,y,0,0,GetID(),0);
+	DynamicObject::Init(x,y,0,0);
 	down = Create_obj_Double_Spike_Down(x,y);
 	up = Create_obj_Double_Spike_Up(x,y+96);
 }

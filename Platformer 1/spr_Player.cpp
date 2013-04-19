@@ -44,6 +44,11 @@ void spr_Player::Update()
 
 void spr_Player::Draw(float x, float y)
 {
+	if(image == NULL)
+	{
+		al_show_native_message_box(NULL, "Error!", "spr_Player", "Image is NULL", "Ok", ALLEGRO_MESSAGEBOX_ERROR);
+		return;
+	}
 	if(vertical_direction)
 	{
 		if(direction)

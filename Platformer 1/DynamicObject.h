@@ -5,19 +5,16 @@ class DynamicObject : public GameObject
 public:
 	DynamicObject(void);
 
-	void Init(float x, float y, float velX, float velY, int ID = UNDEFINED, int depth = 0);
+	void Init(float x, float y, float velX, float velY);
 	void virtual Update();
 	void virtual Draw();
 	void virtual Destroy();
 
 	//get variables
-	float GetVelX()						{return velX;}
-	float GetVelY()						{return velY;}
+	
 	float GetX_previous()				{return x_previous;}
 	float GetY_previous()				{return y_previous;}
 
-	void SetVelX(float velX)			{DynamicObject::velX=velX;}
-	void SetVelY(float velY)			{DynamicObject::velY = velY;}
 
 	//check for collisions
 	bool CheckCollision(GameObject *other);
@@ -25,8 +22,6 @@ public:
 	void virtual Collided(GameObject *other);
 	
 protected:
-	float velX;
-	float velY;
 	float x_previous;
 	float y_previous;
 

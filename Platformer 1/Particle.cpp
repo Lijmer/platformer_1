@@ -5,6 +5,8 @@ Particle::Particle(void)
 {
 	SetID(PARTICLE);
 	SetCollisionType(BB);
+	velX=0;
+	velY=0;
 }
 
 void Particle::init(float x, float y, float velX, float velY)

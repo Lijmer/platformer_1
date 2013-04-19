@@ -2,14 +2,15 @@
 
 DynamicObject::DynamicObject(void)
 {
-	SetCollisionType(BB);
+	x_previous=0;
+	y_previous=0;
 }
 
-void DynamicObject::Init(float x, float y, float velX, float velY, int ID, int depth)
+void DynamicObject::Init(float x, float y, float velX, float velY)
 {
 	DynamicObject::velX = velX;
 	DynamicObject::velY = velY;
-	GameObject::Init(x,y,ID,depth);
+	GameObject::Init(x,y);
 }
 
 void DynamicObject::Update()
@@ -26,6 +27,7 @@ void DynamicObject::Destroy()
 
 bool DynamicObject::CheckCollision(GameObject *other)
 {
+	#pragma region BB and BB
 	if(GetCollisionType() == BB && other->GetCollisionType() == BB)
 	{
 		float otherX = other->GetX();
@@ -36,15 +38,17 @@ bool DynamicObject::CheckCollision(GameObject *other)
 		int otherBoundRight = other->GetBoundRight();
 		
 		//The +1 and -1 is that if there is a gap of 0px between the objects, it will still count as a collision
-		if(x + boundRight + 1 > otherX - otherBoundLeft &&
-		   x - boundLeft - 1 < otherX + otherBoundRight &&
-		   y + boundDown + 1 > otherY - otherBoundUp &&
-		   y - boundUp - 1 < otherY + otherBoundDown)
+		if(x + boundRight + 1 >= otherX - otherBoundLeft &&
+		   x - boundLeft - 1 <= otherX + otherBoundRight &&
+		   y + boundDown + 1 >= otherY - otherBoundUp &&
+		   y - boundUp - 1 <= otherY + otherBoundDown)
 		   return true;
 		else
 			return false;
 	}
-	else if(GetCollisionType() == BB && other->GetCollisionType() == TBB && (x_previous != x || y_previous !=y))
+	#pragma endregion
+	#pragma region BB and TBB
+	else if(GetCollisionType() == BB && other->GetCollisionType() == TBB)
 	{
 		
 		int xPoint1 = other->GetXPoint1();
@@ -182,6 +186,72 @@ bool DynamicObject::CheckCollision(GameObject *other)
 			*/
 		return false;
 	}
+	#pragma endregion
+	#pragma region TBB and BB
+	else if(GetCollisionType() == TBB && other->GetCollisionType() == BB)
+	{
+		
+		int boundUp = other->GetBoundUp();
+		int boundDown = other->GetBoundDown();
+		int boundLeft = other->GetBoundLeft();
+		int boundRight = other->GetBoundRight();
+
+		float x = other->GetX();
+		float y = other->GetY();
+
+		
+
+		//1) Check if any of the triangle’s points are within the rectangle, if yes then intersection is true.
+		if((xPoint1 > x-boundLeft && xPoint1 < x + boundRight && yPoint1 > y - boundUp && yPoint1 < y + boundDown)
+			|| (xPoint2 > x-boundLeft && xPoint2 < x + boundRight && yPoint2 > y - boundUp && yPoint2 < y + boundDown)
+			|| (xPoint3 > x-boundLeft && xPoint3 < x + boundRight && yPoint3 > y - boundUp && yPoint3 < y + boundDown))
+		{
+			return true;
+		}
+
+		//**************************************************************************************************************************************************************\\
+
+		//2) Check if any of the corners of the rectangle is in the triangle
+		/*
+		als een van de hoeken van een vierkant in de driehoek is, is er collision
+		omdat de lijnen elkaar niet raken, hoeven we alleen maar naar het centrum van het vierkant te kijken. (de x en y)
+
+					 B
+				    / \
+				   /   \
+				  /     \
+				 /   P   \      P'
+				/         \
+			  A ----------- C 
+		*/
+			
+		//Bereken totale oppervlakte van driehoek (ABC)
+		
+		float Px, Py;
+
+		Px = x-boundLeft;
+		Py = y-boundUp;
+		
+		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
+			return true;
+		
+		Px = x+boundRight;
+
+		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
+			return true;
+
+		Py = y+boundDown;
+
+		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
+			return true;
+
+		Px = x-boundLeft;
+
+		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
+			return true;
+	}
+	#pragma endregion
+	#pragma region BB and CBB
 	else if(GetCollisionType() == BB && other->GetCollisionType() == CBB)
 	{
 		//Use theorem of Pythagoras A^2=B^2+C^2
@@ -195,21 +265,56 @@ bool DynamicObject::CheckCollision(GameObject *other)
 		*/
 		if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x-boundLeft,y-boundUp))
 			return true;
-		if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x,y-boundUp))
+		else if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x,y-boundUp))
 			return true;
-		if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x+boundLeft,y-boundUp))
+		else if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x+boundRight,y-boundUp))
 			return true;
-		if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x-boundLeft,y))
+		else if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x-boundLeft,y))
 			return true;
-		if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x+boundLeft,y))
+		else if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x+boundRight,y))
 			return true;
-		if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x-boundLeft,y+boundUp))
+		else if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x-boundLeft,y+boundDown))
 			return true;
-		if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x,y+boundUp))
+		else if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x,y+boundDown))
 			return true;
-		if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x+boundLeft,y+boundUp))
+		else if(Is_p_in_circle(other->GetX(), other->GetY(),other->GetRadius(),x+boundRight,y+boundDown))
 			return true;
+		else
+			false;
 	}
+	#pragma endregion
+	#pragma region CBB and BB
+	else if(GetCollisionType() == CBB && other->GetCollisionType() == BB)
+	{
+		//Use theorem of Pythagoras A^2=B^2+C^2
+		//Check for 8 points in de bounding box (the * on the box)
+		/*
+			*----*----*
+			|         |
+			*         *
+			|         |
+			*----*----*
+		*/
+		if(Is_p_in_circle(x, y,radius, other->GetX()-other->GetBoundLeft(), other->GetY()-other->GetBoundUp()))
+			return true;
+		else if(Is_p_in_circle(x, y,radius, other->GetX(), other->GetY() - other->GetBoundUp()))
+			return true;
+		else if(Is_p_in_circle(x, y,radius, other->GetX()+other->GetBoundRight(), other->GetY()-other->GetBoundUp()))
+			return true;
+		else if(Is_p_in_circle(x, y,radius, other->GetX()-other->GetBoundLeft(), other->GetY()))
+			return true;
+		else if(Is_p_in_circle(x, y,radius, other->GetX()+other->GetBoundRight(), other->GetY()))
+			return true;
+		else if(Is_p_in_circle(x, y,radius, other->GetX()-other->GetBoundLeft(), other->GetY()+other->GetBoundDown()))
+			return true;
+		else if(Is_p_in_circle(x, y,radius, other->GetX(), other->GetY()+other->GetBoundDown()))
+			return true;
+		else if(Is_p_in_circle(x, y,radius, other->GetX()+other->GetBoundDown(), other->GetY()+other->GetBoundDown()))
+			return true;
+		else
+			return false;
+	}
+	#pragma endregion
 	return false;
 }
 

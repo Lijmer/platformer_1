@@ -3,18 +3,20 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <allegro5/allegro_native_dialog.h>
+#include "GameObject.h"
 using namespace std;
 class FileManager
 {
 public:
-	FileManager(void(*CreateObject)(int ID, int x, int y), void(*DeleteDynamicObjects)(void));
+	FileManager(GameObject*(*CreateObject)(int ID, int x, int y), void(*DeleteDynamicObjects)(void));
 
 	void LoadLevel(char levelNum);
 	void RestartLevel(char levelNum);
 
 	void Save();
 private:
-	void(*CreateObject)(int ID, int x, int y);
+	GameObject* (*CreateObject)(int ID, int x, int y);
 	void(*DeleteDynamicObjects)(void);
 };
 

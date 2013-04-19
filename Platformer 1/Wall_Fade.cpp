@@ -9,12 +9,14 @@ Wall_Fade::Wall_Fade(void)
 	boundDown=32;
 	boundLeft=0;
 	boundRight=32;
+	SetCollisionType(BB);
+	SetID(WALL_FADE);
 }
 
 void Wall_Fade::Init(float x, float y)
 {
 	image = ImageManager::GetInstance().GetImage(2);
-	DynamicObject::Init(x,y,0,0,WALL_FADE,0);
+	DynamicObject::Init(x,y,0,0);
 }
 
 void Wall_Fade::Update()
@@ -34,7 +36,6 @@ void Wall_Fade::Draw()
 
 void Wall_Fade::Destroy()
 {
-
 }
 
 void Wall_Fade::Collided(GameObject *other)

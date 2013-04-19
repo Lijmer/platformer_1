@@ -22,6 +22,10 @@ void ImageManager::Init()
 	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	al_init_image_addon();
 	img_player = al_load_bitmap("img/player/sprite_sheet.png");
+	if(img_player==NULL)
+	{
+		al_show_native_message_box(NULL, "Error!", "ImageManager", "Coudn't load img_player", "Ok", ALLEGRO_MESSAGEBOX_ERROR); 
+	}
 	img_wall = al_load_bitmap("img/tiles/32x32/wall.png");
 	img_spike_up = al_load_bitmap("img/tiles/32x32/spike_up.png");
 	img_spike_down = al_load_bitmap("img/tiles/32x32/spike_down.png");
@@ -29,7 +33,8 @@ void ImageManager::Init()
 	img_spike_right = al_load_bitmap("img/tiles/32x32/spike_right.png");
 	img_save = al_load_bitmap("img/tiles/other/save.png");
 	img_saw = al_load_bitmap("img/tiles/128x128/saw.png");
-	img_saw_bar = al_load_bitmap("img/saw_bar.png");
+	img_saw_bar = al_load_bitmap("img/other/saw_bar.png");
+	img_platform = al_load_bitmap("img/tiles/other/platform.png");
 	
 	img_blood = al_load_bitmap("img/player/blood/blood.png");
 	img_blood_head = al_load_bitmap("img/player/blood/head.png");
@@ -49,6 +54,7 @@ void ImageManager::Clean()
 	al_destroy_bitmap(img_save);
 	al_destroy_bitmap(img_saw);
 	al_destroy_bitmap(img_saw_bar);
+	al_destroy_bitmap(img_platform);
 
 	al_destroy_bitmap(img_blood);
 	al_destroy_bitmap(img_blood_head);
@@ -62,7 +68,7 @@ ALLEGRO_BITMAP* ImageManager::GetImage(char ID)
 	switch(ID)
 	{
 	case -1:
-		al_show_native_message_box(NULL, "Error!", "ImageManager", "-1 passed into image manager", "", 0);
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "ImageManager", "-1 passed into image manager", "", 0);
 		break;
 	case 0:
 		return img_player;
@@ -91,6 +97,9 @@ ALLEGRO_BITMAP* ImageManager::GetImage(char ID)
 	case 9:
 		return img_saw_bar;
 		break;
+	case 10:
+		return img_platform;
+		break;
 	case 100:
 		return img_blood;
 		break;
@@ -107,7 +116,7 @@ ALLEGRO_BITMAP* ImageManager::GetImage(char ID)
 		return img_blood_foot;
 		break;
 	}
-	al_show_native_message_box(NULL, "Error!", "ImageManager", "NULL passed into image manager", "", 0);
+	al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "ImageManager", "NULL or unknown value passed into image manager", "", 0);
 	//std::cin.ignore();
 	return NULL;
 }

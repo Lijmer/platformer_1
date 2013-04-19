@@ -17,17 +17,19 @@ public:
 	 *PPC = Pixel Perfect Collision
 	*/
 
-	void Init(float x, float y, int ID, int depth);
+	void Init(float x, float y);
 	void Activate();
 	void Deactivate();
 	void virtual Draw();
 	void virtual Destroy();
 
-	static int lastID;
+	static unsigned int lastID;
 
 	//get variables
 	float GetX()								{return x;}
 	float GetY()								{return y;}
+	float GetVelX()								{return velX;}
+	float GetVelY()								{return velY;}
 	int GetBoundUp()							{return boundUp;}
 	int GetBoundDown()							{return boundDown;}
 	int GetBoundLeft()							{return boundLeft;}
@@ -40,6 +42,7 @@ public:
 	float GetYPoint3()							{return yPoint3;}
 	unsigned char GetRadius()					{return radius;}
 	int GetID()									{return ID;}
+	unsigned int GetInstanceID()				{return instanceID;}
 	int GetDepth()								{return depth;}
 	bool GetAlive()								{return alive;}
 	bool GetActivated()							{return activated;}
@@ -49,6 +52,8 @@ public:
 	//set variables
 	void SetX(float x)							{GameObject::x = x;}
 	void SetY(float y)							{GameObject::y = y;}
+	void SetVelX(float velX)					{GameObject::velX=velX;}
+	void SetVelY(float velY)					{GameObject::velY = velY;}
 	void SetBoundUp(int boundUp)				{GameObject::boundUp = boundUp;}
 	void SetBoundDown(int boundDown)			{GameObject::boundDown = boundDown;}
 	void SetBoundLeft(int boundLeft)			{GameObject::boundLeft = boundLeft;}
@@ -64,6 +69,8 @@ public:
 protected:
 	float x;
 	float y;
+	float velX;
+	float velY;
 	int boundUp;
 	int boundDown;
 	int boundLeft;
@@ -78,7 +85,7 @@ protected:
 	ALLEGRO_BITMAP *image;
 private:
 	int ID;
-	int instanceID;
+	unsigned int instanceID;
 	int depth;
 	bool alive;
 	bool activated;

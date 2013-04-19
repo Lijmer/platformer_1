@@ -1,6 +1,6 @@
 #include "GameObject.h"
 
-int GameObject::lastID=0;
+unsigned int GameObject::lastID=0;
 
 GameObject::GameObject()
 {
@@ -18,6 +18,8 @@ GameObject::GameObject()
 	boundRight = 0;
 	x=0;
 	y=0;
+	velX=0;
+	velY=0;
 	depth=0;
 	activated = true;
 	collidable=true;
@@ -28,12 +30,10 @@ GameObject::GameObject()
 }
 
 
-void GameObject::Init(float x, float y, int ID, int depth)
+void GameObject::Init(float x, float y)
 {
 	GameObject::x=x;
 	GameObject::y=y;
-	GameObject::ID=ID;
-	GameObject::depth=depth;
 	activated =true;
 	collidable=true;
 }

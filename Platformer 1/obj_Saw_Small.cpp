@@ -6,6 +6,7 @@ obj_Saw_Small::obj_Saw_Small(void)
 	SetID(SAW);
 	SetCollisionType(CBB);
 	SetCollidable(true);
+	SetDepth(-13);
 }
 
 

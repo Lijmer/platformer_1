@@ -5,7 +5,7 @@ obj_Saw::obj_Saw(void)
 {
 	SetID(SAW);
 	SetCollisionType(CBB);
-	SetCollidable(true);
+	SetDepth(12);
 }
 
 

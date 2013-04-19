@@ -4,6 +4,7 @@ class Bullet : public DynamicObject
 {
 public:
 	Bullet();
+	void Init(float x, float y, float velX);
 	void Update();
 	void Draw();
 	void Destroy();

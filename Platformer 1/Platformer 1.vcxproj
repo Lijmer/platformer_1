@@ -72,6 +72,7 @@
     <ClCompile Include="Blood_Head.cpp" />
     <ClCompile Include="Blood_Torso.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="DisplayManager.cpp" />
     <ClCompile Include="DynamicObject.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="FontManager.cpp" />
@@ -81,6 +82,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="obj_Double_Spike_Down.cpp" />
     <ClCompile Include="obj_Double_Spike_Up.cpp" />
+    <ClCompile Include="obj_Platform_Horizontal.cpp" />
+    <ClCompile Include="obj_Platform_Vertical.cpp" />
     <ClCompile Include="obj_Saw.cpp" />
     <ClCompile Include="obj_saw_bar.cpp" />
     <ClCompile Include="obj_Saw_Small.cpp" />
@@ -106,6 +109,7 @@
     <ClInclude Include="Blood_Head.h" />
     <ClInclude Include="Blood_Torso.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="DisplayManager.h" />
     <ClInclude Include="DynamicObject.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="FontManager.h" />
@@ -114,6 +118,8 @@
     <ClInclude Include="imageManager.h" />
     <ClInclude Include="obj_Double_Spike_Down.h" />
     <ClInclude Include="obj_Double_Spike_Up.h" />
+    <ClInclude Include="obj_Platform_Horizontal.h" />
+    <ClInclude Include="obj_Platform_Vertical.h" />
     <ClInclude Include="obj_Saw.h" />
     <ClInclude Include="obj_Saw_Bar.h" />
     <ClInclude Include="obj_Saw_Small.h" />

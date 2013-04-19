@@ -28,7 +28,7 @@ void SoundManager::Init()
 	SoundManager::snd_jump2 = al_load_sample("snd/player/jump2.wav");
 	SoundManager::snd_splat = al_load_sample("snd/player/splat.wav");
 
-	//SoundManager::music_level1 = al_load_sample("snd/music/level1.ogg");
+	SoundManager::music_level1 = al_load_sample("snd/music/level1.ogg");
 }
 
 void SoundManager::Clean()
@@ -37,7 +37,7 @@ void SoundManager::Clean()
 	al_destroy_sample(snd_jump1);
 	al_destroy_sample(snd_jump2);
 	al_destroy_sample(snd_splat);
-	//al_destroy_sample(music_level1);
+	al_destroy_sample(music_level1);
 }
 
 void SoundManager::Play(int num)
@@ -50,6 +50,6 @@ void SoundManager::Play(int num)
 		al_play_sample(snd_jump2,1,0,1,ALLEGRO_PLAYMODE_ONCE,0);
 	else if(num==SPLAT)
 		al_play_sample(snd_splat,1,0,1,ALLEGRO_PLAYMODE_ONCE,0);
-	//else if(num==50)
-	//	al_play_sample(music_level1,.5,0,1,ALLEGRO_PLAYMODE_LOOP,0);
+	else if(num==50)
+		al_play_sample(music_level1,.5,0,1,ALLEGRO_PLAYMODE_LOOP,0);
 }

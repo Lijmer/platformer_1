@@ -13,7 +13,6 @@ public:
 	void Clean();
 	void Play(int num);
 
-	
 
 private:
 	SoundManager(void);

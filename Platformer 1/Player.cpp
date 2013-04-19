@@ -1,12 +1,11 @@
 #include "Player.h"
 
-Player::Player(bool(*PlaceFree)(float x, float y), void(*CreateObject)(int ID, int x, int y), void(*ReserveSpace)(char ID, int size))
+Player::Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs), 
+	GameObject*(*CreateObject)(int ID, int x, int y), void(*ReserveSpace)(char ID, int size), void(*Shoot)(bool dir, float x, float y, float velX))
 {
 	//All var inits;
 	collisionWallUp = false;
 	collisionWallDown = false;
-	collisionWallLeft = false;
-	collisionWallRight = false;
 
 	gravity=0.62;
 
@@ -25,11 +24,17 @@ Player::Player(bool(*PlaceFree)(float x, float y), void(*CreateObject)(int ID, i
 	Player::PlaceFree = PlaceFree;
 	Player::CreateObject = CreateObject;
 	Player::ReserveSpace = ReserveSpace;
+	Player::Shoot = Shoot;
 
 	SetCollisionType(BB);
 
 	SetID(PLAYER);
 	SetDepth(-11);
+
+	exceptionIDs[0] = WALL_FADE;
+	exceptionIDs[1] = SAVE;
+	exceptionIDs[2] = HORIZONTAL_PLATFORM;
+	exceptionIDs[3] = VERTICAL_PLATFORM;
 }
 
 Player::~Player()
@@ -42,8 +47,7 @@ void Player::Init(float x, float y)
 	Player::x=x;
 	Player::y=y;
 	
-	if(image!=NULL)
-		sprite.Init(ImageManager::GetInstance().GetImage(0), 28, 26, 0, 2);
+	sprite.Init(ImageManager::GetInstance().GetImage(0), 28, 26, 0, 2);
 
 	jump=false;
 	direction = 270;
@@ -92,12 +96,8 @@ void Player::Update()
 		sprite.SetDirection(false);
 		dir=false;
 		idle=false;
-		int i = 0;
-		while(PlaceFree(x-3,y) == 1 && i<1)
-		{
+		if(PlaceFree(x-3,y,boundUp, boundDown, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs))
 			x-=3;
-			i++;
-		}
 
 	}
 
@@ -107,12 +107,8 @@ void Player::Update()
 		sprite.SetDirection(true);
 		idle=false;
 		dir=true;
-		int i = 0;
-		while(PlaceFree(x+3,y) == 1 && i <1)
-		{
+		if(PlaceFree(x+3,y, boundUp, boundDown, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs))
 			x+=3;
-			i++;
-		}
 	}
 
 	//Jump
@@ -158,6 +154,13 @@ void Player::Update()
 			velY+=.35;
 	}
 
+	//Shoot
+	if(_keys_pressed[X_KEY])
+	{
+		SoundManager::GetInstance().Play(SHOOT);
+		Shoot(dir, x, y, velX);
+	}
+
 	if(_keys[SPACE])
 	{
 		if(vertical_dir && collisionWallDown)
@@ -185,8 +188,6 @@ void Player::Update()
 	//Reset Collision Vars
 	collisionWallUp = false;
 	collisionWallDown = false;
-	collisionWallLeft = false;
-	collisionWallRight = false;
 	idle = true;
 
 	//Move vertical
@@ -226,7 +227,7 @@ void Player::Destroy()
 
 void Player::Collided(GameObject *other)
 {
-	if(other->GetID()==WALL || other->GetID()==WALL_FADE || other->GetID()==SAVE)
+	if(other->GetID()==WALL || other->GetID()==WALL_FADE || other->GetID()==SAVE || other->GetID() == VERTICAL_PLATFORM || other->GetID() == HORIZONTAL_PLATFORM)
 	{
 		if(y >= other->GetY())
 			collisionWallUp = true;
@@ -247,8 +248,7 @@ void Player::Collided(GameObject *other)
 		}
 		else if(velY>0)
 		{
-			while(y+boundDown 
-				>= other->GetY() - other->GetBoundUp() && i<120)
+			while(y+boundDown >= other->GetY() - other->GetBoundUp() && i<120)
 			{
 				i++;
 				y-=.1;
@@ -263,5 +263,21 @@ void Player::Collided(GameObject *other)
 	{
 		Kill();
 		SetAlive(false);
+	}
+
+	//Something extra needs to be done with the moving platforms
+	if(other->GetID() == VERTICAL_PLATFORM)
+	{
+		/*
+		y = other->GetY() - boundUp ;
+		if(velY < 0)
+			velY+=2;
+		*/
+		y+=other->GetVelY();
+	}
+	else if(other->GetID() == HORIZONTAL_PLATFORM)
+	{
+		if(PlaceFree(x+other->GetVelX(), y, boundUp, boundDown, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs) && y< other->GetY())
+			x+=other->GetVelX();
 	}
 }

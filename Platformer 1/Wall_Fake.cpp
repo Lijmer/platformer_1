@@ -9,6 +9,7 @@ Wall_Fake::Wall_Fake(void)
 	boundLeft=0;
 	boundRight=0;
 	SetDepth(0);
+	SetCollidable(false);
 	image = ImageManager::GetInstance().GetImage(2);
 }
 

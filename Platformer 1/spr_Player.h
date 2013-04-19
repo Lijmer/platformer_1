@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseSprite.h"
+#include "ImageManager.h"
 #include <iostream>
 class spr_Player : public BaseSprite
 {
@@ -12,6 +13,7 @@ public:
 	void SetVertical_Direction(bool vertical_direction)	{spr_Player::vertical_direction = vertical_direction;}
 	bool GetDirection()									{return direction;}
 	bool GetVertical_Direction()						{return vertical_direction;}
+
 	void Update();
 	void Draw(float x, float y);
 private:

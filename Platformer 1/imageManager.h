@@ -1,6 +1,6 @@
 #pragma once
 #include "globals.h"
-#include <iostream>
+#include "DisplayManager.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_native_dialog.h>
@@ -28,6 +28,7 @@ private:
 	ALLEGRO_BITMAP *img_save;
 	ALLEGRO_BITMAP *img_saw;
 	ALLEGRO_BITMAP *img_saw_bar;
+	ALLEGRO_BITMAP *img_platform;
 	
 	ALLEGRO_BITMAP *img_blood;
 	ALLEGRO_BITMAP *img_blood_head;
