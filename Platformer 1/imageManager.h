@@ -4,6 +4,9 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_native_dialog.h>
+
+#include <string>
+
 class ImageManager
 {
 public:
@@ -29,6 +32,7 @@ private:
 	ALLEGRO_BITMAP *img_saw;
 	ALLEGRO_BITMAP *img_saw_bar;
 	ALLEGRO_BITMAP *img_platform;
+	ALLEGRO_BITMAP *img_treadmill;
 	
 	ALLEGRO_BITMAP *img_blood;
 	ALLEGRO_BITMAP *img_blood_head;

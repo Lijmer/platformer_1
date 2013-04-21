@@ -22,10 +22,6 @@ void ImageManager::Init()
 	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	al_init_image_addon();
 	img_player = al_load_bitmap("img/player/sprite_sheet.png");
-	if(img_player==NULL)
-	{
-		al_show_native_message_box(NULL, "Error!", "ImageManager", "Coudn't load img_player", "Ok", ALLEGRO_MESSAGEBOX_ERROR); 
-	}
 	img_wall = al_load_bitmap("img/tiles/32x32/wall.png");
 	img_spike_up = al_load_bitmap("img/tiles/32x32/spike_up.png");
 	img_spike_down = al_load_bitmap("img/tiles/32x32/spike_down.png");
@@ -35,12 +31,56 @@ void ImageManager::Init()
 	img_saw = al_load_bitmap("img/tiles/128x128/saw.png");
 	img_saw_bar = al_load_bitmap("img/other/saw_bar.png");
 	img_platform = al_load_bitmap("img/tiles/other/platform.png");
+	img_treadmill = al_load_bitmap("img/tiles/32x32/treadmill.png");
 	
-	img_blood = al_load_bitmap("img/player/blood/blood.png");
+	img_blood = al_load_bitmap("img/player/blood/blood_pixel.png");
 	img_blood_head = al_load_bitmap("img/player/blood/head.png");
 	img_blood_torso = al_load_bitmap("img/player/blood/torso.png");
 	img_blood_arm = al_load_bitmap("img/player/blood/arm.png");
 	img_blood_foot = al_load_bitmap("img/player/blood/foot.png");
+
+	std::string error = "";
+
+	//Check if all the images are loadeds
+	if(img_player==NULL)
+		error = "img_player";
+	else if(img_wall==NULL)
+		error = "img_wall";
+	else if(img_spike_up == NULL)
+		error = "img_spike_up";
+	else if(img_spike_down == NULL)
+		error = "img_spike_down";
+	else if(img_spike_left == NULL)
+		error = "img_spike_left";
+	else if(img_spike_right == NULL)
+		error = "img_spike_right";
+	else if(img_save == NULL)
+		error = "img_save";
+	else if(img_saw == NULL)
+		error = "img_saw";
+	else if(img_saw_bar == NULL)
+		error = "img_saw_bar";
+	else if(img_platform == NULL)
+		error = "img_platform";
+	else if(img_treadmill == NULL)
+		error = "img_treadmill";
+	else if(img_blood == NULL)
+		error = "img_blood";
+
+	else if(img_blood_head == NULL)
+		error = "img_blood_head";
+	else if(img_blood_torso == NULL)
+		error = "img_blood_torso";
+	else if(img_blood_arm == NULL)
+		error = "img_blood_arm";
+	else if(img_blood_foot == NULL)
+		error = "img_blood_foot";
+
+	if(error != "")
+	{
+		std::string finalErrorMessage = "Couldn't load " + error + ".";
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "ImageManager", finalErrorMessage.c_str(), "ok", ALLEGRO_MESSAGEBOX_ERROR);
+	}
 }
 
 void ImageManager::Clean()
@@ -55,6 +95,7 @@ void ImageManager::Clean()
 	al_destroy_bitmap(img_saw);
 	al_destroy_bitmap(img_saw_bar);
 	al_destroy_bitmap(img_platform);
+	al_destroy_bitmap(img_treadmill);
 
 	al_destroy_bitmap(img_blood);
 	al_destroy_bitmap(img_blood_head);
@@ -99,6 +140,9 @@ ALLEGRO_BITMAP* ImageManager::GetImage(char ID)
 		break;
 	case 10:
 		return img_platform;
+		break;
+	case 11:
+		return img_treadmill;
 		break;
 	case 100:
 		return img_blood;

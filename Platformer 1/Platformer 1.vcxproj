@@ -63,7 +63,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\allegro\MVSC\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>allegro-5.0.8-monolith-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -87,6 +87,7 @@
     <ClCompile Include="obj_Saw.cpp" />
     <ClCompile Include="obj_saw_bar.cpp" />
     <ClCompile Include="obj_Saw_Small.cpp" />
+    <ClCompile Include="obj_treadmill_left.cpp" />
     <ClCompile Include="obj_Trigger_Double_Spike.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -123,6 +124,7 @@
     <ClInclude Include="obj_Saw.h" />
     <ClInclude Include="obj_Saw_Bar.h" />
     <ClInclude Include="obj_Saw_Small.h" />
+    <ClInclude Include="obj_treadmill_left.h" />
     <ClInclude Include="obj_Trigger_Double_Spike.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Player.h" />

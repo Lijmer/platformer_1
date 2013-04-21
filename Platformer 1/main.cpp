@@ -44,6 +44,7 @@
 #include "obj_Saw_Bar.h"
 #include "obj_Platform_Vertical.h"
 #include "obj_Platform_Horizontal.h"
+#include "obj_Treadmill_Left.h"
 
 #include "Blood.h"
 #include "Blood_Head.h"
@@ -96,6 +97,7 @@ obj_Saw_Small *obj_saw_small = NULL;
 obj_Saw_Bar *obj_saw_bar = NULL;
 obj_Platform_Vertical *obj_platform_vertical = NULL;
 obj_Platform_Horizontal *obj_platform_horizontal = NULL;
+obj_Treadmill_Left *obj_treadmill_left = NULL;
 
 Blood *blood = NULL;
 Blood_Head *blood_head = NULL;
@@ -107,7 +109,8 @@ int stillParticlesSize = -1;
 
 #pragma region Prototypes
 //prototypes
-bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs);
+bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, 
+	unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize);
 int SortFunction(GameObject *i, GameObject *j) {return (i->GetDepth()<j->GetDepth());}
 bool D_object_exists(int ID);
 //void __cdecl CreateObject(int ID,int x,int y);
@@ -173,7 +176,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	ImageManager::GetInstance().Init();
 	SoundManager::GetInstance().Init();
 	//Play Music
-	SoundManager::GetInstance().Play(50);
+	//SoundManager::GetInstance().Play(50);
 	//Map
 	FileManager fmanager(&CreateObject, &DeleteDynamicObjects);
 	fmanager.LoadLevel(_currentLevel);
@@ -305,6 +308,13 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 		else if(ev.type == ALLEGRO_EVENT_TIMER)
 		{
 			render = true;
+			
+			//This function isn't used yet, so it's not called. But it is here just in case it will be used later.
+			//(remove this code on a final build if it is not used, AND DON'T FORGET TO REMOVE THE VIRTUAL FUNCTION FROM DynamicObject!!
+			/*#pragma region UpdateBegin
+			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
+				(*iter)->UpdateBegin();
+			#pragma endregion*/
 
 			#pragma region Update
 			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
@@ -348,6 +358,40 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 				}
 			}
 			#pragma endregion Check for collions
+
+			#pragma region UpdateEnd
+			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
+				(*iter)->UpdateEnd();
+			#pragma endregion This is an extra update function that rusn after the collions event
+
+			#pragma region Cleaning
+			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); )
+			{
+				if(!(*iter)->GetAlive())
+				{
+					(*iter)->Destroy();
+					delete (*iter);
+					iter = dynamicObjects.erase(iter);
+				}
+				else
+					++iter;
+			}
+
+			for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); )
+			{
+				if(!(*iter3)->GetAlive())
+				{
+					(*iter3)->Destroy();
+					delete (*iter3);
+					iter3 = staticObjects.erase(iter3);
+				}
+				else
+					++iter3;
+			}
+
+			MaxParticles();
+
+			#pragma endregion Deletes all objects (that are not deactivated) where alive == false
 
 			#pragma region Activate and Deactivate
 			if(_camX!=_camX_prev || _camY!=_camY_prev)
@@ -467,34 +511,6 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 					(*particleIter)->Draw();
 			}
 			#pragma endregion Find which particles are not moving, put theme in a seperate vector and draw them on a different bitmap
-
-			#pragma region Cleaning
-			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); )
-			{
-				if(!(*iter)->GetAlive())
-				{
-					(*iter)->Destroy();
-					delete (*iter);
-					iter = dynamicObjects.erase(iter);
-				}
-				else
-					++iter;
-			}
-
-			for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); )
-			{
-				if(!(*iter3)->GetAlive())
-				{
-					(*iter3)->Destroy();
-					delete (*iter3);
-					iter3 = staticObjects.erase(iter3);
-				}
-				else
-					++iter3;
-			}
-			MaxParticles();
-
-			#pragma endregion Deletes all objects where alive == false
 			
 			_camX_prev=_camX;
 			_camY_prev=_camY;
@@ -527,16 +543,17 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			sort(dynamicObjects.begin(),dynamicObjects.end(), SortFunction);
 			//Draw static objects
 			al_draw_bitmap(staticCanvas,0,0,0);
+			
+			//Draw dynamic objects
+			for(r_iter = dynamicObjects.rbegin(); r_iter!=dynamicObjects.rend(); r_iter++)
+				(*r_iter)->Draw();
+
 			//Draw Particles
 			for(particleIter = stillParticlesBuffer.begin(); particleIter!=stillParticlesBuffer.end(); particleIter++)
 				(*particleIter)->Draw();
 			for(particleIter = particles.begin(); particleIter!=particles.end(); particleIter++)
 				(*particleIter)->Draw();
 			al_draw_bitmap(stillParticleCanvas,0,0,0);
-			//Draw dynamic objects
-			for(r_iter = dynamicObjects.rbegin(); r_iter!=dynamicObjects.rend(); r_iter++)
-				(*r_iter)->Draw();
-			
 			
 			
 			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,5,0,"FPS: %f", gameFPS);
@@ -625,7 +642,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 #pragma region Functions
 
 #pragma region PlaceFree
-bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs)
+bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize)
 {
 	for(staticPlaceFreeIter = staticObjects.begin(); staticPlaceFreeIter != staticObjects.end(); staticPlaceFreeIter++)
 	{		
@@ -648,7 +665,7 @@ bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLe
 		continue;*/
 		bool cont = true;
 
-		for(int i=0; i<sizeof(exceptionIDs)/sizeof(int); i++)
+		for(int i=0; i<exceptionIDsSize; i++)
 		{
 			if((*dynamicPlaceFreeIter)->GetID() == exceptionIDs[i])
 			{
@@ -657,8 +674,9 @@ bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLe
 			}
 		}
 
-		if(cont)
+		if(cont || instanceID == (*dynamicPlaceFreeIter)->GetInstanceID())
 			continue;
+
 
 		if(x + boundRight  >= (*dynamicPlaceFreeIter)->GetX() - (*dynamicPlaceFreeIter)->GetBoundLeft() &&
 			x - boundLeft  <= (*dynamicPlaceFreeIter)->GetX() + (*dynamicPlaceFreeIter)->GetBoundRight() &&
@@ -785,6 +803,13 @@ GameObject* __cdecl CreateObject(int ID,int x,int y)
 		obj_platform_horizontal->Init(x,y,2,0);
 		dynamicObjects.push_back(obj_platform_horizontal);
 		return obj_platform_horizontal;
+	}
+	else if(ID==14)
+	{
+		obj_treadmill_left = new obj_Treadmill_Left();
+		obj_treadmill_left->Init(x,y,-2,0);
+		dynamicObjects.push_back(obj_treadmill_left);
+		return obj_treadmill_left;
 	}
 	else if(ID==96)
 	{

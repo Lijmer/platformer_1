@@ -53,11 +53,13 @@ void Blood::Draw()
 		//else if(!frame)
 		//	frame=true;
 	//}
-	
+	/*
 	if(kind)
 		al_draw_tinted_scaled_rotated_bitmap_region(image,8*frame,0,8,8,al_map_rgba(255,255,255,255),4,4,x-_camX,y-_camY,1,1,direction*PI/180,0);
 	else if(!kind)
 		al_draw_tinted_scaled_rotated_bitmap_region(image,12*frame,8,12,16,al_map_rgba(255,255,255,255),6,8,x-_camX,y-_camY,1,1,direction*PI/180,0);
+	*/
+	al_draw_filled_rectangle(x-2-_camX, y-2-_camY, x+2-_camX, y+2-_camY, al_map_rgb(255,0,0));
 }
 
 void Blood::Destroy()

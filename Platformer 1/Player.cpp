@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs), 
+Player::Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize), 
 	GameObject*(*CreateObject)(int ID, int x, int y), void(*ReserveSpace)(char ID, int size), void(*Shoot)(bool dir, float x, float y, float velX))
 {
 	//All var inits;
@@ -35,6 +35,8 @@ Player::Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, in
 	exceptionIDs[1] = SAVE;
 	exceptionIDs[2] = HORIZONTAL_PLATFORM;
 	exceptionIDs[3] = VERTICAL_PLATFORM;
+	exceptionIDs[4] = TREADMILL;
+	exceptionIDsSize = 5;
 }
 
 Player::~Player()
@@ -58,12 +60,16 @@ void Player::Init(float x, float y)
 	velY=0;
 }
 
+void Player::UpdateBegin()
+{}
 
 void Player::Update()
 {
 
 	x_previous = x;
 	y_previous = y;
+
+
 	//If collided with block and the y of the block is greater, than put gravity at 0 and allow reset double jump.
 	//Else put the gravity to 0.62 px/(frame^2)
 	if(vertical_dir)
@@ -96,7 +102,7 @@ void Player::Update()
 		sprite.SetDirection(false);
 		dir=false;
 		idle=false;
-		if(PlaceFree(x-3,y,boundUp, boundDown, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs))
+		if(PlaceFree(x-3,y,boundUp-1, boundDown-1, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs, exceptionIDsSize))
 			x-=3;
 
 	}
@@ -107,7 +113,7 @@ void Player::Update()
 		sprite.SetDirection(true);
 		idle=false;
 		dir=true;
-		if(PlaceFree(x+3,y, boundUp, boundDown, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs))
+		if(PlaceFree(x+3,y, boundUp-1, boundDown-1, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs, exceptionIDsSize))
 			x+=3;
 	}
 
@@ -188,6 +194,7 @@ void Player::Update()
 	//Reset Collision Vars
 	collisionWallUp = false;
 	collisionWallDown = false;
+	collidedWithTreadmill = false;
 	idle = true;
 
 	//Move vertical
@@ -202,6 +209,9 @@ void Player::Update()
 
 	sprite.SetVertical_Direction(vertical_dir);
 }
+
+void Player::UpdateEnd()
+{} //empty
 
 void Player::Draw()
 {
@@ -227,7 +237,8 @@ void Player::Destroy()
 
 void Player::Collided(GameObject *other)
 {
-	if(other->GetID()==WALL || other->GetID()==WALL_FADE || other->GetID()==SAVE || other->GetID() == VERTICAL_PLATFORM || other->GetID() == HORIZONTAL_PLATFORM)
+	if(other->GetID()==WALL || other->GetID()==WALL_FADE || other->GetID()==SAVE || other->GetID() == VERTICAL_PLATFORM ||
+		other->GetID() == HORIZONTAL_PLATFORM || other->GetID() == TREADMILL)
 	{
 		if(y >= other->GetY())
 			collisionWallUp = true;
@@ -238,22 +249,24 @@ void Player::Collided(GameObject *other)
 		int i=0;
 		if(velY<0)
 		{
-			while(y-boundUp <= other->GetY() + other->GetBoundDown() && i<120)
+			while(y-boundUp <= other->GetY() + other->GetBoundDown() && i<12)
+			//while(CheckCollision(other))
 			{
 				i++;
-				y+=.1;
+				y+=1;
 			}
-			if(i>=120)
+			if(i>=12)
 				y-=12;
 		}
 		else if(velY>0)
 		{
-			while(y+boundDown >= other->GetY() - other->GetBoundUp() && i<120)
+			while(y+boundDown >= other->GetY() - other->GetBoundUp() && i<12)
+			//while(CheckCollision(other))
 			{
 				i++;
-				y-=.1;
+				y-=1;
 			}
-			if(i>=120)
+			if(i>=12)
 				y+=12;
 		}
 
@@ -265,19 +278,47 @@ void Player::Collided(GameObject *other)
 		SetAlive(false);
 	}
 
-	//Something extra needs to be done with the moving platforms
+	//Something extra needs to be done with the moving platforms and treadmills
 	if(other->GetID() == VERTICAL_PLATFORM)
 	{
-		/*
-		y = other->GetY() - boundUp ;
-		if(velY < 0)
-			velY+=2;
+		
+		//y = other->GetY() - boundUp ;
+		//if(velY < 0)
+		//	velY+=2;
+		
+		/*if(y < other->GetY())
+			y+=other->GetVelY();
 		*/
-		y+=other->GetVelY();
+		//y+=other->GetVelY();
+
+		
+		
+			/*
+			float startY = y;
+			while(CheckCollision(other))
+			{
+				y-=1;
+			}
+			if(startY != y)
+				y+=1;
+			*/
+		if(other->GetVelY() < 0)
+			y = other->GetY() - boundDown;
+		else if(other->GetVelY() > 0)
+			y+=1;
+		
 	}
 	else if(other->GetID() == HORIZONTAL_PLATFORM)
 	{
-		if(PlaceFree(x+other->GetVelX(), y, boundUp, boundDown, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs) && y< other->GetY())
+		if(PlaceFree(x+other->GetVelX(), y, boundUp, boundDown, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs, exceptionIDsSize))
+			//&& y< other->GetY())
+		{
 			x+=other->GetVelX();
+		}
+	}
+	else if(other->GetID() == TREADMILL && !collidedWithTreadmill)
+	{
+		collidedWithTreadmill = true;
+		x+=other->GetVelX();
 	}
 }

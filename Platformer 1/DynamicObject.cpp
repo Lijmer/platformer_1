@@ -13,11 +13,17 @@ void DynamicObject::Init(float x, float y, float velX, float velY)
 	GameObject::Init(x,y);
 }
 
+void DynamicObject::UpdateBegin()
+{}
+
 void DynamicObject::Update()
 {
 	x_previous=x;
 	y_previous=y;
 }
+
+void DynamicObject::UpdateEnd()
+{}
 
 void DynamicObject::Draw()
 {}
@@ -38,10 +44,10 @@ bool DynamicObject::CheckCollision(GameObject *other)
 		int otherBoundRight = other->GetBoundRight();
 		
 		//The +1 and -1 is that if there is a gap of 0px between the objects, it will still count as a collision
-		if(x + boundRight + 1 >= otherX - otherBoundLeft &&
-		   x - boundLeft - 1 <= otherX + otherBoundRight &&
-		   y + boundDown + 1 >= otherY - otherBoundUp &&
-		   y - boundUp - 1 <= otherY + otherBoundDown)
+		if(x + boundRight +1 >= otherX - otherBoundLeft &&
+		   x - boundLeft -1 <= otherX + otherBoundRight &&
+		   y + boundDown +1 >= otherY - otherBoundUp &&
+		   y - boundUp -1 <= otherY + otherBoundDown)
 		   return true;
 		else
 			return false;

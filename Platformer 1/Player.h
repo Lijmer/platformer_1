@@ -7,12 +7,14 @@
 class Player : public DynamicObject
 {
 public:
-	Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs), 
+	Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize),
 		GameObject*(*CreateObject)(int ID, int x, int y), void(*ReserveSpace)(char ID, int size), void(*Shoot)(bool dir, float x, float y, float velX));
 	~Player();
 	
 	void Init(float x, float y);
+	void UpdateBegin();
 	void Update();
+	void UpdateEnd();
 	void Draw();
 	void Kill();
 	void Destroy();
@@ -27,6 +29,7 @@ public:
 private:
 	bool collisionWallUp;
 	bool collisionWallDown;
+	bool collidedWithTreadmill;
 	
 	bool idle;
 	bool dir;
@@ -38,10 +41,12 @@ private:
 	int direction;
 	bool jump;
 
-	int exceptionIDs[4];
+	int exceptionIDsSize;
+	int exceptionIDs[5];
 	
-	bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs);
+	bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize);
 	GameObject*(*CreateObject)(int ID, int x, int y);
 	void(*ReserveSpace)(char ID, int size);
 	void(*Shoot)(bool dir, float x, float y, float velX);
 };
+ 

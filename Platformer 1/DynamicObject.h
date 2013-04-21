@@ -6,7 +6,9 @@ public:
 	DynamicObject(void);
 
 	void Init(float x, float y, float velX, float velY);
+	void virtual UpdateBegin();
 	void virtual Update();
+	void virtual UpdateEnd();
 	void virtual Draw();
 	void virtual Destroy();
 

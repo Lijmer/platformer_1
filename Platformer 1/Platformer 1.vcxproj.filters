@@ -49,9 +49,6 @@
     <Filter Include="Header Files\Objects\Spike\Moving Spike">
       <UniqueIdentifier>{b091d75c-a965-4453-af10-43fcda06b240}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Particles">
-      <UniqueIdentifier>{9b3e11d6-05c7-443a-b260-c2ec1eaffbd4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Particles">
       <UniqueIdentifier>{f39398d7-5864-43a3-951f-72fc80237103}</UniqueIdentifier>
     </Filter>
@@ -66,6 +63,9 @@
     </Filter>
     <Filter Include="Header Files\Objects\Platform">
       <UniqueIdentifier>{7f16561e-caa7-4481-bbcb-c6593d9857dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects\Particles">
+      <UniqueIdentifier>{9b3e11d6-05c7-443a-b260-c2ec1eaffbd4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -174,6 +174,9 @@
     <ClCompile Include="obj_Platform_Horizontal.cpp">
       <Filter>Source Files\Objects\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="obj_treadmill_left.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="globals.h">
@@ -243,10 +246,10 @@
       <Filter>Header Files\Objects\Spike\Moving Spike</Filter>
     </ClInclude>
     <ClInclude Include="Particle.h">
-      <Filter>Header Files\Particles</Filter>
+      <Filter>Header Files\Objects\Particles</Filter>
     </ClInclude>
     <ClInclude Include="Blood.h">
-      <Filter>Header Files\Particles</Filter>
+      <Filter>Header Files\Objects\Particles</Filter>
     </ClInclude>
     <ClInclude Include="obj_Double_Spike_Down.h">
       <Filter>Header Files\Objects\Spike\Moving Spike</Filter>
@@ -264,10 +267,10 @@
       <Filter>Header Files\Objects\Spike\Moving Spike</Filter>
     </ClInclude>
     <ClInclude Include="Blood_Head.h">
-      <Filter>Header Files\Particles</Filter>
+      <Filter>Header Files\Objects\Particles</Filter>
     </ClInclude>
     <ClInclude Include="Blood_Torso.h">
-      <Filter>Header Files\Particles</Filter>
+      <Filter>Header Files\Objects\Particles</Filter>
     </ClInclude>
     <ClInclude Include="obj_Platform_Vertical.h">
       <Filter>Header Files\Objects\Platform</Filter>
@@ -277,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="obj_Platform_Horizontal.h">
       <Filter>Header Files\Objects\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="obj_treadmill_left.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

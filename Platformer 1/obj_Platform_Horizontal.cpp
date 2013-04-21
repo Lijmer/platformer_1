@@ -1,7 +1,6 @@
 #include "obj_Platform_Horizontal.h"
 
-
-obj_Platform_Horizontal::obj_Platform_Horizontal(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs))
+obj_Platform_Horizontal::obj_Platform_Horizontal(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize))
 {
 	obj_Platform_Horizontal::PlaceFree = PlaceFree;
 	image = ImageManager::GetInstance().GetImage(10);
@@ -16,8 +15,8 @@ obj_Platform_Horizontal::obj_Platform_Horizontal(bool(*PlaceFree)(float x, float
 	exceptionIDs[2] = VERTICAL_PLATFORM;
 	exceptionIDs[3] = HORIZONTAL_PLATFORM;
 	exceptionIDs[4] = PLAYER;
+	exceptionIDsSize = 5;
 }
-
 
 obj_Platform_Horizontal::~obj_Platform_Horizontal(void)
 {
@@ -25,7 +24,7 @@ obj_Platform_Horizontal::~obj_Platform_Horizontal(void)
 
 void obj_Platform_Horizontal::Update()
 {
-	if(PlaceFree(x+velX, y, boundUp, boundDown, boundLeft, boundRight, GetInstanceID(), exceptionIDs))
+	if(PlaceFree(x+velX, y, boundUp-1, boundDown-1, boundLeft, boundRight, GetInstanceID(), exceptionIDs, exceptionIDsSize))
 	{
 		x+=velX;
 	}

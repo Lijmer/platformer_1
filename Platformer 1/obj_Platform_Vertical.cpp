@@ -1,7 +1,7 @@
 #include "obj_Platform_Vertical.h"
 
 
-obj_Platform_Vertical::obj_Platform_Vertical(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs))
+obj_Platform_Vertical::obj_Platform_Vertical(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize))
 {
 	obj_Platform_Vertical::PlaceFree = PlaceFree;
 	SetID(VERTICAL_PLATFORM);
@@ -17,6 +17,7 @@ obj_Platform_Vertical::obj_Platform_Vertical(bool(*PlaceFree)(float x, float y, 
 	exceptionIDs[1] = SAVE;
 	exceptionIDs[2] = HORIZONTAL_PLATFORM;
 	exceptionIDs[3] = VERTICAL_PLATFORM;
+	exceptionIDsSize = 4;
 }
 
 
@@ -29,7 +30,7 @@ void obj_Platform_Vertical::Update()
 {
 	if(isGoingUp)
 	{
-		if(PlaceFree(x, y + velY - 21, boundUp, boundDown, boundLeft-1, boundRight-1, GetInstanceID(), exceptionIDs))
+		if(PlaceFree(x, y + velY - 21, boundUp, boundDown, boundLeft-1, boundRight-1, GetInstanceID(), exceptionIDs, exceptionIDsSize))
 		{
 			y+=velY;
 		}
@@ -41,7 +42,7 @@ void obj_Platform_Vertical::Update()
 	}
 	if(!isGoingUp)
 	{
-		if(PlaceFree(x, y + velY + 21, boundUp, boundDown, boundLeft-1, boundRight-1, GetInstanceID(), exceptionIDs))
+		if(PlaceFree(x, y + velY + 21, boundUp, boundDown, boundLeft-1, boundRight-1, GetInstanceID(), exceptionIDs, exceptionIDsSize))
 		{
 			y+=velY;
 		}
