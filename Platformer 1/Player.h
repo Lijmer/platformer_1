@@ -41,8 +41,8 @@ private:
 	int direction;
 	bool jump;
 
-	int exceptionIDsSize;
-	int exceptionIDs[5];
+	static const int exceptionIDsSize = 6;
+	int exceptionIDs[6];
 	
 	bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize);
 	GameObject*(*CreateObject)(int ID, int x, int y);

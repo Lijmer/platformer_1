@@ -35,8 +35,8 @@ Player::Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, in
 	exceptionIDs[1] = SAVE;
 	exceptionIDs[2] = HORIZONTAL_PLATFORM;
 	exceptionIDs[3] = VERTICAL_PLATFORM;
-	exceptionIDs[4] = TREADMILL;
-	exceptionIDsSize = 5;
+	exceptionIDs[4] = TREADMILL_LEFT;
+	exceptionIDs[5] = TREADMILL_RIGHT;
 }
 
 Player::~Player()
@@ -238,7 +238,7 @@ void Player::Destroy()
 void Player::Collided(GameObject *other)
 {
 	if(other->GetID()==WALL || other->GetID()==WALL_FADE || other->GetID()==SAVE || other->GetID() == VERTICAL_PLATFORM ||
-		other->GetID() == HORIZONTAL_PLATFORM || other->GetID() == TREADMILL)
+		other->GetID() == HORIZONTAL_PLATFORM || other->GetID() == TREADMILL_LEFT || other->GetID() == TREADMILL_RIGHT)
 	{
 		if(y >= other->GetY())
 			collisionWallUp = true;
@@ -281,31 +281,10 @@ void Player::Collided(GameObject *other)
 	//Something extra needs to be done with the moving platforms and treadmills
 	if(other->GetID() == VERTICAL_PLATFORM)
 	{
-		
-		//y = other->GetY() - boundUp ;
-		//if(velY < 0)
-		//	velY+=2;
-		
-		/*if(y < other->GetY())
-			y+=other->GetVelY();
-		*/
-		//y+=other->GetVelY();
-
-		
-		
-			/*
-			float startY = y;
-			while(CheckCollision(other))
-			{
-				y-=1;
-			}
-			if(startY != y)
-				y+=1;
-			*/
 		if(other->GetVelY() < 0)
 			y = other->GetY() - boundDown;
 		else if(other->GetVelY() > 0)
-			y+=1;
+			y+=2;
 		
 	}
 	else if(other->GetID() == HORIZONTAL_PLATFORM)
@@ -316,7 +295,7 @@ void Player::Collided(GameObject *other)
 			x+=other->GetVelX();
 		}
 	}
-	else if(other->GetID() == TREADMILL && !collidedWithTreadmill)
+	else if(other->GetID() == TREADMILL_LEFT && !collidedWithTreadmill)
 	{
 		collidedWithTreadmill = true;
 		x+=other->GetVelX();

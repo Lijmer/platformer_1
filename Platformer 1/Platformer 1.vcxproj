@@ -78,7 +78,7 @@
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="globals.cpp" />
-    <ClCompile Include="imageManager.cpp" />
+    <ClCompile Include="ImageManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="obj_Double_Spike_Down.cpp" />
     <ClCompile Include="obj_Double_Spike_Up.cpp" />
@@ -87,7 +87,9 @@
     <ClCompile Include="obj_Saw.cpp" />
     <ClCompile Include="obj_saw_bar.cpp" />
     <ClCompile Include="obj_Saw_Small.cpp" />
-    <ClCompile Include="obj_treadmill_left.cpp" />
+    <ClCompile Include="obj_Treadmill_Left.cpp" />
+    <ClCompile Include="obj_Treadmill_Left_Begin.cpp" />
+    <ClCompile Include="obj_Treadmill_Left_End.cpp" />
     <ClCompile Include="obj_Trigger_Double_Spike.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -116,7 +118,7 @@
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="globals.h" />
-    <ClInclude Include="imageManager.h" />
+    <ClInclude Include="ImageManager.h" />
     <ClInclude Include="obj_Double_Spike_Down.h" />
     <ClInclude Include="obj_Double_Spike_Up.h" />
     <ClInclude Include="obj_Platform_Horizontal.h" />
@@ -124,7 +126,9 @@
     <ClInclude Include="obj_Saw.h" />
     <ClInclude Include="obj_Saw_Bar.h" />
     <ClInclude Include="obj_Saw_Small.h" />
-    <ClInclude Include="obj_treadmill_left.h" />
+    <ClInclude Include="obj_Treadmill_Left.h" />
+    <ClInclude Include="obj_Treadmill_Left_Begin.h" />
+    <ClInclude Include="obj_Treadmill_Left_End.h" />
     <ClInclude Include="obj_Trigger_Double_Spike.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Player.h" />

@@ -134,8 +134,12 @@ void FileManager::LoadLevel(char levelNum)
 								CreateObject(11,x*tileWidth,y*tileHeight);
 							else if(temp == "12")
 								CreateObject(12,x*tileWidth,y*tileHeight);
+							else if(temp == "13")
+								CreateObject(13,x*tileWidth,y*tileHeight);
 							else if(temp == "14")
 								CreateObject(14,x*tileWidth,y*tileHeight);
+							else if(temp == "15")
+								CreateObject(15,x*tileWidth,y*tileHeight);
 							else if(temp == "96")
 								CreateObject(96,x*tileWidth,y*tileHeight);
 							else if(temp == "97")
@@ -258,8 +262,12 @@ void FileManager::RestartLevel(char levelNum)
 								CreateObject(11,x*tileWidth,y*tileHeight);
 							else if(temp == "12")
 								CreateObject(12,x*tileWidth,y*tileHeight);
+							else if(temp == "13")
+								CreateObject(13,x*tileWidth,y*tileHeight);
 							else if(temp == "14")
 								CreateObject(14,x*tileWidth,y*tileHeight);
+							else if(temp == "15")
+								CreateObject(15,x*tileWidth,y*tileHeight);
 							else if(temp == "96")
 								CreateObject(96,x*tileWidth,y*tileHeight);
 							else if(temp == "97")

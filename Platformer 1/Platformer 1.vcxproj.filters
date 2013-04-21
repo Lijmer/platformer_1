@@ -67,6 +67,18 @@
     <Filter Include="Header Files\Objects\Particles">
       <UniqueIdentifier>{9b3e11d6-05c7-443a-b260-c2ec1eaffbd4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Objects\Treadmill">
+      <UniqueIdentifier>{8cade1b0-bdbb-477b-9ada-f96e11b788d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects\Treadmill\Left">
+      <UniqueIdentifier>{c0206abe-643e-45b4-8840-de8a87d94403}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects\Treadmill">
+      <UniqueIdentifier>{2d0dc20f-e1c7-451a-b905-28e417f7f020}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects\Treadmill\Left">
+      <UniqueIdentifier>{643b0486-c6c0-478a-8f7f-ad145b796a73}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -123,9 +135,6 @@
     <ClCompile Include="SoundManager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="imageManager.cpp">
-      <Filter>Source Files\Managers</Filter>
-    </ClCompile>
     <ClCompile Include="FontManager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
@@ -174,8 +183,17 @@
     <ClCompile Include="obj_Platform_Horizontal.cpp">
       <Filter>Source Files\Objects\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="obj_treadmill_left.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="obj_Treadmill_Left_Begin.cpp">
+      <Filter>Source Files\Objects\Treadmill\Left</Filter>
+    </ClCompile>
+    <ClCompile Include="obj_Treadmill_Left.cpp">
+      <Filter>Source Files\Objects\Treadmill\Left</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="obj_Treadmill_Left_End.cpp">
+      <Filter>Source Files\Objects\Treadmill\Left</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -236,9 +254,6 @@
     <ClInclude Include="FileManager.h">
       <Filter>Header Files\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="imageManager.h">
-      <Filter>Header Files\Managers</Filter>
-    </ClInclude>
     <ClInclude Include="Save.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
@@ -281,8 +296,17 @@
     <ClInclude Include="obj_Platform_Horizontal.h">
       <Filter>Header Files\Objects\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="obj_treadmill_left.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="obj_Treadmill_Left_Begin.h">
+      <Filter>Header Files\Objects\Treadmill\Left</Filter>
+    </ClInclude>
+    <ClInclude Include="obj_Treadmill_Left.h">
+      <Filter>Header Files\Objects\Treadmill\Left</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="obj_Treadmill_Left_End.h">
+      <Filter>Header Files\Objects\Treadmill\Left</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

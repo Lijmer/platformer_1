@@ -44,7 +44,9 @@
 #include "obj_Saw_Bar.h"
 #include "obj_Platform_Vertical.h"
 #include "obj_Platform_Horizontal.h"
+#include "obj_Treadmill_Left_Begin.h"
 #include "obj_Treadmill_Left.h"
+#include "obj_Treadmill_Left_End.h"
 
 #include "Blood.h"
 #include "Blood_Head.h"
@@ -97,7 +99,9 @@ obj_Saw_Small *obj_saw_small = NULL;
 obj_Saw_Bar *obj_saw_bar = NULL;
 obj_Platform_Vertical *obj_platform_vertical = NULL;
 obj_Platform_Horizontal *obj_platform_horizontal = NULL;
+obj_Treadmill_Left_Begin *obj_treadmill_left_begin = NULL;
 obj_Treadmill_Left *obj_treadmill_left = NULL;
+obj_Treadmill_Left_End *obj_treadmill_left_end = NULL;
 
 Blood *blood = NULL;
 Blood_Head *blood_head = NULL;
@@ -804,12 +808,26 @@ GameObject* __cdecl CreateObject(int ID,int x,int y)
 		dynamicObjects.push_back(obj_platform_horizontal);
 		return obj_platform_horizontal;
 	}
+	else if(ID==13)
+	{
+		obj_treadmill_left_begin = new obj_Treadmill_Left_Begin();
+		obj_treadmill_left_begin->Init(x,y,-1,0);
+		dynamicObjects.push_back(obj_treadmill_left_begin);
+		return obj_treadmill_left_begin;
+	}
 	else if(ID==14)
 	{
 		obj_treadmill_left = new obj_Treadmill_Left();
-		obj_treadmill_left->Init(x,y,-2,0);
+		obj_treadmill_left->Init(x,y,-1,0);
 		dynamicObjects.push_back(obj_treadmill_left);
 		return obj_treadmill_left;
+	}
+	else if(ID==15)
+	{
+		obj_treadmill_left_end = new obj_Treadmill_Left_End();
+		obj_treadmill_left_end->Init(x,y,-1,0);
+		dynamicObjects.push_back(obj_treadmill_left_end);
+		return obj_treadmill_left_end;
 	}
 	else if(ID==96)
 	{

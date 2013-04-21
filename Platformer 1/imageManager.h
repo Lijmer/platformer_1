@@ -32,7 +32,9 @@ private:
 	ALLEGRO_BITMAP *img_saw;
 	ALLEGRO_BITMAP *img_saw_bar;
 	ALLEGRO_BITMAP *img_platform;
+	ALLEGRO_BITMAP *img_treadmill_left;
 	ALLEGRO_BITMAP *img_treadmill;
+	ALLEGRO_BITMAP *img_treadmill_right;
 	
 	ALLEGRO_BITMAP *img_blood;
 	ALLEGRO_BITMAP *img_blood_head;

@@ -9,7 +9,7 @@ public:
 	void Update();
 	void Draw();
 
-private:
+protected:
 	int currentFrame;
 	static const int maxFrame = 7;
 	int frameCount;

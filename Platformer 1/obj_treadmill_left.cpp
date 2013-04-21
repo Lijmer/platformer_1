@@ -3,21 +3,28 @@
 
 obj_Treadmill_Left::obj_Treadmill_Left(void)
 {
-	//EASTEREGG
-	//Reddit is amazing
-	SetID(TREADMILL);
+	/*   EASTEREGG
+	 *     .-"-.
+	 *   .'=^=^='.
+	 *  /=^=^=^=^=\
+	 * :^= HAPPY =^;
+	 * |^ EASTER! ^|
+	 * :^=^=^=^=^=^:
+	 *  \=^=^=^=^=/
+	 *   `.=^=^=.'
+	 *     `~~~`
+	 */
+	SetID(TREADMILL_LEFT);
 	
 	boundUp = 0;
 	boundDown = 32;
 	boundLeft = 0;
 	boundRight = 32;
 
-	image = ImageManager::GetInstance().GetImage(11);
+	image = ImageManager::GetInstance().GetImage(12);
 
 	frameCount = 0;
 	currentFrame = 0;
-
-	velX = -2;
 }
 
 
@@ -30,7 +37,7 @@ void obj_Treadmill_Left::Update()
 	frameCount+=1;
 	if(frameCount > frameDelay)
 	{
-		currentFrame+=2;
+		currentFrame+=1;
 		frameCount = 0;
 	}
 	while(currentFrame > maxFrame)
