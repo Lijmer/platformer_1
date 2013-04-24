@@ -25,6 +25,13 @@ enum _OBJECT_ID
 	PARTICLE
 };
 
+enum COLLISION_TYPE{
+	BB,		// = Bounding Box
+	TBB,	// = Triangle Bounding Box
+	CBB,	// = Circle Bounding Box
+	PPC		// = Pixel Perfect Collision
+};
+
 enum _KEYS
 {
 	UP=0,
@@ -53,6 +60,7 @@ enum _DIFFICULTY
 	HARD,
 	IMPOSSIBLE
 };
+
 
 extern float _monitorWidth, _monitorHeight, _scaleScreen;
 

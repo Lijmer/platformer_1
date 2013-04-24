@@ -3,10 +3,12 @@
 
 Particle::Particle(void)
 {
-	SetID(PARTICLE);
-	SetCollisionType(BB);
+	x=0;
+	y=0;
 	velX=0;
 	velY=0;
+	alive = true;
+	image = NULL;
 }
 
 void Particle::init(float x, float y, float velX, float velY)
@@ -32,7 +34,7 @@ void Particle::Destroy()
 
 bool Particle::CheckCollision(GameObject *other)
 {
-	if(GetCollisionType() == BB && other->GetCollisionType() == BB)
+	if(other->GetCollisionType() == BB)
 	{
 		int otherX = other->GetX();
 		int otherY = other->GetY();
@@ -41,15 +43,15 @@ bool Particle::CheckCollision(GameObject *other)
 		int otherBoundLeft = other->GetBoundLeft();
 		int otherBoundRight = other->GetBoundRight();
 	
-		if(x + boundRight >= otherX - otherBoundLeft &&
-		   x - boundLeft <= otherX + otherBoundRight &&
-		   y + boundDown >= otherY - otherBoundUp &&
-		   y - boundUp <= otherY + otherBoundDown)
+		if(x >= otherX - otherBoundLeft &&
+		   x <= otherX + otherBoundRight &&
+		   y >= otherY - otherBoundUp &&
+		   y <= otherY + otherBoundDown)
 		   return true;
 		else
 			return false;
 	}
-	else if(GetCollisionType() == BB && other->GetCollisionType() == TBB)
+	else if(other->GetCollisionType() == TBB)
 	{
 		
 		int xPoint1 = other->GetXPoint1();
@@ -62,9 +64,9 @@ bool Particle::CheckCollision(GameObject *other)
 		
 
 		//1) Check if any of the triangle’s points are within the rectangle, if yes then intersection is true.
-		if((xPoint1 >= x-boundLeft && xPoint1 <= x + boundRight && yPoint1 >= y - boundUp && yPoint1 <= y + boundDown)
-			|| (xPoint2 >= x-boundLeft && xPoint2 <= x + boundRight && yPoint2 >= y - boundUp && yPoint2 <= y + boundDown)
-			|| (xPoint3 >= x-boundLeft && xPoint3 <= x + boundRight && yPoint3 >= y - boundUp && yPoint3 <= y + boundDown))
+		if((xPoint1 >= x && xPoint1 <= x && yPoint1 >= y && yPoint1 <= y)
+			|| (xPoint2 >= x && xPoint2 <= x && yPoint2 >= y && yPoint2 <= y)
+			|| (xPoint3 >= x && xPoint3 <= x && yPoint3 >= y && yPoint3 <= y))
 		{
 			return true;
 		}
@@ -89,26 +91,12 @@ bool Particle::CheckCollision(GameObject *other)
 		
 		float Px, Py;
 
-		Px = x-boundLeft;
-		Py = y-boundUp;
+		Px = x;
+		Py = y;
 		
 		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
 			return true;
-		
-		Px = x+boundRight;
-
-		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
-			return true;
-
-		Py = y+boundDown;
-
-		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
-			return true;
-
-		Px = x-boundLeft;
-
-		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
-			return true;
+		else
 		return false;
 	}
 	return false;
@@ -116,6 +104,18 @@ bool Particle::CheckCollision(GameObject *other)
 
 void Particle::Collided(GameObject *other)
 {
+}
+
+void Particle::Activate()
+{
+	if(x>_camX-64 && x<_camX+_SCREEN_WIDTH+64 && y>_camY-64 && y<_camY+_SCREEN_HEIGHT+64)
+		activated = true;
+}
+
+void Particle::Deactivate()
+{
+	if(x<_camX-64 || x>_camX+_SCREEN_WIDTH+64 || y<_camY-64 || y>_camY+_SCREEN_HEIGHT+64)
+		activated = false;
 }
 
 bool Particle::Is_p_in_triangle(float xPoint1, float yPoint1, float xPoint2, float yPoint2, float xPoint3, float yPoint3, float Px, float Py)

@@ -79,6 +79,24 @@
     <Filter Include="Header Files\Objects\Treadmill\Left">
       <UniqueIdentifier>{643b0486-c6c0-478a-8f7f-ad145b796a73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Objects\Treadmill\Right">
+      <UniqueIdentifier>{1182435b-97f4-4b21-8eda-4dcd89df45b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects\Treadmill\Right">
+      <UniqueIdentifier>{c95ff1bf-cbd8-40ae-8096-d0c5a07a0ad9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects\BaseObjects">
+      <UniqueIdentifier>{308da43b-9234-47d7-ab18-2af85e051a38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects\Player">
+      <UniqueIdentifier>{f16aa697-7686-4abb-a0f6-8e3789491ba5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects\BaseObjects">
+      <UniqueIdentifier>{1aa9d295-6f87-48fe-90d0-3e9e550d1719}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects\Player">
+      <UniqueIdentifier>{9a6d2dc3-b277-42b5-a267-9352dda51115}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -87,23 +105,8 @@
     <ClCompile Include="BaseSprite.cpp">
       <Filter>Source Files\Sprites</Filter>
     </ClCompile>
-    <ClCompile Include="DynamicObject.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="StaticObject.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="spr_Player.cpp">
       <Filter>Source Files\Sprites</Filter>
-    </ClCompile>
-    <ClCompile Include="Bullet.cpp">
-      <Filter>Source Files\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Spike.cpp">
       <Filter>Source Files\Objects\Spike</Filter>
@@ -195,31 +198,43 @@
     <ClCompile Include="obj_Treadmill_Left_End.cpp">
       <Filter>Source Files\Objects\Treadmill\Left</Filter>
     </ClCompile>
+    <ClCompile Include="obj_Treadmill_Right.cpp">
+      <Filter>Source Files\Objects\Treadmill\Right</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicObject.cpp">
+      <Filter>Source Files\Objects\BaseObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files\Objects\BaseObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticObject.cpp">
+      <Filter>Source Files\Objects\BaseObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files\Objects\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>Source Files\Objects\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="obj_Treadmill_Right_Begin.cpp">
+      <Filter>Source Files\Objects\Treadmill\Right</Filter>
+    </ClCompile>
+    <ClCompile Include="obj_Treadmill_Right_End.cpp">
+      <Filter>Source Files\Objects\Treadmill\Right</Filter>
+    </ClCompile>
+    <ClCompile Include="main_extra.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="globals.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StaticObject.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="DynamicObject.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Header Files\Objects</Filter>
     </ClInclude>
     <ClInclude Include="BaseSprite.h">
       <Filter>Header Files\Sprites</Filter>
     </ClInclude>
     <ClInclude Include="spr_Player.h">
       <Filter>Header Files\Sprites</Filter>
-    </ClInclude>
-    <ClInclude Include="Bullet.h">
-      <Filter>Header Files\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Spike.h">
       <Filter>Header Files\Objects\Spike</Filter>
@@ -307,6 +322,33 @@
     </ClInclude>
     <ClInclude Include="obj_Treadmill_Left_End.h">
       <Filter>Header Files\Objects\Treadmill\Left</Filter>
+    </ClInclude>
+    <ClInclude Include="obj_Treadmill_Right.h">
+      <Filter>Header Files\Objects\Treadmill\Right</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\Objects\BaseObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicObject.h">
+      <Filter>Header Files\Objects\BaseObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticObject.h">
+      <Filter>Header Files\Objects\BaseObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>Header Files\Objects\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files\Objects\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="obj_Treadmill_Right_Begin.h">
+      <Filter>Header Files\Objects\Treadmill\Right</Filter>
+    </ClInclude>
+    <ClInclude Include="obj_Treadmill_Right_End.h">
+      <Filter>Header Files\Objects\Treadmill\Right</Filter>
+    </ClInclude>
+    <ClInclude Include="main_extra.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

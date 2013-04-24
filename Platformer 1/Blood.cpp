@@ -6,15 +6,9 @@ Blood::Blood(void)
 	collided = false;
 	SetAlive(true);
 
-	boundUp=0;
-	boundDown=0;
-	boundLeft=0;
-	boundRight=0;
 	gravity = .62;
 	x = 0;
 	y = 0;
-	SetID(PARTICLE);
-	SetCollisionType(BB);
 	kind=rand()%2;
 	frame=rand()%2;
 }

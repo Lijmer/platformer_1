@@ -24,13 +24,13 @@ void obj_Saw::Init(float x, float y)
 }
 void obj_Saw::Update()
 {
-	direction += 10;
-	while(direction>360)
-		direction-=360;
+	direction += .174532;     //.1784532 rad = 10 degree
+	while(direction>6.283185) //6.283185 = 2*pi
+		direction-=6.283185;
 }
 void obj_Saw::Draw()
 {
-	al_draw_rotated_bitmap(image,radius,radius,x-_camX,y-_camY,direction*PI/180,0);
+	al_draw_rotated_bitmap(image,radius,radius,x-_camX,y-_camY,direction,0);
 }
 void obj_Saw::Destroy()
 {}

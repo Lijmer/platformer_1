@@ -1,131 +1,10 @@
-#pragma region Include
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_native_dialog.h>
-#include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_image.h>
-#include <allegro5/allegro_ttf.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_acodec.h>
-#include <allegro5/allegro_audio.h>
-//Basic Stuff
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include <algorithm>
-#include <math.h>
-
-//Backgroundstuff Objects
-#include "FileManager.h"
-#include "SoundManager.h"
-#include "imageManager.h"
-#include "FontManager.h"
-#include "DisplayManager.h"
-
-//Game Objects:
-#include "GameObject.h"
-#include "DynamicObject.h"
-#include "Particle.h"
-#include "StaticObject.h"
-#include "Player.h"
-#include "Bullet.h"
-#include "Wall.h"
-#include "Wall_Fake.h"
-#include "Wall_Fade.h"
-#include "Spike_Up.h"
-#include "Spike_Down.h"
-#include "Spike_Left.h"
-#include "Spike_Right.h"
-#include "Save.h"
-#include "obj_Trigger_Double_Spike.h"
-#include "obj_Double_Spike_Down.h"
-#include "obj_Double_Spike_Up.h"
-#include "obj_Saw.h"
-#include "obj_Saw_Small.h"
-#include "obj_Saw_Bar.h"
-#include "obj_Platform_Vertical.h"
-#include "obj_Platform_Horizontal.h"
-#include "obj_Treadmill_Left_Begin.h"
-#include "obj_Treadmill_Left.h"
-#include "obj_Treadmill_Left_End.h"
-
-#include "Blood.h"
-#include "Blood_Head.h"
-#include "Blood_Torso.h"
-
-using std::vector;
-using std::cout;
-using std::endl;
-using namespace std;
-
-#pragma endregion All include and using stuff is in here
-
-#pragma region Variables
-vector<DynamicObject *> dynamicObjects;
-vector<DynamicObject *> deactivatedDynamicObjects;
-vector<StaticObject *> staticObjects;
-vector<StaticObject *> deactivatedStaticObjects;
-vector<Particle *> particles;
-vector<Particle *> stillParticles;
-vector<Particle *> stillParticlesBuffer;
-vector<Particle *> deactivatedParticles;
-
-
-vector<DynamicObject *>::iterator iter;
-vector<DynamicObject *>::iterator iter2;
-vector<DynamicObject *>::iterator dynamicPlaceFreeIter;
-vector<DynamicObject *>::reverse_iterator r_iter; 
-vector<DynamicObject *>::reverse_iterator r_iter2;
-vector<StaticObject *>::iterator iter3;
-vector<StaticObject *>::iterator iter4;
-vector<StaticObject *>::iterator staticPlaceFreeIter;
-vector<StaticObject *>::reverse_iterator r_iter3;
-vector<Particle *>::iterator particleIter;
-
-Player *player = NULL;
-Bullet *bullet = NULL;
-Wall *wall = NULL;
-Wall_Fake *wall_fake = NULL;
-Wall_Fade *wall_fade = NULL;
-Spike_Up *spike_up = NULL;
-Spike_Down *spike_down = NULL;
-Spike_Left *spike_left = NULL;
-Spike_Right *spike_right = NULL;
-Save *save = NULL;
-obj_Trigger_Double_Spike *obj_trigger_double_spike = NULL;
-obj_Double_Spike_Down *obj_double_spike_down = NULL;
-obj_Double_Spike_Up *obj_double_spike_up = NULL;
-obj_Saw *obj_saw = NULL;
-obj_Saw_Small *obj_saw_small = NULL;
-obj_Saw_Bar *obj_saw_bar = NULL;
-obj_Platform_Vertical *obj_platform_vertical = NULL;
-obj_Platform_Horizontal *obj_platform_horizontal = NULL;
-obj_Treadmill_Left_Begin *obj_treadmill_left_begin = NULL;
-obj_Treadmill_Left *obj_treadmill_left = NULL;
-obj_Treadmill_Left_End *obj_treadmill_left_end = NULL;
-
-Blood *blood = NULL;
-Blood_Head *blood_head = NULL;
-Blood_Torso *blood_torso = NULL;
+//All stuff that needs to be included is in this file
+#include "main_extra.h"
 
 int stillParticlesSize = -1;
 
-#pragma endregion All vectors, object pointers and other variables are declared in here
-
-#pragma region Prototypes
-//prototypes
-bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, 
-	unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize);
+//Function that is used to sort the dynamicObjects vector
 int SortFunction(GameObject *i, GameObject *j) {return (i->GetDepth()<j->GetDepth());}
-bool D_object_exists(int ID);
-//void __cdecl CreateObject(int ID,int x,int y);
-GameObject* __cdecl CreateObject(int ID,int x,int y);
-obj_Double_Spike_Down* __cdecl Create_obj_Double_Spike_Down(float x,float y);
-obj_Double_Spike_Up* __cdecl Create_obj_Double_Spike_Up(float x,float y);
-void __cdecl DeleteDynamicObjects(void);
-void __cdecl ReserveSpace(char ID, int size);
-void MaxParticles();
-void __cdecl Shoot(bool dir, float x, float y, float velX);
-#pragma endregion All protypes are in here
 
 int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  This applications doesn't take parameters...
 {
@@ -180,7 +59,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	ImageManager::GetInstance().Init();
 	SoundManager::GetInstance().Init();
 	//Play Music
-	//SoundManager::GetInstance().Play(50);
+	SoundManager::GetInstance().Play(50);
 	//Map
 	FileManager fmanager(&CreateObject, &DeleteDynamicObjects);
 	fmanager.LoadLevel(_currentLevel);
@@ -363,10 +242,14 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			}
 			#pragma endregion Check for collions
 
+			//This function isn't used yet, so it's not called. But it is here just in case it will be used later.
+			//(remove this code on a final build if it is not used, AND DON'T FORGET TO REMOVE THE VIRTUAL FUNCTION FROM DynamicObject!!
+			/*
 			#pragma region UpdateEnd
 			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
 				(*iter)->UpdateEnd();
 			#pragma endregion This is an extra update function that rusn after the collions event
+			*/
 
 			#pragma region Cleaning
 			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); )
@@ -561,15 +444,15 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			
 			
 			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,5,0,"FPS: %f", gameFPS);
-			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,85,0,"_camX: %i\t_camY: %i", _camX, _camY);
+			//al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,85,0,"_camX: %i\t_camY: %i", _camX, _camY);
+			/*
 			if(D_object_exists(PLAYER))
 			{
 				al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,25,0,"X: %f\tY: %f", player->GetX(), player->GetY());
 				al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,45,0,"Gravity: %f", player->GetGravity());
 				al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,65,0,"velY: %f\tvelX: %f", player->GetVelY(), player->GetVelX());
-	
 			}
-
+			*/
 			//Draw borders
 			al_draw_filled_rectangle(-(_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0, 0, 0, _SCREEN_HEIGHT,al_map_rgb(0,0,0));
 			al_draw_filled_rectangle(_SCREEN_WIDTH + (_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0, 0, _SCREEN_WIDTH, _SCREEN_HEIGHT, al_map_rgb(0,0,0));
@@ -639,343 +522,6 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	al_destroy_timer(timer);
 	al_destroy_event_queue(event_queue);
 	#pragma endregion This destroys all objects and variables made in the platformer
-
+	
 	return 0;
 }
-
-#pragma region Functions
-
-#pragma region PlaceFree
-bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize)
-{
-	for(staticPlaceFreeIter = staticObjects.begin(); staticPlaceFreeIter != staticObjects.end(); staticPlaceFreeIter++)
-	{		
-		if((*staticPlaceFreeIter)->GetID() != WALL) continue;
-		if(x + boundRight  >= (*staticPlaceFreeIter)->GetX() - (*staticPlaceFreeIter)->GetBoundLeft() &&
-			x - boundLeft  <= (*staticPlaceFreeIter)->GetX() + (*staticPlaceFreeIter)->GetBoundRight() &&
-			y + boundDown  >= (*staticPlaceFreeIter)->GetY() - (*staticPlaceFreeIter)->GetBoundUp() &&
-			y - boundUp  <= (*staticPlaceFreeIter)->GetY() + (*staticPlaceFreeIter)->GetBoundDown())
-		{
-			return false;
-		}
-		else
-			continue;
-	}
-	for(dynamicPlaceFreeIter = dynamicObjects.begin(); dynamicPlaceFreeIter != dynamicObjects.end(); dynamicPlaceFreeIter++)
-	{		
-		/*if((*dynamicPlaceFreeIter)->GetID() != WALL_FADE && (*dynamicPlaceFreeIter)->GetID()!= SAVE && (*dynamicPlaceFreeIter)->GetID()!=PLAYER &&
-		(*dynamicPlaceFreeIter)->GetID()!=HORIZONTAL_PLATFORM && (*dynamicPlaceFreeIter)->GetID()!=VERTICAL_PLATFORM 
-			|| (*dynamicPlaceFreeIter)->GetInstanceID() == instanceID)
-		continue;*/
-		bool cont = true;
-
-		for(int i=0; i<exceptionIDsSize; i++)
-		{
-			if((*dynamicPlaceFreeIter)->GetID() == exceptionIDs[i])
-			{
-				cont = false;
-				break;
-			}
-		}
-
-		if(cont || instanceID == (*dynamicPlaceFreeIter)->GetInstanceID())
-			continue;
-
-
-		if(x + boundRight  >= (*dynamicPlaceFreeIter)->GetX() - (*dynamicPlaceFreeIter)->GetBoundLeft() &&
-			x - boundLeft  <= (*dynamicPlaceFreeIter)->GetX() + (*dynamicPlaceFreeIter)->GetBoundRight() &&
-			y + boundDown  >= (*dynamicPlaceFreeIter)->GetY() - (*dynamicPlaceFreeIter)->GetBoundUp() &&
-			y - boundUp  <= (*dynamicPlaceFreeIter)->GetY() + (*dynamicPlaceFreeIter)->GetBoundDown())
-		{
-			return false;
-		}
-		else
-			continue;
-	}
-	return true;
-}
-#pragma endregion Checks if there is no object blocking the player.
-
-#pragma region D_object_exists
-bool D_object_exists(int ID)
-{
-	for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
-	{
-		if((*iter)->GetID() == ID)
-			return true;
-	}
-	for(iter = deactivatedDynamicObjects.begin(); iter!=deactivatedDynamicObjects.end(); iter++)
-	{
-		if((*iter)->GetID() == ID)
-			return true;
-	}
-	return false;
-}
-#pragma endregion Check if dynamic object with ID exists
-
-#pragma region CreateObject
-
-GameObject* __cdecl CreateObject(int ID,int x,int y)
-{
-	if(ID==0)
-	{
-		wall = new Wall();
-		wall->Init(x,y);
-		staticObjects.push_back(wall);
-		return wall;
-	}
-	else if(ID==1)
-	{
-		spike_up = new Spike_Up();
-		spike_up->Init(x,y);
-		staticObjects.push_back(spike_up);
-		return spike_up;
-	}
-	else if(ID==2)
-	{
-		spike_down = new Spike_Down();
-		spike_down->Init(x,y);
-		staticObjects.push_back(spike_down);
-		return spike_down;
-	}
-	else if(ID==3)
-	{
-		spike_left = new Spike_Left();
-		spike_left->Init(x,y);
-		staticObjects.push_back(spike_left);
-		return spike_left;
-	}
-	else if(ID==4)
-	{
-		spike_right = new Spike_Right();
-		spike_right->Init(x,y);
-		staticObjects.push_back(spike_right);
-		return spike_right;
-	}
-	else if(ID==5)
-	{
-		wall_fade = new Wall_Fade();
-		wall_fade->Init(x,y);
-		dynamicObjects.push_back(wall_fade);
-		return wall_fade;
-	}
-	else if(ID==6)
-	{
-		wall_fake = new Wall_Fake();
-		wall_fake->Init(x,y);
-		staticObjects.push_back(wall_fake);
-		return wall_fake;
-	}
-	else if(ID==7)
-	{
-		obj_trigger_double_spike = new obj_Trigger_Double_Spike(&Create_obj_Double_Spike_Down,&Create_obj_Double_Spike_Up);
-		obj_trigger_double_spike->Init(x,y);
-		dynamicObjects.push_back(obj_trigger_double_spike);
-		return obj_trigger_double_spike;
-	}
-	else if(ID==8)
-	{
-		obj_saw = new obj_Saw();
-		obj_saw->Init(x,y);
-		dynamicObjects.push_back(obj_saw);
-		return obj_saw;
-	}
-	else if(ID==9)
-	{
-		obj_saw_small = new obj_Saw_Small();
-		obj_saw_small->Init(x,y);
-		dynamicObjects.push_back(obj_saw_small);
-		return obj_saw_small;
-	}
-	else if(ID==10)
-	{
-		obj_saw_bar = new obj_Saw_Bar(&CreateObject);
-		obj_saw_bar->Init(x,y);
-		dynamicObjects.push_back(obj_saw_bar);
-		return obj_saw_bar;
-	}
-	else if(ID==11)
-	{
-		obj_platform_vertical = new obj_Platform_Vertical(&PlaceFree);
-		obj_platform_vertical->Init(x,y,0,-2);
-		dynamicObjects.push_back(obj_platform_vertical);
-		return obj_platform_vertical;
-	}
-	else if(ID==12)
-	{
-		obj_platform_horizontal = new obj_Platform_Horizontal(&PlaceFree);
-		obj_platform_horizontal->Init(x,y,2,0);
-		dynamicObjects.push_back(obj_platform_horizontal);
-		return obj_platform_horizontal;
-	}
-	else if(ID==13)
-	{
-		obj_treadmill_left_begin = new obj_Treadmill_Left_Begin();
-		obj_treadmill_left_begin->Init(x,y,-1,0);
-		dynamicObjects.push_back(obj_treadmill_left_begin);
-		return obj_treadmill_left_begin;
-	}
-	else if(ID==14)
-	{
-		obj_treadmill_left = new obj_Treadmill_Left();
-		obj_treadmill_left->Init(x,y,-1,0);
-		dynamicObjects.push_back(obj_treadmill_left);
-		return obj_treadmill_left;
-	}
-	else if(ID==15)
-	{
-		obj_treadmill_left_end = new obj_Treadmill_Left_End();
-		obj_treadmill_left_end->Init(x,y,-1,0);
-		dynamicObjects.push_back(obj_treadmill_left_end);
-		return obj_treadmill_left_end;
-	}
-	else if(ID==96)
-	{
-		save = new Save(&CreateObject);
-		save->Init(x,y,0);
-		dynamicObjects.push_back(save);
-		return save;
-	}
-	else if(ID==97)
-	{
-		save = new Save(&CreateObject);
-		save->Init(x,y,1);
-		dynamicObjects.push_back(save);
-		return save;
-	}
-	else if(ID==98)
-	{
-		save = new Save(&CreateObject);
-		save->Init(x,y,2);
-		dynamicObjects.push_back(save);
-		return save;
-	}
-	else if(ID==99)
-	{
-		player = new Player(&PlaceFree, &CreateObject, &ReserveSpace, &Shoot);
-		player->Init(x,y);
-		dynamicObjects.push_back(player);
-		return player;
-	}
-
-	else if(ID==100)
-	{
-		blood = new Blood();
-		blood->Init(x,y,rand()%360,(((float)rand()/(float)RAND_MAX)*30.0));
-		particles.push_back(blood);
-		return blood;
-	}
-	else if(ID==101)
-	{
-		blood_head = new Blood_Head();
-		blood_head->Init(x,y,270,20);
-		particles.push_back(blood_head);
-		return blood_head;
-	}
-	else if(ID==102)
-	{
-		blood_torso = new Blood_Torso();
-		blood_torso->Init(x,y,rand()%360,((float)rand()/(float)RAND_MAX)*30.0);
-		particles.push_back(blood_torso);
-		return blood_torso;
-	}
-	return NULL;
-}
-#pragma endregion
-
-#pragma region Double_Spike
-obj_Double_Spike_Down* __cdecl Create_obj_Double_Spike_Down(float x,float y)
-{
-	obj_double_spike_down = new obj_Double_Spike_Down;
-	obj_double_spike_down->Init(x,y);
-	dynamicObjects.push_back(obj_double_spike_down);
-	return obj_double_spike_down;
-}
-obj_Double_Spike_Up* __cdecl Create_obj_Double_Spike_Up(float x,float y)
-{
-	obj_double_spike_up = new obj_Double_Spike_Up;
-	obj_double_spike_up->Init(x,y);
-	dynamicObjects.push_back(obj_double_spike_up);
-	return obj_double_spike_up;
-}
-
-#pragma endregion
-
-#pragma region deleteDynamicObjects
-void __cdecl DeleteDynamicObjects(void)
-{
-	for(iter=dynamicObjects.begin();iter!=dynamicObjects.end();)
-	{
-		(*iter)->Destroy();
-		delete (*iter);
-		iter = dynamicObjects.erase(iter);
-	}
-	for(iter=deactivatedDynamicObjects.begin();iter!=deactivatedDynamicObjects.end();)
-	{
-		(*iter)->Destroy();
-		delete (*iter);
-		iter = deactivatedDynamicObjects.erase(iter);
-	}
-}
-#pragma endregion
-
-#pragma region MaxParticles()
-void MaxParticles()
-{
-	while(particles.size()>1500)
-	{
-		particleIter = particles.begin();
-		(*particleIter)->Destroy();
-		delete (*particleIter);
-		particleIter=particles.erase(particleIter);
-	}
-	while(deactivatedParticles.size()>5000)
-	{
-		particleIter = deactivatedParticles.begin();
-		(*particleIter)->Destroy();
-		delete (*particleIter);
-		particleIter=deactivatedParticles.erase(particleIter);
-	}
-}
-#pragma endregion
-
-#pragma region ReserveSpace()
-void __cdecl ReserveSpace(char ID, int size)
-{
-	if(ID==0) //Dynamic Objects
-	{
-		dynamicObjects.reserve(size);
-	}
-	else if(ID==1) //Deactivated DynamicObjects
-	{
-		deactivatedDynamicObjects.reserve(size);
-	}
-	else if(ID==2) //Static Objects
-	{
-		staticObjects.reserve(size);
-	}
-	else if(ID==3) //Deactivated Static Objects
-	{
-		deactivatedStaticObjects.reserve(size);
-	}
-	else if(ID==4) //Particles
-	{
-		particles.reserve(size);
-	}
-
-}
-#pragma endregion
-
-#pragma region Shoot
-void __cdecl Shoot(bool dir, float x, float y, float velX)
-{
-	bullet = new Bullet();
-	if(dir)
-		bullet->Init(x+13, y-1, velX+10);
-	else
-		bullet->Init(x-13, y-1, velX-10);
-	dynamicObjects.push_back(bullet);
-}
-#pragma endregion This functions will be called by the player object and shoot a bullet
-
-#pragma endregion All functions (except for main) in this file are here :D

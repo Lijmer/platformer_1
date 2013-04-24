@@ -3,9 +3,13 @@
 Player::Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize), 
 	GameObject*(*CreateObject)(int ID, int x, int y), void(*ReserveSpace)(char ID, int size), void(*Shoot)(bool dir, float x, float y, float velX))
 {
-	//All var inits;
+	//Most of this function is setting default values for variables.
+
+	//Init collision variables
 	collisionWallUp = false;
 	collisionWallDown = false;
+	collidedWithTreadmillLeft = false;
+	collidedWithTreadmillRight = false;
 
 	gravity=0.62;
 
@@ -21,6 +25,8 @@ Player::Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, in
 
 	dir=true;
 	vertical_dir=true;
+
+	//Assign pointer functions
 	Player::PlaceFree = PlaceFree;
 	Player::CreateObject = CreateObject;
 	Player::ReserveSpace = ReserveSpace;
@@ -194,7 +200,8 @@ void Player::Update()
 	//Reset Collision Vars
 	collisionWallUp = false;
 	collisionWallDown = false;
-	collidedWithTreadmill = false;
+	collidedWithTreadmillLeft = false;
+	collidedWithTreadmillRight = false;
 	idle = true;
 
 	//Move vertical
@@ -249,24 +256,24 @@ void Player::Collided(GameObject *other)
 		int i=0;
 		if(velY<0)
 		{
-			while(y-boundUp <= other->GetY() + other->GetBoundDown() && i<12)
+			while(y-boundUp <= other->GetY() + other->GetBoundDown() && i<12*5)
 			//while(CheckCollision(other))
 			{
 				i++;
-				y+=1;
+				y+=.2;
 			}
-			if(i>=12)
+			if(i>=12*5)
 				y-=12;
 		}
 		else if(velY>0)
 		{
-			while(y+boundDown >= other->GetY() - other->GetBoundUp() && i<12)
+			while(y+boundDown >= other->GetY() - other->GetBoundUp() && i<12*5)
 			//while(CheckCollision(other))
 			{
 				i++;
-				y-=1;
+				y-=.2;
 			}
-			if(i>=12)
+			if(i>=12*5)
 				y+=12;
 		}
 
@@ -295,9 +302,14 @@ void Player::Collided(GameObject *other)
 			x+=other->GetVelX();
 		}
 	}
-	else if(other->GetID() == TREADMILL_LEFT && !collidedWithTreadmill)
+	else if(other->GetID() == TREADMILL_LEFT && !collidedWithTreadmillLeft && y<other->GetY())
 	{
-		collidedWithTreadmill = true;
+		collidedWithTreadmillLeft = true;
+		x+=other->GetVelX();
+	}
+	else if(other->GetID() == TREADMILL_RIGHT && !collidedWithTreadmillRight && y<other->GetY())
+	{
+		collidedWithTreadmillRight = true;
 		x+=other->GetVelX();
 	}
 }

@@ -29,7 +29,8 @@ public:
 private:
 	bool collisionWallUp;
 	bool collisionWallDown;
-	bool collidedWithTreadmill;
+	bool collidedWithTreadmillLeft;
+	bool collidedWithTreadmillRight;
 	
 	bool idle;
 	bool dir;

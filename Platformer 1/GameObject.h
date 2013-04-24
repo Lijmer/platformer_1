@@ -10,12 +10,7 @@ class GameObject
 public:
 	GameObject();
 
-	enum COLLISION_TYPE{BB, TBB, CBB , PPC};
-	/*BB = Bounding Box
-	 *TBB = Triangle Bounding Box
-	 *CBB = Circle Bouding Box
-	 *PPC = Pixel Perfect Collision
-	*/
+	
 
 	void Init(float x, float y);
 	void Activate();

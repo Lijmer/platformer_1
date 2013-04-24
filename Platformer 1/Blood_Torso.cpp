@@ -3,12 +3,6 @@
 
 Blood_Torso::Blood_Torso(void)
 {
-	boundUp=0;
-	boundDown=0;
-	boundLeft=0;
-	boundRight=0;
-	SetCollisionType(BB);
-	SetID(PARTICLE);
 	gravity=.62;
 	collided=false;
 }

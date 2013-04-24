@@ -31,9 +31,9 @@ void ImageManager::Init()
 	img_saw = al_load_bitmap("img/tiles/128x128/saw.png");
 	img_saw_bar = al_load_bitmap("img/other/saw_bar.png");
 	img_platform = al_load_bitmap("img/tiles/other/platform.png");
-	img_treadmill_left = al_load_bitmap("img/tiles/32x32/treadmill_left.png");
+	img_treadmill_begin = al_load_bitmap("img/tiles/32x32/treadmill_begin.png");
 	img_treadmill = al_load_bitmap("img/tiles/32x32/treadmill.png");
-	img_treadmill_right = al_load_bitmap("img/tiles/32x32/treadmill_right.png");
+	img_treadmill_end = al_load_bitmap("img/tiles/32x32/treadmill_end.png");
 	
 	img_blood = al_load_bitmap("img/player/blood/blood_pixel.png");
 	img_blood_head = al_load_bitmap("img/player/blood/head.png");
@@ -64,12 +64,12 @@ void ImageManager::Init()
 		error = "img_saw_bar";
 	else if(img_platform == NULL)
 		error = "img_platform";
-	else if(img_treadmill_left == NULL)
-		error = "img_treadmill_left";
+	else if(img_treadmill_begin == NULL)
+		error = "img_treadmill_begin";
 	else if(img_treadmill == NULL)
 		error = "img_treadmill";
-	else if(img_treadmill_right == NULL)
-		error = "img_treadmill_right";
+	else if(img_treadmill_end == NULL)
+		error = "img_treadmill_end";
 	else if(img_blood == NULL)
 		error = "img_blood";
 
@@ -101,9 +101,9 @@ void ImageManager::Clean()
 	al_destroy_bitmap(img_saw);
 	al_destroy_bitmap(img_saw_bar);
 	al_destroy_bitmap(img_platform);
-	al_destroy_bitmap(img_treadmill_left);
+	al_destroy_bitmap(img_treadmill_begin);
 	al_destroy_bitmap(img_treadmill);
-	al_destroy_bitmap(img_treadmill_right);
+	al_destroy_bitmap(img_treadmill_end);
 
 	al_destroy_bitmap(img_blood);
 	al_destroy_bitmap(img_blood_head);
@@ -150,13 +150,13 @@ ALLEGRO_BITMAP* ImageManager::GetImage(char ID)
 		return img_platform;
 		break;
 	case 11:
-		return img_treadmill_left;
+		return img_treadmill_begin;
 		break;
 	case 12:
 		return img_treadmill;
 		break;
 	case 13:
-		return img_treadmill_right;
+		return img_treadmill_end;
 		break;
 	case 100:
 		return img_blood;
@@ -175,6 +175,5 @@ ALLEGRO_BITMAP* ImageManager::GetImage(char ID)
 		break;
 	}
 	al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "ImageManager", "NULL or unknown value passed into image manager", "", 0);
-	//std::cin.ignore();
 	return NULL;
 }

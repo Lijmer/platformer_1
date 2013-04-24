@@ -26,13 +26,16 @@ void obj_Saw_Bar::Init(float x, float y)
 }
 void obj_Saw_Bar::Update()
 {
-	direction+=5;
-	saw->SetX((x+16)+120*cos(direction*PI/180));
-	saw->SetY((y+16)+120*sin(direction*PI/180));
+	direction += .087266;     //..087266 rad = 5 degree
+	while(direction>6.283185) //6.283185 = 2*pi
+		direction-=6.283185;
+
+	saw->SetX((x+16)+120*cos(direction));
+	saw->SetY((y+16)+120*sin(direction));
 }
 void obj_Saw_Bar::Draw()
 {
-	al_draw_rotated_bitmap(image, 4, 4, x+16 -_camX, y+16 -_camY, direction*PI/180, 0);
+	al_draw_rotated_bitmap(image, 4, 4, x+16 -_camX, y+16 -_camY, direction, 0);
 }
 void obj_Saw_Bar::Destroy()
 {}
