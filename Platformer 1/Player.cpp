@@ -1,7 +1,8 @@
 #include "Player.h"
 
 Player::Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize), 
-	GameObject*(*CreateObject)(int ID, int x, int y), void(*ReserveSpace)(char ID, int size), void(*Shoot)(bool dir, float x, float y, float velX))
+	bool(*PlaceMeeting)(int otherID, float x, float y, DynamicObject *object), GameObject*(*CreateObject)(int ID, int x, int y), void(*ReserveSpace)(char ID, int size),
+	void(*Shoot)(bool dir, float x, float y, float velX))
 {
 	//Most of this function is setting default values for variables.
 
@@ -28,6 +29,7 @@ Player::Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, in
 
 	//Assign pointer functions
 	Player::PlaceFree = PlaceFree;
+	Player::PlaceMeeting = PlaceMeeting;
 	Player::CreateObject = CreateObject;
 	Player::ReserveSpace = ReserveSpace;
 	Player::Shoot = Shoot;
@@ -78,6 +80,15 @@ void Player::Update()
 
 	//If collided with block and the y of the block is greater, than put gravity at 0 and allow reset double jump.
 	//Else put the gravity to 0.62 px/(frame^2)
+
+	collisionWallDown = !PlaceFree(x, y+1, boundUp, boundDown, boundLeft, boundRight, GetInstanceID(), exceptionIDs, exceptionIDsSize);
+	collisionWallUp = !PlaceFree(x, y-1, boundUp, boundDown, boundLeft, boundRight, GetInstanceID(), exceptionIDs, exceptionIDsSize);
+
+	if(PlaceMeeting(TREADMILL_LEFT, x, y+1, this))
+		x-=1;
+	if(PlaceMeeting(TREADMILL_RIGHT, x, y+1, this))
+		x+=1;
+
 	if(vertical_dir)
 	{
 		if(collisionWallDown)
@@ -86,7 +97,7 @@ void Player::Update()
 			jump=true;
 		}
 		else
-			gravity=.62;
+			gravity = .62;
 	}
 	else if(!vertical_dir)
 	{
@@ -108,7 +119,7 @@ void Player::Update()
 		sprite.SetDirection(false);
 		dir=false;
 		idle=false;
-		if(PlaceFree(x-3,y,boundUp-1, boundDown-1, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs, exceptionIDsSize))
+		if(PlaceFree(x-3,y,boundUp-1, boundDown-2, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs, exceptionIDsSize))
 			x-=3;
 
 	}
@@ -223,6 +234,7 @@ void Player::UpdateEnd()
 void Player::Draw()
 {
 	sprite.Draw(x,y);
+	al_draw_filled_rectangle(x-boundLeft,y-boundUp,x+boundRight,y+boundDown,al_map_rgb(0,0,0));
 }
 
 void Player::Kill()
@@ -246,18 +258,11 @@ void Player::Collided(GameObject *other)
 {
 	if(other->GetID()==WALL || other->GetID()==WALL_FADE || other->GetID()==SAVE || other->GetID() == VERTICAL_PLATFORM ||
 		other->GetID() == HORIZONTAL_PLATFORM || other->GetID() == TREADMILL_LEFT || other->GetID() == TREADMILL_RIGHT)
-	{
-		if(y >= other->GetY())
-			collisionWallUp = true;
-
-		if(y <= other->GetY())
-			collisionWallDown = true;
-		
+	{		
 		int i=0;
 		if(velY<0)
 		{
-			while(y-boundUp <= other->GetY() + other->GetBoundDown() && i<12*5)
-			//while(CheckCollision(other))
+			while(y-boundUp < other->GetY() + other->GetBoundDown() && i<12*5)
 			{
 				i++;
 				y+=.2;
@@ -267,8 +272,7 @@ void Player::Collided(GameObject *other)
 		}
 		else if(velY>0)
 		{
-			while(y+boundDown >= other->GetY() - other->GetBoundUp() && i<12*5)
-			//while(CheckCollision(other))
+			while(y+boundDown > other->GetY() - other->GetBoundUp() && i<12*5)
 			{
 				i++;
 				y-=.2;
@@ -285,19 +289,25 @@ void Player::Collided(GameObject *other)
 		SetAlive(false);
 	}
 
+
 	//Something extra needs to be done with the moving platforms and treadmills
 	if(other->GetID() == VERTICAL_PLATFORM)
 	{
 		if(other->GetVelY() < 0)
 			y = other->GetY() - boundDown;
-		else if(other->GetVelY() > 0)
-			y+=2;
+		else
+		{
+			while(CheckCollision(other))
+			{
+				y-=.2;
+			}
+			y+=.2;
+		}
 		
 	}
 	else if(other->GetID() == HORIZONTAL_PLATFORM)
 	{
-		if(PlaceFree(x+other->GetVelX(), y, boundUp, boundDown, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs, exceptionIDsSize))
-			//&& y< other->GetY())
+		if(PlaceFree(x+other->GetVelX(), y, boundUp, boundDown, boundLeft, boundRight, GetInstanceID(), exceptionIDs, exceptionIDsSize))
 		{
 			x+=other->GetVelX();
 		}
@@ -312,4 +322,6 @@ void Player::Collided(GameObject *other)
 		collidedWithTreadmillRight = true;
 		x+=other->GetVelX();
 	}
+
+	
 }

@@ -63,7 +63,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\allegro\MVSC\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>allegro-5.0.8-monolith-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -80,7 +80,7 @@
     <ClCompile Include="globals.cpp" />
     <ClCompile Include="ImageManager.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="main_extra.cpp" />
+    <ClCompile Include="main_funcs_vars.cpp" />
     <ClCompile Include="obj_Double_Spike_Down.cpp" />
     <ClCompile Include="obj_Double_Spike_Up.cpp" />
     <ClCompile Include="obj_Platform_Horizontal.cpp" />
@@ -123,7 +123,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="ImageManager.h" />
-    <ClInclude Include="main_extra.h" />
+    <ClInclude Include="main_funcs_vars.h" />
     <ClInclude Include="obj_Double_Spike_Down.h" />
     <ClInclude Include="obj_Double_Spike_Up.h" />
     <ClInclude Include="obj_Platform_Horizontal.h" />

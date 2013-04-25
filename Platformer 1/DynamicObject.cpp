@@ -43,11 +43,10 @@ bool DynamicObject::CheckCollision(GameObject *other)
 		int otherBoundLeft = other->GetBoundLeft();
 		int otherBoundRight = other->GetBoundRight();
 		
-		//The +1 and -1 is that if there is a gap of 0px between the objects, it will still count as a collision
-		if(x + boundRight +1 >= otherX - otherBoundLeft &&
-		   x - boundLeft -1 <= otherX + otherBoundRight &&
-		   y + boundDown +1 >= otherY - otherBoundUp &&
-		   y - boundUp -1 <= otherY + otherBoundDown)
+		if(x + boundRight > otherX - otherBoundLeft &&
+		   x - boundLeft < otherX + otherBoundRight &&
+		   y + boundDown > otherY - otherBoundUp &&
+		   y - boundUp < otherY + otherBoundDown)
 		   return true;
 		else
 			return false;

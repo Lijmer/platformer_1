@@ -1,4 +1,4 @@
-#include "main_extra.h"
+#include "main_funcs_vars.h"
 
 #pragma region variables
 
@@ -54,7 +54,6 @@ Blood_Torso *blood_torso = NULL;
 
 #pragma endregion
 
-
 #pragma region PlaceFree
 bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize)
 {
@@ -105,6 +104,35 @@ bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLe
 	return true;
 }
 #pragma endregion Checks if there is no object blocking the player.
+
+bool __cdecl PlaceMeeting(int otherID, float x, float y, DynamicObject *object)
+{
+	for(dynamicPlaceFreeIter = dynamicObjects.begin(); dynamicPlaceFreeIter != dynamicObjects.end(); dynamicPlaceFreeIter++)
+	{
+		if((*dynamicPlaceFreeIter)->GetInstanceID() == object->GetInstanceID())
+			continue;
+		if((*dynamicPlaceFreeIter)->GetID() != otherID)
+			continue;
+		float oldX = object->GetX();
+		float oldY = object->GetY();
+
+		object->SetX(x);
+		object->SetY(y);
+		
+		if(object->CheckCollision(*dynamicPlaceFreeIter))
+		{
+			object->SetX(oldX);
+			object->SetY(oldY);
+			return true;
+		}
+		else
+		{
+			object->SetX(oldX);
+			object->SetY(oldY);
+		}
+	}
+	return false;
+}
 
 #pragma region D_object_exists
 bool D_object_exists(int ID)
@@ -283,7 +311,7 @@ GameObject* __cdecl CreateObject(int ID,int x,int y)
 	}
 	else if(ID==99)
 	{
-		player = new Player(&PlaceFree, &CreateObject, &ReserveSpace, &Shoot);
+		player = new Player(&PlaceFree, &PlaceMeeting, &CreateObject, &ReserveSpace, &Shoot);
 		player->Init(x,y);
 		dynamicObjects.push_back(player);
 		return player;

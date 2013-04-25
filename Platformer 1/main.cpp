@@ -1,5 +1,6 @@
 //All stuff that needs to be included is in this file
-#include "main_extra.h"
+//#define true false //This line of code can fuck up everything ;)
+#include "main_funcs_vars.h"
 
 int stillParticlesSize = -1;
 
@@ -59,7 +60,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	ImageManager::GetInstance().Init();
 	SoundManager::GetInstance().Init();
 	//Play Music
-	SoundManager::GetInstance().Play(50);
+	//SoundManager::GetInstance().Play(50);
 	//Map
 	FileManager fmanager(&CreateObject, &DeleteDynamicObjects);
 	fmanager.LoadLevel(_currentLevel);
@@ -445,14 +446,14 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			
 			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,5,0,"FPS: %f", gameFPS);
 			//al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,85,0,"_camX: %i\t_camY: %i", _camX, _camY);
-			/*
+			
 			if(D_object_exists(PLAYER))
 			{
 				al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,25,0,"X: %f\tY: %f", player->GetX(), player->GetY());
 				al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,45,0,"Gravity: %f", player->GetGravity());
 				al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,65,0,"velY: %f\tvelX: %f", player->GetVelY(), player->GetVelX());
 			}
-			*/
+			
 			//Draw borders
 			al_draw_filled_rectangle(-(_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0, 0, 0, _SCREEN_HEIGHT,al_map_rgb(0,0,0));
 			al_draw_filled_rectangle(_SCREEN_WIDTH + (_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0, 0, _SCREEN_WIDTH, _SCREEN_HEIGHT, al_map_rgb(0,0,0));

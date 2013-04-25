@@ -74,6 +74,7 @@ using namespace std;
 
 bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, 
 	unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize);
+bool __cdecl PlaceMeeting(int otherID, float x, float y, DynamicObject *object);
 bool D_object_exists(int ID);
 //void __cdecl CreateObject(int ID,int x,int y);
 GameObject* __cdecl CreateObject(int ID,int x,int y);

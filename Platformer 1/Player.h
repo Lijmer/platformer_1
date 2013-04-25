@@ -8,7 +8,8 @@ class Player : public DynamicObject
 {
 public:
 	Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize),
-		GameObject*(*CreateObject)(int ID, int x, int y), void(*ReserveSpace)(char ID, int size), void(*Shoot)(bool dir, float x, float y, float velX));
+		bool(*PlaceMeeting)(int otherID, float x, float y, DynamicObject *object), GameObject*(*CreateObject)(int ID, int x, int y), void(*ReserveSpace)(char ID, int size), 
+		void(*Shoot)(bool dir, float x, float y, float velX));
 	~Player();
 	
 	void Init(float x, float y);
@@ -46,6 +47,7 @@ private:
 	int exceptionIDs[6];
 	
 	bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize);
+	bool(*PlaceMeeting)(int otherID, float x, float y, DynamicObject *object);
 	GameObject*(*CreateObject)(int ID, int x, int y);
 	void(*ReserveSpace)(char ID, int size);
 	void(*Shoot)(bool dir, float x, float y, float velX);
