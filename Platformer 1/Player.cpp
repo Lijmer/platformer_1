@@ -88,7 +88,11 @@ void Player::Update()
 		x-=1;
 	if(PlaceMeeting(TREADMILL_RIGHT, x, y+1, this))
 		x+=1;
-
+	if(PlaceMeeting(HORIZONTAL_PLATFORM, x, y+1, this))
+	{
+		if(PlaceFree(x+velX,y,boundUp,boundDown,boundLeft,boundRight,GetInstanceID(),exceptionIDs,exceptionIDsSize))
+			x+=velX;
+	}
 	if(vertical_dir)
 	{
 		if(collisionWallDown)

@@ -1,7 +1,6 @@
 //All stuff that needs to be included is in this file
 //#define true false //This line of code can fuck up everything ;)
 #include "main_funcs_vars.h"
-
 int stillParticlesSize = -1;
 
 //Function that is used to sort the dynamicObjects vector
@@ -381,7 +380,6 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 				else
 					particleIter++;
 			}
-
 			if(stillParticlesBuffer.size() >= 125)
 			{
 				for(particleIter = stillParticlesBuffer.begin(); particleIter!=stillParticlesBuffer.end(); )
@@ -390,7 +388,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 					particleIter = stillParticlesBuffer.erase(particleIter);
 				}
 			}
-
+			//If the size of the stillParticle vector has changed
 			if(stillParticlesSize != stillParticles.size())
 			{
 				al_set_target_bitmap(stillParticleCanvas);
@@ -398,7 +396,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 				for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end(); particleIter++)
 					(*particleIter)->Draw();
 			}
-			#pragma endregion Find which particles are not moving, put theme in a seperate vector and draw them on a different bitmap
+			#pragma endregion Find which particles are not moving, put them in a seperate vector and draw them on a different bitmap
 			
 			_camX_prev=_camX;
 			_camY_prev=_camY;

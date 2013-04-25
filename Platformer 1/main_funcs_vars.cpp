@@ -60,10 +60,10 @@ bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLe
 	for(staticPlaceFreeIter = staticObjects.begin(); staticPlaceFreeIter != staticObjects.end(); staticPlaceFreeIter++)
 	{		
 		if((*staticPlaceFreeIter)->GetID() != WALL) continue;
-		if(x + boundRight  >= (*staticPlaceFreeIter)->GetX() - (*staticPlaceFreeIter)->GetBoundLeft() &&
-			x - boundLeft  <= (*staticPlaceFreeIter)->GetX() + (*staticPlaceFreeIter)->GetBoundRight() &&
-			y + boundDown  >= (*staticPlaceFreeIter)->GetY() - (*staticPlaceFreeIter)->GetBoundUp() &&
-			y - boundUp  <= (*staticPlaceFreeIter)->GetY() + (*staticPlaceFreeIter)->GetBoundDown())
+		if(x + boundRight  > (*staticPlaceFreeIter)->GetX() - (*staticPlaceFreeIter)->GetBoundLeft() &&
+			x - boundLeft  < (*staticPlaceFreeIter)->GetX() + (*staticPlaceFreeIter)->GetBoundRight() &&
+			y + boundDown  > (*staticPlaceFreeIter)->GetY() - (*staticPlaceFreeIter)->GetBoundUp() &&
+			y - boundUp  < (*staticPlaceFreeIter)->GetY() + (*staticPlaceFreeIter)->GetBoundDown())
 		{
 			return false;
 		}
@@ -91,10 +91,10 @@ bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLe
 			continue;
 
 
-		if(x + boundRight  >= (*dynamicPlaceFreeIter)->GetX() - (*dynamicPlaceFreeIter)->GetBoundLeft() &&
-			x - boundLeft  <= (*dynamicPlaceFreeIter)->GetX() + (*dynamicPlaceFreeIter)->GetBoundRight() &&
-			y + boundDown  >= (*dynamicPlaceFreeIter)->GetY() - (*dynamicPlaceFreeIter)->GetBoundUp() &&
-			y - boundUp  <= (*dynamicPlaceFreeIter)->GetY() + (*dynamicPlaceFreeIter)->GetBoundDown())
+		if(x + boundRight  > (*dynamicPlaceFreeIter)->GetX() - (*dynamicPlaceFreeIter)->GetBoundLeft() &&
+			x - boundLeft  < (*dynamicPlaceFreeIter)->GetX() + (*dynamicPlaceFreeIter)->GetBoundRight() &&
+			y + boundDown  > (*dynamicPlaceFreeIter)->GetY() - (*dynamicPlaceFreeIter)->GetBoundUp() &&
+			y - boundUp  < (*dynamicPlaceFreeIter)->GetY() + (*dynamicPlaceFreeIter)->GetBoundDown())
 		{
 			return false;
 		}
@@ -123,6 +123,11 @@ bool __cdecl PlaceMeeting(int otherID, float x, float y, DynamicObject *object)
 		{
 			object->SetX(oldX);
 			object->SetY(oldY);
+			if(object->GetID() == PLAYER)
+			{
+				if(otherID == HORIZONTAL_PLATFORM)
+					object->SetVelX((*dynamicPlaceFreeIter)->GetVelX());
+			}
 			return true;
 		}
 		else
@@ -192,7 +197,7 @@ GameObject* __cdecl CreateObject(int ID,int x,int y)
 	}
 	else if(ID==5)
 	{
-		wall_fade = new Wall_Fade();
+		wall_fade = new Wall_Fade(&PlaceMeeting);
 		wall_fade->Init(x,y);
 		dynamicObjects.push_back(wall_fade);
 		return wall_fade;

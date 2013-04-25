@@ -62,8 +62,8 @@ void DisplayManager::ChangeState()
 
 
 		al_identity_transform(&camera);
-		al_scale_transform(&camera, 1, 1);
-		al_translate_transform(&camera, 0, 0);
+		//al_scale_transform(&camera, 1, 1);
+		//al_translate_transform(&camera, 0, 0);
 		al_use_transform(&camera);
 	}
 	else if(state == WINDOWED)

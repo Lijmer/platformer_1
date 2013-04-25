@@ -1,7 +1,7 @@
 #include "Wall_Fade.h"
 
 
-Wall_Fade::Wall_Fade(void)
+Wall_Fade::Wall_Fade(bool(*PlaceMeeting)(int otherID, float x, float y, DynamicObject *object))
 {
 	activated=false;
 	opacity = 1;
@@ -11,6 +11,7 @@ Wall_Fade::Wall_Fade(void)
 	boundRight=32;
 	SetCollisionType(BB);
 	SetID(WALL_FADE);
+	Wall_Fade::PlaceMeeting = PlaceMeeting;
 }
 
 void Wall_Fade::Init(float x, float y)
@@ -21,6 +22,8 @@ void Wall_Fade::Init(float x, float y)
 
 void Wall_Fade::Update()
 {
+	if(PlaceMeeting(PLAYER, x, y-1, this))
+		activated = true;
 	if(activated)
 	{
 		opacity-=0.2;
