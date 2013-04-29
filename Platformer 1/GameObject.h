@@ -10,8 +10,6 @@ class GameObject
 public:
 	GameObject();
 
-	
-
 	void Init(float x, float y);
 	void Activate();
 	void Deactivate();
@@ -21,28 +19,28 @@ public:
 	static unsigned int lastID;
 
 	//get variables
-	float GetX()								{return x;}
-	float GetY()								{return y;}
-	float GetVelX()								{return velX;}
-	float GetVelY()								{return velY;}
-	int GetBoundUp()							{return boundUp;}
-	int GetBoundDown()							{return boundDown;}
-	int GetBoundLeft()							{return boundLeft;}
-	int GetBoundRight()							{return boundRight;}
-	float GetXPoint1()							{return xPoint1;}
-	float GetYPoint1()							{return yPoint1;}
-	float GetXPoint2()							{return xPoint2;}
-	float GetYPoint2()							{return yPoint2;}
-	float GetXPoint3()							{return xPoint3;}
-	float GetYPoint3()							{return yPoint3;}
-	unsigned char GetRadius()					{return radius;}
-	int GetID()									{return ID;}
-	unsigned int GetInstanceID()				{return instanceID;}
-	int GetDepth()								{return depth;}
-	bool GetAlive()								{return alive;}
-	bool GetActivated()							{return activated;}
-	bool GetCollidable()						{return collidable;}
-	int GetCollisionType()						{return collisionType;}
+	float GetX()				const			{return x;}
+	float GetY()				const			{return y;}
+	float GetVelX()				const			{return velX;}
+	float GetVelY()				const			{return velY;}
+	int GetBoundUp()			const			{return boundUp;}
+	int GetBoundDown()			const			{return boundDown;}
+	int GetBoundLeft()			const			{return boundLeft;}
+	int GetBoundRight()			const			{return boundRight;}
+	float GetXPoint1()			const			{return xPoint1;}
+	float GetYPoint1()			const			{return yPoint1;}
+	float GetXPoint2()			const			{return xPoint2;}
+	float GetYPoint2()			const			{return yPoint2;}
+	float GetXPoint3()			const			{return xPoint3;}
+	float GetYPoint3()			const			{return yPoint3;}
+	unsigned char GetRadius()	const			{return radius;}
+	int GetID()					const			{return ID;}
+	unsigned int GetInstanceID()const			{return instanceID;}
+	int GetDepth()				const			{return depth;}
+	bool GetAlive()				const			{return alive;}
+	bool GetActivated()			const			{return activated;}
+	bool GetCollidable()		const			{return collidable;}
+	int GetCollisionType()		const			{return collisionType;}
 
 	//set variables
 	void SetX(float x)							{GameObject::x = x;}

@@ -3,7 +3,7 @@
 class Wall_Fade : public DynamicObject
 {
 public:
-	Wall_Fade(void);
+	Wall_Fade(bool(*PlaceMeeting)(int otherID, float x, float y, DynamicObject *object));
 
 	void Init(float x, float y);
 
@@ -14,5 +14,7 @@ public:
 private:
 	bool activated;
 	float opacity;
+
+	bool(*PlaceMeeting)(int otherID, float x, float y, DynamicObject *object);
 };
 

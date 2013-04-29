@@ -63,8 +63,6 @@ bool DynamicObject::CheckCollision(GameObject *other)
 		int xPoint3 = other->GetXPoint3();
 		int yPoint3 = other->GetYPoint3();
 
-		
-
 		//1) Check if any of the triangle’s points are within the rectangle, if yes then intersection is true.
 		if((xPoint1 > x-boundLeft && xPoint1 < x + boundRight && yPoint1 > y - boundUp && yPoint1 < y + boundDown)
 			|| (xPoint2 > x-boundLeft && xPoint2 < x + boundRight && yPoint2 > y - boundUp && yPoint2 < y + boundDown)
@@ -115,7 +113,7 @@ bool DynamicObject::CheckCollision(GameObject *other)
 			return true;
 
 		//**************************************************************************************************************************************************************\\
-
+		//This has been commented out, because it is for very precise collision checking, but it's not neccessary and it would only slow things down
 		//3) Check if any of the triangle’s lines intersect any of the rectangle’s lines, if yes then intersection is true. (Not necessary with current objects)
 		/*
 		float a = 0;
@@ -204,8 +202,6 @@ bool DynamicObject::CheckCollision(GameObject *other)
 		float x = other->GetX();
 		float y = other->GetY();
 
-		
-
 		//1) Check if any of the triangle’s points are within the rectangle, if yes then intersection is true.
 		if((xPoint1 > x-boundLeft && xPoint1 < x + boundRight && yPoint1 > y - boundUp && yPoint1 < y + boundDown)
 			|| (xPoint2 > x-boundLeft && xPoint2 < x + boundRight && yPoint2 > y - boundUp && yPoint2 < y + boundDown)
@@ -259,7 +255,6 @@ bool DynamicObject::CheckCollision(GameObject *other)
 	#pragma region BB and CBB
 	else if(GetCollisionType() == BB && other->GetCollisionType() == CBB)
 	{
-		//Use theorem of Pythagoras A^2=B^2+C^2
 		//Check for 8 points in de bounding box (the * on the box)
 		/*
 			*----*----*
@@ -291,7 +286,6 @@ bool DynamicObject::CheckCollision(GameObject *other)
 	#pragma region CBB and BB
 	else if(GetCollisionType() == CBB && other->GetCollisionType() == BB)
 	{
-		//Use theorem of Pythagoras A^2=B^2+C^2
 		//Check for 8 points in de bounding box (the * on the box)
 		/*
 			*----*----*

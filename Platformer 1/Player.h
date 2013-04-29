@@ -2,7 +2,7 @@
 #include "DynamicObject.h"
 #include "spr_Player.h"
 #include "SoundManager.h"
-#include "ImageManager.h"
+#include <time.h>
 
 class Player : public DynamicObject
 {
@@ -20,12 +20,11 @@ public:
 	void Kill();
 	void Destroy();
 	void Collided(GameObject *other);
-
-
-	float GetGravity()				{return gravity;}
-	bool GetCollisionWallUp()		{return collisionWallUp;}
-	bool GetCollisionWallDown()		{return collisionWallDown;}
-	bool GetDir()					{return dir;}
+	
+	float GetGravity() const			{return gravity;}
+	bool GetCollisionWallUp() const		{return collisionWallUp;}
+	bool GetCollisionWallDown()	const	{return collisionWallDown;}
+	bool GetDir() const					{return dir;}
 
 private:
 	bool collisionWallUp;
@@ -37,7 +36,7 @@ private:
 	bool dir;
 	bool vertical_dir;
 
-	spr_Player sprite;
+	spr_Player *sprite;
 
 	float gravity;
 	int direction;
@@ -46,6 +45,16 @@ private:
 	static const int exceptionIDsSize = 6;
 	int exceptionIDs[6];
 	
+	//Functions to make the Update() function clearer
+	void Jump();
+	void Move();
+	void Blast();
+	void InvertGravity();
+	void SetGravitySpeed();
+	void SetSpriteData();
+
+	
+
 	bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize);
 	bool(*PlaceMeeting)(int otherID, float x, float y, DynamicObject *object);
 	GameObject*(*CreateObject)(int ID, int x, int y);

@@ -84,6 +84,7 @@ void __cdecl DeleteDynamicObjects(void);
 void __cdecl ReserveSpace(char ID, int size);
 void MaxParticles();
 void __cdecl Shoot(bool dir, float x, float y, float velX);
+void StressTest();
 
 
 extern vector<DynamicObject *> dynamicObjects;

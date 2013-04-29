@@ -30,7 +30,7 @@ void obj_Platform_Vertical::Update()
 {
 	if(isGoingUp)
 	{
-		if(PlaceFree(x, y + velY - 21, boundUp, boundDown, boundLeft-1, boundRight-1, GetInstanceID(), exceptionIDs, exceptionIDsSize))
+		if(PlaceFree(x, y + velY - 21, boundUp, boundDown, boundLeft, boundRight, GetInstanceID(), exceptionIDs, exceptionIDsSize))
 		{
 			y+=velY;
 		}

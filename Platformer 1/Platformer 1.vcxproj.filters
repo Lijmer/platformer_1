@@ -305,9 +305,6 @@
     <ClInclude Include="obj_Platform_Vertical.h">
       <Filter>Header Files\Objects\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="DisplayManager.h">
-      <Filter>Header Files\Managers</Filter>
-    </ClInclude>
     <ClInclude Include="obj_Platform_Horizontal.h">
       <Filter>Header Files\Objects\Platform</Filter>
     </ClInclude>
@@ -349,6 +346,9 @@
     </ClInclude>
     <ClInclude Include="main_funcs_vars.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayManager.h">
+      <Filter>Header Files\Managers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
