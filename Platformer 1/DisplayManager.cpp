@@ -10,6 +10,7 @@ DisplayManager::DisplayManager(void)
 
 DisplayManager::~DisplayManager(void)
 {
+	al_destroy_display(display);
 }
 
 DisplayManager &DisplayManager::GetInstance()
@@ -60,7 +61,7 @@ void DisplayManager::ChangeState()
 		al_toggle_display_flag(display, ALLEGRO_NOFRAME, false);
 		al_resize_display(display, _SCREEN_WIDTH, _SCREEN_HEIGHT);
 
-
+		//Reset transformation
 		al_identity_transform(&camera);
 		//al_scale_transform(&camera, 1, 1);
 		//al_translate_transform(&camera, 0, 0);
@@ -79,9 +80,4 @@ void DisplayManager::ChangeState()
 		al_translate_transform(&camera, (disp_data.width - (_SCREEN_WIDTH * _scaleScreen))/2.0, (disp_data.height - (_SCREEN_HEIGHT * _scaleScreen))/2.0);
 		al_use_transform(&camera);
 	}
-}
-
-void DisplayManager::Clean()
-{
-	al_destroy_display(display);
 }

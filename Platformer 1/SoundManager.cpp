@@ -12,6 +12,11 @@ SoundManager::SoundManager(void)
 
 SoundManager::~SoundManager(void)
 {
+	al_destroy_sample(snd_shoot);
+	al_destroy_sample(snd_jump1);
+	al_destroy_sample(snd_jump2);
+	al_destroy_sample(snd_splat);
+	al_destroy_sample(music_level1);
 }
 
 
@@ -29,15 +34,6 @@ void SoundManager::Init()
 	SoundManager::snd_splat = al_load_sample("snd/player/splat.wav");
 
 	SoundManager::music_level1 = al_load_sample("snd/music/level1.ogg");
-}
-
-void SoundManager::Clean()
-{
-	al_destroy_sample(snd_shoot);
-	al_destroy_sample(snd_jump1);
-	al_destroy_sample(snd_jump2);
-	al_destroy_sample(snd_splat);
-	al_destroy_sample(music_level1);
 }
 
 void SoundManager::Play(int num)

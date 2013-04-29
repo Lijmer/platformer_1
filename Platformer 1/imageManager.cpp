@@ -8,6 +8,25 @@ ImageManager::ImageManager(void)
 
 ImageManager::~ImageManager(void)
 {
+	al_destroy_bitmap(img_player);
+	al_destroy_bitmap(img_wall);
+	al_destroy_bitmap(img_spike_up);
+	al_destroy_bitmap(img_spike_down);
+	al_destroy_bitmap(img_spike_left);
+	al_destroy_bitmap(img_spike_right);
+	al_destroy_bitmap(img_save);
+	al_destroy_bitmap(img_saw);
+	al_destroy_bitmap(img_saw_bar);
+	al_destroy_bitmap(img_platform);
+	al_destroy_bitmap(img_treadmill_begin);
+	al_destroy_bitmap(img_treadmill);
+	al_destroy_bitmap(img_treadmill_end);
+
+	al_destroy_bitmap(img_blood);
+	al_destroy_bitmap(img_blood_head);
+	al_destroy_bitmap(img_blood_torso);
+	al_destroy_bitmap(img_blood_arm);
+	al_destroy_bitmap(img_blood_foot);
 }
 
 
@@ -89,28 +108,6 @@ void ImageManager::Init()
 	}
 }
 
-void ImageManager::Clean()
-{
-	al_destroy_bitmap(img_player);
-	al_destroy_bitmap(img_wall);
-	al_destroy_bitmap(img_spike_up);
-	al_destroy_bitmap(img_spike_down);
-	al_destroy_bitmap(img_spike_left);
-	al_destroy_bitmap(img_spike_right);
-	al_destroy_bitmap(img_save);
-	al_destroy_bitmap(img_saw);
-	al_destroy_bitmap(img_saw_bar);
-	al_destroy_bitmap(img_platform);
-	al_destroy_bitmap(img_treadmill_begin);
-	al_destroy_bitmap(img_treadmill);
-	al_destroy_bitmap(img_treadmill_end);
-
-	al_destroy_bitmap(img_blood);
-	al_destroy_bitmap(img_blood_head);
-	al_destroy_bitmap(img_blood_torso);
-	al_destroy_bitmap(img_blood_arm);
-	al_destroy_bitmap(img_blood_foot);
-}
 
 ALLEGRO_BITMAP* ImageManager::GetImage(char ID)
 {

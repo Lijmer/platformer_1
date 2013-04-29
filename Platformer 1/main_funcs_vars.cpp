@@ -71,11 +71,7 @@ bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLe
 			continue;
 	}
 	for(dynamicPlaceFreeIter = dynamicObjects.begin(); dynamicPlaceFreeIter != dynamicObjects.end(); dynamicPlaceFreeIter++)
-	{		
-		/*if((*dynamicPlaceFreeIter)->GetID() != WALL_FADE && (*dynamicPlaceFreeIter)->GetID()!= SAVE && (*dynamicPlaceFreeIter)->GetID()!=PLAYER &&
-		(*dynamicPlaceFreeIter)->GetID()!=HORIZONTAL_PLATFORM && (*dynamicPlaceFreeIter)->GetID()!=VERTICAL_PLATFORM 
-			|| (*dynamicPlaceFreeIter)->GetInstanceID() == instanceID)
-		continue;*/
+	{
 		bool cont = true;
 
 		for(int i=0; i<exceptionIDsSize; i++)
@@ -89,7 +85,6 @@ bool __cdecl PlaceFree(float x, float y, int boundUp, int boundDown, int boundLe
 
 		if(cont || instanceID == (*dynamicPlaceFreeIter)->GetInstanceID())
 			continue;
-
 
 		if(x + boundRight  > (*dynamicPlaceFreeIter)->GetX() - (*dynamicPlaceFreeIter)->GetBoundLeft() &&
 			x - boundLeft  < (*dynamicPlaceFreeIter)->GetX() + (*dynamicPlaceFreeIter)->GetBoundRight() &&
@@ -441,3 +436,13 @@ void __cdecl Shoot(bool dir, float x, float y, float velX)
 	dynamicObjects.push_back(bullet);
 }
 #pragma endregion This functions will be called by the player object and shoot a bullet
+
+void StressTest()
+{
+	for(unsigned int i=0; i<1000000; i++)
+	{
+		blood = new Blood();
+		blood->Init(_SCREEN_WIDTH/2,_SCREEN_HEIGHT/2,rand()%260,((float)rand()/(float)RAND_MAX)*10+5);
+		particles.push_back(blood);
+	}
+}

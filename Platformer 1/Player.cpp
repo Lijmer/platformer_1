@@ -6,7 +6,6 @@ Player::Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, in
 {
 	//Most of this function is setting default values for variables.
 
-	//Init collision variables
 	collisionWallUp = false;
 	collisionWallDown = false;
 	collidedWithTreadmillLeft = false;
@@ -26,6 +25,8 @@ Player::Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, in
 
 	dir=true;
 	vertical_dir=true;
+
+	sprite = new spr_Player();
 
 	//Assign pointer functions
 	Player::PlaceFree = PlaceFree;
@@ -49,7 +50,7 @@ Player::Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, in
 
 Player::~Player()
 {
-	
+	delete sprite;
 }
 
 void Player::Init(float x, float y)
@@ -57,7 +58,7 @@ void Player::Init(float x, float y)
 	Player::x=x;
 	Player::y=y;
 	
-	sprite.Init(ImageManager::GetInstance().GetImage(0), 28, 26, 0, 2);
+	sprite->Init(ImageManager::GetInstance().GetImage(0), 28, 26, 0, 2);
 
 	jump=false;
 	direction = 270;
@@ -70,17 +71,8 @@ void Player::Init(float x, float y)
 
 void Player::UpdateBegin()
 {}
-
 void Player::Update()
 {
-
-	x_previous = x;
-	y_previous = y;
-
-
-	//If collided with block and the y of the block is greater, than put gravity at 0 and allow reset double jump.
-	//Else put the gravity to 0.62 px/(frame^2)
-
 	collisionWallDown = !PlaceFree(x, y+1, boundUp, boundDown, boundLeft, boundRight, GetInstanceID(), exceptionIDs, exceptionIDsSize);
 	collisionWallUp = !PlaceFree(x, y-1, boundUp, boundDown, boundLeft, boundRight, GetInstanceID(), exceptionIDs, exceptionIDsSize);
 
@@ -114,130 +106,52 @@ void Player::Update()
 			gravity=-.62;
 	}
 
+	
+	SetGravitySpeed();
+	
 	//Add gravity to velocity
 	velY+=gravity;
 
-	//Move Left
-	if(_keys[LEFT] && !_keys[RIGHT])
-	{
-		sprite.SetDirection(false);
-		dir=false;
-		idle=false;
-		if(PlaceFree(x-3,y,boundUp-1, boundDown-2, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs, exceptionIDsSize))
-			x-=3;
-
-	}
-
-	//Move Right
-	if(_keys[RIGHT] && !_keys[LEFT])
-	{
-		sprite.SetDirection(true);
-		idle=false;
-		dir=true;
-		if(PlaceFree(x+3,y, boundUp-1, boundDown-1, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs, exceptionIDsSize))
-			x+=3;
-	}
-
-	//Jump
-	if(_keys_pressed[Z_KEY])
-	{
-		if(vertical_dir)
-		{
-			if(collisionWallDown)
-			{
-				SoundManager::GetInstance().Play(JUMP1);
-				velY=-6.5;
-			}
-			else if(jump)
-			{
-				SoundManager::GetInstance().Play(JUMP2);
-				velY=-6.5;
-				jump=false;
-			}
-		}
-		if(!vertical_dir)
-		{
-			if(collisionWallUp)
-			{
-				SoundManager::GetInstance().Play(JUMP1);
-				velY=6.5;
-			}
-			else if(jump)
-			{
-				SoundManager::GetInstance().Play(JUMP2);
-				velY=6.5;
-				jump=false;
-			}
-		}
-	}
-	if(vertical_dir)
-	{
-		if(_keys[Z_KEY] && velY<0)
-			velY-=.35;
-	}
-	else if(!vertical_dir)
-	{
-		if(_keys[Z_KEY] && velY>0)
-			velY+=.35;
-	}
-
-	//Shoot
-	if(_keys_pressed[X_KEY])
-	{
-		SoundManager::GetInstance().Play(SHOOT);
-		Shoot(dir, x, y, velX);
-	}
-
-	if(_keys[SPACE])
-	{
-		if(vertical_dir && collisionWallDown)
-			vertical_dir=false;
-		else if(!vertical_dir && collisionWallUp)
-			vertical_dir=true;
-	}
-
-	//Maximum velocity for going down.
+	//Stuff that depends on buttons being pressed down.
+	Jump();
+	Move();	
+	Blast();
+	InvertGravity();
+	
+	//Maximum velocity for going down and going up.
 	if(velY>7)
 		velY=7;
 	if(velY<-7)
 		velY=-7;
-
-	if(velY==0)
-		if(idle)
-			sprite.SetRow(2);
-		else
-			sprite.SetRow(3);
-	else if(velY>0)
-		sprite.SetRow(1);
-	else if(velY<0)
-		sprite.SetRow(0);
 	
-	//Reset Collision Vars
-	collisionWallUp = false;
-	collisionWallDown = false;
-	collidedWithTreadmillLeft = false;
-	collidedWithTreadmillRight = false;
-	idle = true;
-
-	//Move vertical
+	//Change coordinates based on speed
 	y+=velY;
-
+	x+=velX;
+	
 	//Update Sprite
-	sprite.Update();
+	SetSpriteData();
+	sprite->Update();
 
 	//Update Cam
 	_camX = int(x/_SCREEN_WIDTH)*_SCREEN_WIDTH;
 	_camY = int(y/_SCREEN_HEIGHT)*_SCREEN_HEIGHT;
 
-	sprite.SetVertical_Direction(vertical_dir);
+	//Reset Variables
+	collisionWallUp = false;
+	collisionWallDown = false;
+	collidedWithTreadmillLeft = false;
+	collidedWithTreadmillRight = false;
+	idle = true;
+	velX=0;
+	x_previous = x;
+	y_previous = y;
 }
-
 void Player::UpdateEnd()
-{} //empty
+{}
 
 void Player::Draw()
 {
-	sprite.Draw(x,y);
+	sprite->Draw(x,y);
 	al_draw_filled_rectangle(x-boundLeft,y-boundUp,x+boundRight,y+boundDown,al_map_rgb(0,0,0));
 }
 
@@ -284,7 +198,6 @@ void Player::Collided(GameObject *other)
 			if(i>=12*5)
 				y+=12;
 		}
-
 		velY=0;
 	}
 	else if(other->GetID() == SPIKE || other->GetID() == SAW)
@@ -292,40 +205,129 @@ void Player::Collided(GameObject *other)
 		Kill();
 		SetAlive(false);
 	}
+}
 
-
-	//Something extra needs to be done with the moving platforms and treadmills
-	if(other->GetID() == VERTICAL_PLATFORM)
+//Functions to make the Update() function clearer
+inline void Player::Jump()
+{
+	//Jump
+	if(_keys_pressed[Z_KEY])
 	{
-		if(other->GetVelY() < 0)
-			y = other->GetY() - boundDown;
-		else
+		if(vertical_dir)
 		{
-			while(CheckCollision(other))
+			if(collisionWallDown)
 			{
-				y-=.2;
+				SoundManager::GetInstance().Play(JUMP1);
+				velY=-6.5;
 			}
-			y+=.2;
+			else if(jump)
+			{
+				SoundManager::GetInstance().Play(JUMP2);
+				velY=-6.5;
+				jump=false;
+			}
 		}
-		
-	}
-	else if(other->GetID() == HORIZONTAL_PLATFORM)
-	{
-		if(PlaceFree(x+other->GetVelX(), y, boundUp, boundDown, boundLeft, boundRight, GetInstanceID(), exceptionIDs, exceptionIDsSize))
+		if(!vertical_dir)
 		{
-			x+=other->GetVelX();
+			if(collisionWallUp)
+			{
+				SoundManager::GetInstance().Play(JUMP1);
+				velY=6.5;
+			}
+			else if(jump)
+			{
+				SoundManager::GetInstance().Play(JUMP2);
+				velY=6.5;
+				jump=false;
+			}
 		}
 	}
-	else if(other->GetID() == TREADMILL_LEFT && !collidedWithTreadmillLeft && y<other->GetY())
+	if(vertical_dir)
 	{
-		collidedWithTreadmillLeft = true;
-		x+=other->GetVelX();
+		if(_keys[Z_KEY] && velY<0)
+			velY-=.35;
 	}
-	else if(other->GetID() == TREADMILL_RIGHT && !collidedWithTreadmillRight && y<other->GetY())
+	else if(!vertical_dir)
 	{
-		collidedWithTreadmillRight = true;
-		x+=other->GetVelX();
+		if(_keys[Z_KEY] && velY>0)
+			velY+=.35;
+	}
+}
+inline void Player::Move()
+{
+	//Move Left
+	if(_keys[LEFT] && !_keys[RIGHT])
+	{
+		sprite->SetDirection(false);
+		dir=false;
+		idle=false;
+		if(PlaceFree(x-3,y,boundUp-1, boundDown-2, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs, exceptionIDsSize))
+			x-=3;
+
 	}
 
-	
+	//Move Right
+	if(_keys[RIGHT] && !_keys[LEFT])
+	{
+		sprite->SetDirection(true);
+		idle=false;
+		dir=true;
+		if(PlaceFree(x+3,y, boundUp-1, boundDown-1, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs, exceptionIDsSize))
+			x+=3;
+	}
+}
+inline void Player::Blast()
+{
+	//Shoot
+	if(_keys_pressed[X_KEY])
+	{
+		SoundManager::GetInstance().Play(SHOOT);
+		Shoot(dir, x, y, velX);
+	}
+}
+inline void Player::InvertGravity()
+{
+	if(_keys[SPACE])
+	{
+		if(vertical_dir && collisionWallDown)
+			vertical_dir=false;
+		else if(!vertical_dir && collisionWallUp)
+			vertical_dir=true;
+	}
+}
+inline void Player::SetGravitySpeed()
+{
+	if(vertical_dir)
+	{
+		if(collisionWallDown)
+		{
+			gravity = 0;
+			jump=true;
+		}
+		else
+			gravity = .62;
+	}
+	else if(!vertical_dir)
+	{
+		if(collisionWallUp)
+		{
+			gravity = 0;
+			jump=true;
+		}
+		else
+			gravity=-.62;
+	}
+}
+inline void Player::SetSpriteData()
+{
+	if(velY==0)
+		if(idle)
+			sprite->SetRow(2);
+		else
+			sprite->SetRow(3);
+	else if(velY>0)
+		sprite->SetRow(1);
+	else if(velY<0)
+		sprite->SetRow(0);
+	sprite->SetVertical_Direction(vertical_dir);
 }

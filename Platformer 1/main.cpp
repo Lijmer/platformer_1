@@ -4,13 +4,21 @@
 int stillParticlesSize = -1;
 
 //Function that is used to sort the dynamicObjects vector
+
 int SortFunction(GameObject *i, GameObject *j) {return (i->GetDepth()<j->GetDepth());}
+inline double diffclock(clock_t clock1, clock_t clock2)
+	{
+		double diffticks = clock1 - clock2;
+		double diffms=(diffticks*1000)/CLOCKS_PER_SEC;
+		return diffms;
+	}
 
 int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  This applications doesn't take parameters...
 {
 	#pragma region Setup
+
 	//==============================================
-	//SHELL VARIABLES
+	//PROJECT VARIABLES
 	//==============================================
 	bool done = false;
 	bool render = false;
@@ -19,13 +27,8 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	float gameFPS = 0;
 	//int APM = 0, APS = 0;
 	srand(time(unsigned int(0)));
-
-	//==============================================
-	//PROJECT VARIABLES
-	//==============================================
-	particles.reserve(125);
 	_difficulty=0;
-	stillParticlesSize = stillParticles.size();
+	int stillParticlesSize = stillParticles.size();
 
 	//==============================================
 	//ALLEGRO VARIABLES
@@ -38,19 +41,17 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	//==============================================
 	//ALLEGRO INIT FUNCTIONS
 	//==============================================
-	if(!al_init())	//initialize Allegro
+	if(!al_init())	//initialize Allegro (if it fails to do, show error message and terminate
 	{
 		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "Error!", "Couldn't initialize allegro 5", "Ok Sok", 0);
 		return -1;
 	}
-	if(!DisplayManager::GetInstance().CreateDisplay()) //Create display (if display there is a problem the application will terminate)
+	if(!DisplayManager::GetInstance().CreateDisplay()) //Create display, if it fails to create a display, show error message en terminate (error message is in function)
 		return -1;
 
-	//==============================================
-	//ADDON INSTALL
-	//==============================================
 	al_install_keyboard();
 	al_init_primitives_addon();
+
 	
 	//==============================================
 	//PROJECT INIT
@@ -78,8 +79,8 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 
 	al_start_timer(timer);
 	gameTime = al_current_time();
-	#pragma endregion Setting up the game before entering the loop (declaring variables, initing allegro, installing addons, registering even sources)
-
+	#pragma endregion Setting up the game before entering the loop (declaring variables, initing allegro, installing addons, registering event sources)
+	
 	#pragma region Main Game Loop
 	while(!done)
 	{
@@ -144,6 +145,10 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 				if(_keys[ALT])
 					DisplayManager::GetInstance().ChangeState();
 				break;
+			case ALLEGRO_KEY_ALTGR:
+				StressTest();
+				break;
+
 			}
 		}
 		else if(ev.type == ALLEGRO_EVENT_KEY_UP)
@@ -191,14 +196,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 		else if(ev.type == ALLEGRO_EVENT_TIMER)
 		{
 			render = true;
-			
-			//This function isn't used yet, so it's not called. But it is here just in case it will be used later.
-			//(remove this code on a final build if it is not used, AND DON'T FORGET TO REMOVE THE VIRTUAL FUNCTION FROM DynamicObject!!
-			/*#pragma region UpdateBegin
-			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
-				(*iter)->UpdateBegin();
-			#pragma endregion*/
-
+	
 			#pragma region Update
 			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
 				(*iter)->Update();
@@ -241,15 +239,6 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 				}
 			}
 			#pragma endregion Check for collions
-
-			//This function isn't used yet, so it's not called. But it is here just in case it will be used later.
-			//(remove this code on a final build if it is not used, AND DON'T FORGET TO REMOVE THE VIRTUAL FUNCTION FROM DynamicObject!!
-			/*
-			#pragma region UpdateEnd
-			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
-				(*iter)->UpdateEnd();
-			#pragma endregion This is an extra update function that rusn after the collions event
-			*/
 
 			#pragma region Cleaning
 			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); )
@@ -394,13 +383,20 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 				al_set_target_bitmap(stillParticleCanvas);
 				al_clear_to_color(al_map_rgba(0,0,0,0));
 				for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end(); particleIter++)
-					(*particleIter)->Draw();
+				{
+					if((*particleIter)->GetX() > _camX && (*particleIter)->GetX() < _camX + _SCREEN_WIDTH &&
+						(*particleIter)->GetY() > _camY && (*particleIter)->GetY() < _camY + _SCREEN_HEIGHT)
+					{
+						(*particleIter)->Draw();
+					}
+				}
+				stillParticlesSize = stillParticles.size();
 			}
 			#pragma endregion Find which particles are not moving, put them in a seperate vector and draw them on a different bitmap
 			
 			_camX_prev=_camX;
 			_camY_prev=_camY;
-			stillParticlesSize = stillParticles.size();
+			//stillParticlesSize = stillParticles.size();
 			//Reset keys
 			for(int i=0; i<8; i++)
 				_keys_pressed[i]=false;
@@ -418,7 +414,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 				gameFPS = frames;
 				frames = 0;
 			}
-
+			
 			render = false;
 			
 			al_set_target_backbuffer(DisplayManager::GetInstance().GetDisplay());
@@ -440,7 +436,6 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			for(particleIter = particles.begin(); particleIter!=particles.end(); particleIter++)
 				(*particleIter)->Draw();
 			al_draw_bitmap(stillParticleCanvas,0,0,0);
-			
 			
 			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,5,0,"FPS: %f", gameFPS);
 			//al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,85,0,"_camX: %i\t_camY: %i", _camX, _camY);
@@ -464,7 +459,6 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 		#pragma endregion All drawing stuff happens in here
 	}
 	#pragma endregion
-
 	#pragma region Clean up
 	//==============================================
 	//DESTROY PROJECT OBJECTS
@@ -511,16 +505,9 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 		delete(*particleIter);
 		particleIter = deactivatedParticles.erase(particleIter);
 	}
-
-	FontManager::GetInstance().Clean();
-	SoundManager::GetInstance().Clean();
-	ImageManager::GetInstance().Clean();
-	DisplayManager::GetInstance().Clean();
-
 	//SHELL OBJECTS=================================
 	al_destroy_timer(timer);
 	al_destroy_event_queue(event_queue);
 	#pragma endregion This destroys all objects and variables made in the platformer
-	
 	return 0;
 }

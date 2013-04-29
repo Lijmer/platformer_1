@@ -22,7 +22,11 @@ void Wall_Fade::Init(float x, float y)
 
 void Wall_Fade::Update()
 {
+<<<<<<< HEAD
 	if(PlaceMeeting(PLAYER, x, y-1, this))
+=======
+	if(PlaceMeeting(PLAYER,x,y-1,this))
+>>>>>>> Loads of rewriting and optimizing
 		activated = true;
 	if(activated)
 	{
@@ -43,9 +47,10 @@ void Wall_Fade::Destroy()
 
 void Wall_Fade::Collided(GameObject *other)
 {
+	/*
 	if(other->GetID() == PLAYER)
 	{
 		if(other->GetY()<y)
 			activated=true;
-	}
+	}*/
 }

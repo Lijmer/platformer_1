@@ -10,7 +10,6 @@ public:
 	static SoundManager &GetInstance();
 
 	void Init();
-	void Clean();
 	void Play(int num);
 
 
