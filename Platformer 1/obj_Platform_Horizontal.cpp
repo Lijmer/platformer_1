@@ -1,8 +1,8 @@
 #include "obj_Platform_Horizontal.h"
+#include "GameObjectManager.h"
 
-obj_Platform_Horizontal::obj_Platform_Horizontal(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize))
+obj_Platform_Horizontal::obj_Platform_Horizontal()
 {
-	obj_Platform_Horizontal::PlaceFree = PlaceFree;
 	image = ImageManager::GetInstance().GetImage(10);
 	boundUp = 0;
 	boundDown = 16;
@@ -24,7 +24,7 @@ obj_Platform_Horizontal::~obj_Platform_Horizontal(void)
 
 void obj_Platform_Horizontal::Update()
 {
-	if(PlaceFree(x+velX, y, boundUp-1, boundDown-1, boundLeft, boundRight, GetInstanceID(), exceptionIDs, exceptionIDsSize))
+	if(GameObjectManager::GetInstance().PlaceFree(x+velX, y, boundUp-1, boundDown-1, boundLeft, boundRight, GetInstanceID(), exceptionIDs, exceptionIDsSize))
 	{
 		x+=velX;
 	}

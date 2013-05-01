@@ -5,6 +5,7 @@
 //#include <allegro5/allegro_image.h>
 #include "ImageManager.h"
 #include "globals.h"
+
 class GameObject
 {
 public:

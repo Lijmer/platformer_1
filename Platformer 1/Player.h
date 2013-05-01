@@ -2,14 +2,13 @@
 #include "DynamicObject.h"
 #include "spr_Player.h"
 #include "SoundManager.h"
+#include "GameObjectManager.h"
 #include <time.h>
 
 class Player : public DynamicObject
 {
 public:
-	Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize),
-		bool(*PlaceMeeting)(int otherID, float x, float y, DynamicObject *object), GameObject*(*CreateObject)(int ID, int x, int y), void(*ReserveSpace)(char ID, int size), 
-		void(*Shoot)(bool dir, float x, float y, float velX));
+	Player();
 	~Player();
 	
 	void Init(float x, float y);
@@ -21,10 +20,19 @@ public:
 	void Destroy();
 	void Collided(GameObject *other);
 	
-	float GetGravity() const			{return gravity;}
-	bool GetCollisionWallUp() const		{return collisionWallUp;}
+	float GetGravity()			const	{return gravity;}
+	bool GetCollisionWallUp()	const	{return collisionWallUp;}
 	bool GetCollisionWallDown()	const	{return collisionWallDown;}
-	bool GetDir() const					{return dir;}
+	bool GetDir()				const	{return dir;}
+	bool GetVerticalDir()		const	{return vertical_dir;}
+	bool GetJump()				const	{return jump;}
+	bool GetIdle()				const	{return idle;}
+
+	void SetGravity(float gravity)			{Player::gravity = gravity;}
+	void SetDir(bool Dir)					{Player::dir = dir;}
+	void SetVerticalDir(bool vertical_dir)	{Player::vertical_dir = vertical_dir;}
+	void SetJump(bool jump)					{Player::jump = jump;}
+	void SetIdle(bool idle)					{Player::idle = idle;}
 
 private:
 	bool collisionWallUp;
@@ -35,12 +43,11 @@ private:
 	bool idle;
 	bool dir;
 	bool vertical_dir;
+	bool jump;
+	float gravity;
 
 	spr_Player *sprite;
 
-	float gravity;
-	int direction;
-	bool jump;
 
 	static const int exceptionIDsSize = 6;
 	int exceptionIDs[6];
@@ -48,17 +55,9 @@ private:
 	//Functions to make the Update() function clearer
 	void Jump();
 	void Move();
-	void Blast();
+	void Shoot();
 	void InvertGravity();
 	void SetGravitySpeed();
 	void SetSpriteData();
-
-	
-
-	bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize);
-	bool(*PlaceMeeting)(int otherID, float x, float y, DynamicObject *object);
-	GameObject*(*CreateObject)(int ID, int x, int y);
-	void(*ReserveSpace)(char ID, int size);
-	void(*Shoot)(bool dir, float x, float y, float velX);
 };
  

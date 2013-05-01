@@ -1,10 +1,9 @@
 #include "obj_Saw_Bar.h"
+#include "GameObjectManager.h"
 
-
-obj_Saw_Bar::obj_Saw_Bar(GameObject*(*CreateObject)(int ID, int x, int y))
+obj_Saw_Bar::obj_Saw_Bar()
 {
 	image = ImageManager::GetInstance().GetImage(9);
-	obj_Saw_Bar::CreateObject = CreateObject;
 	SetDepth(-12);
 }
 
@@ -21,8 +20,8 @@ void obj_Saw_Bar::Init(float x, float y)
 	direction = 0;
 	obj_Saw_Bar::x = x;
 	obj_Saw_Bar::y = y;
-	saw = CreateObject(9,x+120,y);
-	CreateObject(0,x,y);
+	saw = GameObjectManager::GetInstance().CreateObject(9,x+120,y);
+	GameObjectManager::GetInstance().CreateObject(0,x,y);
 }
 void obj_Saw_Bar::Update()
 {

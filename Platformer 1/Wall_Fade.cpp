@@ -1,7 +1,7 @@
 #include "Wall_Fade.h"
+#include "GameObjectManager.h"
 
-
-Wall_Fade::Wall_Fade(bool(*PlaceMeeting)(int otherID, float x, float y, DynamicObject *object))
+Wall_Fade::Wall_Fade()
 {
 	activated=false;
 	opacity = 1;
@@ -11,7 +11,6 @@ Wall_Fade::Wall_Fade(bool(*PlaceMeeting)(int otherID, float x, float y, DynamicO
 	boundRight=32;
 	SetCollisionType(BB);
 	SetID(WALL_FADE);
-	Wall_Fade::PlaceMeeting = PlaceMeeting;
 }
 
 void Wall_Fade::Init(float x, float y)
@@ -22,11 +21,7 @@ void Wall_Fade::Init(float x, float y)
 
 void Wall_Fade::Update()
 {
-<<<<<<< HEAD
-	if(PlaceMeeting(PLAYER, x, y-1, this))
-=======
-	if(PlaceMeeting(PLAYER,x,y-1,this))
->>>>>>> Loads of rewriting and optimizing
+	if(GameObjectManager::GetInstance().PlaceMeeting(PLAYER, x, y-1, this))
 		activated = true;
 	if(activated)
 	{

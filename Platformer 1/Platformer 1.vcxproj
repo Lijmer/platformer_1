@@ -77,10 +77,10 @@
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="globals.cpp" />
     <ClCompile Include="ImageManager.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="main_funcs_vars.cpp" />
     <ClCompile Include="obj_Double_Spike_Down.cpp" />
     <ClCompile Include="obj_Double_Spike_Up.cpp" />
     <ClCompile Include="obj_Platform_Horizontal.cpp" />
@@ -121,9 +121,9 @@
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="ImageManager.h" />
-    <ClInclude Include="main_funcs_vars.h" />
     <ClInclude Include="obj_Double_Spike_Down.h" />
     <ClInclude Include="obj_Double_Spike_Up.h" />
     <ClInclude Include="obj_Platform_Horizontal.h" />

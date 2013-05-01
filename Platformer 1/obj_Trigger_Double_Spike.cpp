@@ -1,11 +1,10 @@
 #include "obj_Trigger_Double_Spike.h"
+#include "GameObjectManager.h"
 
 
-obj_Trigger_Double_Spike::obj_Trigger_Double_Spike(obj_Double_Spike_Down*(*Create_obj_Double_Spike_Down)(float x,float y),obj_Double_Spike_Up*(*Create_obj_Double_Spike_Up)(float x,float y))
+obj_Trigger_Double_Spike::obj_Trigger_Double_Spike(void)
 {
 	SetID(TRIGGER_DOUBLE_SPIKE);
-	obj_Trigger_Double_Spike::Create_obj_Double_Spike_Down = Create_obj_Double_Spike_Down;
-	obj_Trigger_Double_Spike::Create_obj_Double_Spike_Up = Create_obj_Double_Spike_Up;
 	boundUp = 0;
 	boundDown = 128;
 	boundLeft = 0;
@@ -24,8 +23,8 @@ void obj_Trigger_Double_Spike::Init(float x, float y)
 {
 	image = NULL;
 	DynamicObject::Init(x,y,0,0);
-	down = Create_obj_Double_Spike_Down(x,y);
-	up = Create_obj_Double_Spike_Up(x,y+96);
+	down = GameObjectManager::GetInstance().Create_obj_Double_Spike_Down(x,y);
+	up = GameObjectManager::GetInstance().Create_obj_Double_Spike_Up(x,y+96);
 }
 
 void obj_Trigger_Double_Spike::Update()

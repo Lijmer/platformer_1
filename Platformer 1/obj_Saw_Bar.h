@@ -3,7 +3,7 @@
 class obj_Saw_Bar : public DynamicObject
 {
 public:
-	obj_Saw_Bar(GameObject*(*CreateObject)(int ID, int x, int y));
+	obj_Saw_Bar();
 	~obj_Saw_Bar(void);
 
 	void Init(float x, float y);
@@ -12,7 +12,6 @@ public:
 	void Destroy();
 
 private:
-	GameObject*(*CreateObject)(int ID, int x, int y);
 	float direction;
 	GameObject *saw;
 };

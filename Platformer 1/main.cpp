@@ -1,17 +1,51 @@
 //All stuff that needs to be included is in this file
 //#define true false //This line of code can fuck up everything ;)
-#include "main_funcs_vars.h"
-int stillParticlesSize = -1;
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_native_dialog.h>
+#include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_image.h>
+#include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_acodec.h>
+#include <allegro5/allegro_audio.h>
+//Basic Stuff
+#include <vector>
+#include <iostream>
+#include <fstream>
+#include <algorithm>
+#include <math.h>
 
-//Function that is used to sort the dynamicObjects vector
+//Backgroundstuff Objects
+#include "FileManager.h"
+#include "SoundManager.h"
+#include "imageManager.h"
+#include "FontManager.h"
+#include "DisplayManager.h"
+#include "GameObjectManager.h"
 
-int SortFunction(GameObject *i, GameObject *j) {return (i->GetDepth()<j->GetDepth());}
+//Function that is used to calculate the time it takes to run a certain piece of code
 inline double diffclock(clock_t clock1, clock_t clock2)
+{
+	double diffticks = clock1 - clock2;
+	double diffms=(diffticks*1000)/CLOCKS_PER_SEC;
+	return diffms;
+}
+inline void UpdateTime()
+{
+	if(++_steps > 60)
 	{
-		double diffticks = clock1 - clock2;
-		double diffms=(diffticks*1000)/CLOCKS_PER_SEC;
-		return diffms;
+		_steps-=60;
+		if(++_seconds>60)
+		{
+			_seconds-=60;
+			if(++_minutes>60)
+			{
+				_minutes-=60;
+				_hours++;
+			}
+		}
 	}
+}
 
 int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  This applications doesn't take parameters...
 {
@@ -25,18 +59,14 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	int gameTime = 0;
 	int frames = 0;
 	float gameFPS = 0;
-	//int APM = 0, APS = 0;
 	srand(time(unsigned int(0)));
 	_difficulty=0;
-	int stillParticlesSize = stillParticles.size();
 
 	//==============================================
 	//ALLEGRO VARIABLES
 	//==============================================
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer;
-	ALLEGRO_BITMAP *staticCanvas = NULL;
-	ALLEGRO_BITMAP *stillParticleCanvas = NULL;
 	
 	//==============================================
 	//ALLEGRO INIT FUNCTIONS
@@ -52,26 +82,23 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	al_install_keyboard();
 	al_init_primitives_addon();
 
-	
 	//==============================================
 	//PROJECT INIT
 	//==============================================
 	FontManager::GetInstance().Init();
 	ImageManager::GetInstance().Init();
 	SoundManager::GetInstance().Init();
+
+	GameObjectManager::GetInstance().Init();
 	//Play Music
 	//SoundManager::GetInstance().Play(50);
 	//Map
-	FileManager fmanager(&CreateObject, &DeleteDynamicObjects);
-	fmanager.LoadLevel(_currentLevel);
-
+	FileManager::GetInstance().LoadLevel(_currentLevel);
 	//==============================================
 	//TIMER INIT AND STARTUP
 	//==============================================
 	event_queue = al_create_event_queue();
 	timer = al_create_timer(1.0 / 60.0);
-	staticCanvas = al_create_bitmap(1024,768);
-	stillParticleCanvas = al_create_bitmap(1024,768);
 
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
@@ -126,16 +153,18 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			case ALLEGRO_KEY_R:
 				_keys_pressed[R_KEY]=true;
 				_keys[R_KEY]=true;
-				fmanager.RestartLevel(_currentLevel);
+				FileManager::GetInstance().RestartLevel(_currentLevel);
 				_camX_prev=-1;
 				_camY_prev=-1;
 				break;
 			case ALLEGRO_KEY_Q:
-				if(D_object_exists(PLAYER))
+				if(GameObjectManager::GetInstance().D_object_exists(PLAYER))
 				{
-					player->Kill();
-					player->SetAlive(false);
+					GameObjectManager::GetInstance().KillPlayer();
 				}
+				break;
+			case ALLEGRO_KEY_L:
+				FileManager::GetInstance().Load();
 				break;
 			case ALLEGRO_KEY_ALT:
 				_keys[ALT] = true;
@@ -146,7 +175,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 					DisplayManager::GetInstance().ChangeState();
 				break;
 			case ALLEGRO_KEY_ALTGR:
-				StressTest();
+				//StressTest();
 				break;
 
 			}
@@ -195,204 +224,13 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 		#pragma region Timer event
 		else if(ev.type == ALLEGRO_EVENT_TIMER)
 		{
-			render = true;
-	
-			#pragma region Update
-			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
-				(*iter)->Update();
-			for(particleIter = particles.begin(); particleIter!=particles.end(); particleIter++)
-				(*particleIter)->Update();
-			#pragma endregion Run the update function for all objects
-
-			#pragma region Collisions
-			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
-			{
-				//Check for collision with other dynamic objects
-				for(iter2 = iter; iter2!=dynamicObjects.end(); iter2++)
-				{
-					if((*iter)->GetInstanceID() == (*iter2)->GetInstanceID()) continue;
-					if((*iter)->GetID() == (*iter2)->GetID()) continue;
-					if(!(*iter)->CheckCollision((*iter2)))	continue;
-					(*iter)->Collided(*iter2);
-					(*iter2)->Collided(*iter);
-				}
-				for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); iter3++)
-				{
-					if(!(*iter)->CheckCollision((*iter3)))
-						continue;
-					(*iter)->Collided(*iter3);
-				}
-			}
-			for(particleIter=particles.begin(); particleIter!=particles.end(); particleIter++)
-			{
-				for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); iter3++)
-				{
-					if((*particleIter)->CheckCollision(*iter3))
-					{
-						(*particleIter)->Collided(*iter3);
-					}
-				}
-				for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
-				{
-					if((*particleIter)->CheckCollision(*iter))
-						(*particleIter)->Collided(*iter);
-				}
-			}
-			#pragma endregion Check for collions
-
-			#pragma region Cleaning
-			for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); )
-			{
-				if(!(*iter)->GetAlive())
-				{
-					(*iter)->Destroy();
-					delete (*iter);
-					iter = dynamicObjects.erase(iter);
-				}
-				else
-					++iter;
-			}
-
-			for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); )
-			{
-				if(!(*iter3)->GetAlive())
-				{
-					(*iter3)->Destroy();
-					delete (*iter3);
-					iter3 = staticObjects.erase(iter3);
-				}
-				else
-					++iter3;
-			}
-
-			MaxParticles();
-
-			#pragma endregion Deletes all objects (that are not deactivated) where alive == false
-
-			#pragma region Activate and Deactivate
-			if(_camX!=_camX_prev || _camY!=_camY_prev)
-			{
-				//Activate
-				for(iter = deactivatedDynamicObjects.begin(); iter!=deactivatedDynamicObjects.end();)
-				{
-					(*iter)->Activate();
-					if((*iter)->GetActivated())
-					{
-						dynamicObjects.push_back((*iter));
-						iter = deactivatedDynamicObjects.erase(iter);
-					}
-					else
-						iter++;
-				}
-				for(iter3 = deactivatedStaticObjects.begin(); iter3!=deactivatedStaticObjects.end();)
-				{
-					(*iter3)->Activate();
-					if((*iter3)->GetActivated())
-					{
-						staticObjects.push_back((*iter3));
-						iter3 = deactivatedStaticObjects.erase(iter3);
-					}
-					else
-						iter3++;
-				}
-				for(particleIter = deactivatedParticles.begin(); particleIter!=deactivatedParticles.end();)
-				{
-					(*particleIter)->Activate();
-					if((*particleIter)->GetActivated())
-					{
-						stillParticles.push_back((*particleIter));
-						particleIter = deactivatedParticles.erase(particleIter);
-					}
-					else
-						particleIter++;
-				}
-
-				//Deactivate
-				for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end();)
-				{
-					if((*iter)->GetID() != PLAYER)
-					{
-						(*iter)->Deactivate();
-						if(!(*iter)->GetActivated())
-						{
-							deactivatedDynamicObjects.push_back((*iter));
-							iter = dynamicObjects.erase(iter);
-						}
-						else
-							iter++;
-					}
-					else
-						iter++;
-				}
-				for(iter3 = staticObjects.begin(); iter3!=staticObjects.end();)
-				{
-					(*iter3)->Deactivate();
-					if(!(*iter3)->GetActivated())
-					{
-						deactivatedStaticObjects.push_back((*iter3));
-						iter3 = staticObjects.erase(iter3);
-					}
-					else
-						iter3++;
-				}
-				for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end();)
-				{
-					(*particleIter)->Deactivate();
-					if(!(*particleIter)->GetActivated())
-					{
-						deactivatedParticles.push_back((*particleIter));
-						particleIter = stillParticles.erase(particleIter);
-					}
-					else
-						particleIter++;
-				}
-
-				//Draw all staticobjects on the staticCanvas, This is so there will be less looping through the staticObjectsvector
-				sort(staticObjects.begin(),staticObjects.end(), SortFunction);
-				al_set_target_bitmap(staticCanvas);
-				al_clear_to_color(al_map_rgba(0,0,0,0));
-				for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); iter3++)
-				{
-					(*iter3)->Draw();
-				}
-			}
-			#pragma endregion All objects that are outside of the screen get put in a different vector.
-
-			#pragma region Not moving particles
-			for(particleIter=particles.begin(); particleIter!=particles.end(); )
-			{
-				if((*particleIter)->GetVelX() == 0 && (*particleIter)->GetVelY() == 0)
-				{
-					stillParticlesBuffer.push_back((*particleIter));
-					particleIter = particles.erase(particleIter);
-				}
-				else
-					particleIter++;
-			}
-			if(stillParticlesBuffer.size() >= 125)
-			{
-				for(particleIter = stillParticlesBuffer.begin(); particleIter!=stillParticlesBuffer.end(); )
-				{
-					stillParticles.push_back((*particleIter));
-					particleIter = stillParticlesBuffer.erase(particleIter);
-				}
-			}
-			//If the size of the stillParticle vector has changed
-			if(stillParticlesSize != stillParticles.size())
-			{
-				al_set_target_bitmap(stillParticleCanvas);
-				al_clear_to_color(al_map_rgba(0,0,0,0));
-				for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end(); particleIter++)
-				{
-					if((*particleIter)->GetX() > _camX && (*particleIter)->GetX() < _camX + _SCREEN_WIDTH &&
-						(*particleIter)->GetY() > _camY && (*particleIter)->GetY() < _camY + _SCREEN_HEIGHT)
-					{
-						(*particleIter)->Draw();
-					}
-				}
-				stillParticlesSize = stillParticles.size();
-			}
-			#pragma endregion Find which particles are not moving, put them in a seperate vector and draw them on a different bitmap
+			render = true;			
+			UpdateTime();
+			GameObjectManager::GetInstance().Update();
+			GameObjectManager::GetInstance().Collisions();
+			GameObjectManager::GetInstance().Clean();
+			GameObjectManager::GetInstance().ActivateDeactivate();
+			GameObjectManager::GetInstance().MotionlessParticles();
 			
 			_camX_prev=_camX;
 			_camY_prev=_camY;
@@ -419,34 +257,15 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			
 			al_set_target_backbuffer(DisplayManager::GetInstance().GetDisplay());
 			al_clear_to_color(al_map_rgb(192,192,192));
-
+			
 			//BEGIN PROJECT RENDER=============================================================================================
-			
-			sort(dynamicObjects.begin(),dynamicObjects.end(), SortFunction);
-			//Draw static objects
-			al_draw_bitmap(staticCanvas,0,0,0);
-			
-			//Draw dynamic objects
-			for(r_iter = dynamicObjects.rbegin(); r_iter!=dynamicObjects.rend(); r_iter++)
-				(*r_iter)->Draw();
+			GameObjectManager::GetInstance().Draw();
 
-			//Draw Particles
-			for(particleIter = stillParticlesBuffer.begin(); particleIter!=stillParticlesBuffer.end(); particleIter++)
-				(*particleIter)->Draw();
-			for(particleIter = particles.begin(); particleIter!=particles.end(); particleIter++)
-				(*particleIter)->Draw();
-			al_draw_bitmap(stillParticleCanvas,0,0,0);
-			
+
 			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,5,0,"FPS: %f", gameFPS);
-			//al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,85,0,"_camX: %i\t_camY: %i", _camX, _camY);
-			
-			if(D_object_exists(PLAYER))
-			{
-				al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,25,0,"X: %f\tY: %f", player->GetX(), player->GetY());
-				al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,45,0,"Gravity: %f", player->GetGravity());
-				al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,65,0,"velY: %f\tvelX: %f", player->GetVelY(), player->GetVelX());
-			}
-			
+			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,85,0,"_camX: %i\t_camY: %i", _camX, _camY);
+			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,105,0,"hours: %i\tminutes: %i\tseconds: %i\tsteps: %i", _hours, _minutes, _seconds, _steps);
+			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,125,0,"Deaths: %i", _deaths);
 			//Draw borders
 			al_draw_filled_rectangle(-(_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0, 0, 0, _SCREEN_HEIGHT,al_map_rgb(0,0,0));
 			al_draw_filled_rectangle(_SCREEN_WIDTH + (_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0, 0, _SCREEN_WIDTH, _SCREEN_HEIGHT, al_map_rgb(0,0,0));
@@ -459,52 +278,8 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 		#pragma endregion All drawing stuff happens in here
 	}
 	#pragma endregion
+
 	#pragma region Clean up
-	//==============================================
-	//DESTROY PROJECT OBJECTS
-	//==============================================
-	for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); )
-	{
-		(*iter)->Destroy();
-		delete (*iter);
-		iter = dynamicObjects.erase(iter);
-	}
-	for(iter = deactivatedDynamicObjects.begin(); iter!=deactivatedDynamicObjects.end();)
-	{
-		(*iter)->Destroy();
-		delete(*iter);
-		iter = deactivatedDynamicObjects.erase(iter);
-	}
-	for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); )
-	{
-		(*iter3)->Destroy();
-		delete (*iter3);
-		iter3 = staticObjects.erase(iter3);
-	}
-	for(iter3 = deactivatedStaticObjects.begin(); iter3!=deactivatedStaticObjects.end(); )
-	{
-		(*iter3)->Destroy();
-		delete (*iter3);
-		iter3 = deactivatedStaticObjects.erase(iter3);
-	}
-	for(particleIter = particles.begin(); particleIter !=particles.end();)
-	{
-		(*particleIter)->Destroy();
-		delete (*particleIter);
-		particleIter = particles.erase(particleIter);
-	}
-	for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end();)
-	{
-		(*particleIter)->Destroy();
-		delete (*particleIter);
-		particleIter = stillParticles.erase(particleIter);
-	}
-	for(particleIter = deactivatedParticles.begin(); particleIter != deactivatedParticles.end(); )
-	{
-		(*particleIter)->Destroy();
-		delete(*particleIter);
-		particleIter = deactivatedParticles.erase(particleIter);
-	}
 	//SHELL OBJECTS=================================
 	al_destroy_timer(timer);
 	al_destroy_event_queue(event_queue);

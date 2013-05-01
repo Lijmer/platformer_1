@@ -1,10 +1,54 @@
 #include "FileManager.h"
 
 
-FileManager::FileManager(GameObject*(*CreateObject)(int ID, int x, int y), void(*DeleteDynamicObjects)(void))
+FileManager::FileManager()
 {
-	FileManager::CreateObject = CreateObject;
-	FileManager::DeleteDynamicObjects = DeleteDynamicObjects;
+	//Save File structure:
+	//active,level,difficulty,x,y,velX,velY,_camX,_camY,dir,vertical_dir,gravity,jump,idle,deaths,hours,minutes,seconds,steps;
+	const int MAX_SAVE=3;
+	//Open the file
+	fstream saveFile;
+	saveFile.open("save/save.sav");
+
+	//If the file doesn't exist, it will create a new file and write default values to it
+	if(!saveFile.is_open())
+	{
+		saveFile.close();
+		ofstream defaultSaveFile;
+		defaultSaveFile.open("save/save.sav");
+		for(int i=0; i<MAX_SAVE; i++)
+		{
+			defaultSaveFile << "0,0,0,0,0,96,726,0,0,1,1,0,1,1,0,0,0,0,0;" << endl;
+		}
+		defaultSaveFile.close();
+		saveFile.open("save/save.sav");
+	}
+
+	//Declare variables to read the file
+	string temp;
+	vector<string> save;
+	vector<string>::iterator iter;
+	//Read the file
+	while(getline(saveFile,temp))
+	{
+		save.push_back(temp);
+	}
+	
+	for(iter = save.begin(); iter!=save.end(); iter++)
+	{
+		cout << (*iter) << endl;
+	}
+
+	//cout << save[0];
+
+	//Close the file
+	saveFile.close();
+}
+
+FileManager& FileManager::GetInstance()
+{
+	static FileManager instance;
+	return instance;
 }
 
 void FileManager::LoadLevel(char levelNum)
@@ -46,9 +90,13 @@ void FileManager::LoadLevel(char levelNum)
 
 	//READ ALL THE DATA!
 	while(getline(levelFile,temp))
-	{
 		lvl.push_back(temp);
-	}
+
+	temp = "";
+	//Close the file
+	levelFile.close();	
+	if(levelFile.is_open())
+		al_show_native_message_box(NULL, "Error!", "FileManager", "Couldn't close the level file", "Ok", ALLEGRO_MESSAGEBOX_ERROR);
 
 	//This is the main for loop in this function. It loops through the lvl vector.
 	for(iter = lvl.begin(); iter!=lvl.end(); iter++)
@@ -93,7 +141,7 @@ void FileManager::LoadLevel(char levelNum)
 		else if((*iter) == "[map]")
 		{
 			int x=0,y=0;
-			string temp;
+			temp="";
 			for(iter2 = iter+1; iter2!=lvl.end(); iter2++)
 			{
 				if((*iter2) == ";")
@@ -109,51 +157,51 @@ void FileManager::LoadLevel(char levelNum)
 							if(temp=="-1")
 							{}//If temp == -1 the rest doesn't have to be checked, since most is -1 it is at the top
 							else if(temp == "00")
-								CreateObject(0,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(0,x*tileWidth,y*tileHeight);
 							else if(temp == "01")
-								CreateObject(1,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(1,x*tileWidth,y*tileHeight);
 							else if(temp == "02")
-								CreateObject(2,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(2,x*tileWidth,y*tileHeight);
 							else if(temp == "03")
-								CreateObject(3,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(3,x*tileWidth,y*tileHeight);
 							else if(temp == "04")
-								CreateObject(4,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(4,x*tileWidth,y*tileHeight);
 							else if(temp == "05")
-								CreateObject(5,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(5,x*tileWidth,y*tileHeight);
 							else if(temp == "06")
-								CreateObject(6,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(6,x*tileWidth,y*tileHeight);
 							else if(temp == "07")
-								CreateObject(7,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(7,x*tileWidth,y*tileHeight);
 							else if(temp == "08")
-								CreateObject(8,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(8,x*tileWidth,y*tileHeight);
 							else if(temp == "09")
-								CreateObject(9,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(9,x*tileWidth,y*tileHeight);
 							else if(temp == "10")
-								CreateObject(10,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(10,x*tileWidth,y*tileHeight);
 							else if(temp == "11")
-								CreateObject(11,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(11,x*tileWidth,y*tileHeight);
 							else if(temp == "12")
-								CreateObject(12,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(12,x*tileWidth,y*tileHeight);
 							else if(temp == "13")
-								CreateObject(13,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(13,x*tileWidth,y*tileHeight);
 							else if(temp == "14")
-								CreateObject(14,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(14,x*tileWidth,y*tileHeight);
 							else if(temp == "15")
-								CreateObject(15,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(15,x*tileWidth,y*tileHeight);
 							else if(temp == "16")
-								CreateObject(16,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(16,x*tileWidth,y*tileHeight);
 							else if(temp == "17")
-								CreateObject(17,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(17,x*tileWidth,y*tileHeight);
 							else if(temp == "18")
-								CreateObject(18,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(18,x*tileWidth,y*tileHeight);
 							else if(temp == "96")
-								CreateObject(96,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(96,x*tileWidth,y*tileHeight);
 							else if(temp == "97")
-								CreateObject(97,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(97,x*tileWidth,y*tileHeight);
 							else if(temp == "98")
-								CreateObject(98,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(98,x*tileWidth,y*tileHeight);
 							else if(temp == "99")
-								CreateObject(99,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(99,x*tileWidth,y*tileHeight);
 							else if(temp=="--")
 							{
 								temp="";
@@ -178,16 +226,15 @@ void FileManager::LoadLevel(char levelNum)
 		else if((*iter) == "END")
 			break;
 	}
-	//Close the file
-	levelFile.close();
-	if(levelFile.is_open())
-		al_show_native_message_box(NULL, "Error!", "FileManager", "Couldn't close the level file", "Ok", ALLEGRO_MESSAGEBOX_ERROR);
+	
 }
 
 void FileManager::RestartLevel(char levelNum)
 {
+	//Load Level stuff******************************************************************************************************
+
 	//This does he exact same thing as LoadLevel, but it only creates DynamicObjects
-	DeleteDynamicObjects();
+	GameObjectManager::GetInstance().DeleteDynamicObjects();
 	ifstream levelFile;
 	if(levelNum == 0)
 		levelFile.open("levels/level1.lvl");
@@ -255,39 +302,39 @@ void FileManager::RestartLevel(char levelNum)
 						else
 						{
 							if(temp == "05")
-								CreateObject(5,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(5,x*tileWidth,y*tileHeight);
 							else if(temp == "07")
-								CreateObject(7,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(7,x*tileWidth,y*tileHeight);
 							else if(temp == "08")
-								CreateObject(8,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(8,x*tileWidth,y*tileHeight);
 							else if(temp == "09")
-								CreateObject(9,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(9,x*tileWidth,y*tileHeight);
 							else if(temp == "10")
-								CreateObject(10,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(10,x*tileWidth,y*tileHeight);
 							else if(temp == "11")
-								CreateObject(11,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(11,x*tileWidth,y*tileHeight);
 							else if(temp == "12")
-								CreateObject(12,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(12,x*tileWidth,y*tileHeight);
 							else if(temp == "13")
-								CreateObject(13,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(13,x*tileWidth,y*tileHeight);
 							else if(temp == "14")
-								CreateObject(14,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(14,x*tileWidth,y*tileHeight);
 							else if(temp == "15")
-								CreateObject(15,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(15,x*tileWidth,y*tileHeight);
 							else if(temp == "16")
-								CreateObject(16,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(16,x*tileWidth,y*tileHeight);
 							else if(temp == "17")
-								CreateObject(17,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(17,x*tileWidth,y*tileHeight);
 							else if(temp == "18")
-								CreateObject(18,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(18,x*tileWidth,y*tileHeight);
 							else if(temp == "96")
-								CreateObject(96,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(96,x*tileWidth,y*tileHeight);
 							else if(temp == "97")
-								CreateObject(97,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(97,x*tileWidth,y*tileHeight);
 							else if(temp == "98")
-								CreateObject(98,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(98,x*tileWidth,y*tileHeight);
 							else if(temp == "99")
-								CreateObject(99,x*tileWidth,y*tileHeight);
+								GameObjectManager::GetInstance().CreateObject(99,x*tileWidth,y*tileHeight);
 							else if(temp=="--")
 							{
 								temp="";
@@ -308,9 +355,275 @@ void FileManager::RestartLevel(char levelNum)
 	}
 	
 	levelFile.close();
+
+	//Load Player stuff*****************************************************************************************************
+	
+	//active,level,difficulty,_camX,_camY,x,y,velX,velY,dir,vertical_dir,gravity,jump,idle,deaths,hours,minutes,seconds,steps;
+	ifstream saveFile;
+	saveFile.open("save/save.sav");
+	if(!saveFile.is_open())
+	{
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "FileManager",
+			"Could not open save file", "ok sok", ALLEGRO_MESSAGEBOX_ERROR);
+		return;
+	}
+
+	temp = "";
+	vector<string> save;
+	//vector<string>::iterator iter;
+
+	while(getline(saveFile,temp))
+	{
+		save.push_back(temp);
+	}
+	saveFile.close();
+	temp = "";
+	//This variable keeps track of the place of the value to identify what it must do with it.
+	int valueNum=0;
+	float playerX=0, playerY=0, playerVelX=0, playerVelY=0, playerGravity;
+	bool playerDir=false, playerVerticalDir=false, playerJump=false, playerIdle=false;
+	for(unsigned int i=0; i<save[_saveNum].size(); i++)
+	{
+		
+		if(save[_saveNum][i]==',' || save[_saveNum][i]==';')
+		{
+			switch(valueNum)
+			{
+			case 0:
+				if(!::atoi(temp.c_str()))
+					return;
+				break;
+			case 1:
+				_currentLevel = ::atoi(temp.c_str());
+				break;
+			case 2:
+				_difficulty = ::atoi(temp.c_str());
+				break;
+			case 3:
+				_camX = ::atoi(temp.c_str());
+				break;
+			case 4:
+				_camY = ::atoi(temp.c_str());
+				break;
+			case 5:
+				playerX=::atof(temp.c_str());
+				break;
+			case 6:
+				playerY=::atof(temp.c_str());
+				break;
+			case 7:
+				playerVelX=::atof(temp.c_str());
+				break;
+			case 8:
+				playerVelY=::atof(temp.c_str());
+				break;	
+			case 9:
+				if(temp == "0")
+					playerDir=false;
+				else if(temp=="1")
+					playerDir=true;
+				else
+					cout << "ERROR!";
+				break;
+			case 10:
+				if(temp == "0")
+					playerVerticalDir=false;
+				else if(temp=="1")
+					playerVerticalDir=true;
+				else
+					cout << "ERROR!";
+				//player->SetVerticalDir(::atoi(temp.c_str()));
+				break;
+			case 11:
+				playerGravity = ::atof(temp.c_str());
+				break;
+			case 12:
+				playerJump = ::atoi(temp.c_str());
+				break;
+			case 13:
+				playerIdle=::atoi(temp.c_str());
+				break;
+			}
+			valueNum++;
+			temp = "";
+		}
+		else if(save[_saveNum][i]==';')
+		{
+			
+		}
+		else
+			temp += save[_saveNum][i];
+	}
+	GameObjectManager::GetInstance().SetPlayerData(playerX, playerY, playerVelX, playerVelY, playerGravity, playerDir, playerVerticalDir, playerJump, playerIdle);
 }
 
 void FileManager::Save()
 {
+	//Save File structure:
+	//active,level,difficulty,_camX,_camY,x,y,velX,velY,dir,vertical_dir,gravity,jump,idle,deaths,hours,minutes,seconds,steps;
 
+	//Create an ifstream objec to read the file
+	ifstream isaveFile;
+	isaveFile.open("save/save.sav");
+	//Check if it opened
+	if(!isaveFile.is_open())
+	{
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "FileManager", "Could not open save file", "ok sok", ALLEGRO_MESSAGEBOX_ERROR);
+		return;
+	}
+	//Declare variables to read the file
+	string temp;
+	vector<string> save;
+	vector<string>::iterator iter;
+	//Read the file
+	while(getline(isaveFile,temp))
+	{
+		save.push_back(temp);
+	}
+
+	isaveFile.close();	
+	ofstream osaveFile;
+	osaveFile.open("save/save.sav");
+
+	std::stringstream ss;
+
+	float playerX=0, playerY=0, playerVelX=0, playerVelY=0, playerGravity=0;
+	bool playerDir=false, playerVerticalDir=false, playerJump=false, playerIdle=false;
+	
+	GameObjectManager::GetInstance().GetPlayerData(playerX, playerY, playerVelX, playerVelY, playerGravity, playerDir, playerVerticalDir, playerJump, playerIdle);
+	/*
+	ss << 1 << "," << _currentLevel << "," << _difficulty << "," << _camX << "," << _camY << "," << player->GetX() << "," << player->GetY() << "," 
+		<< player->GetVelX() << "," << player->GetVelY() << ","  << player->GetDir() << "," << player->GetVerticalDir() << "," << player->GetGravity() << ","
+		<< player->GetJump() << "," << player->GetIdle() << "," << _deaths << "," << _hours << "," << _minutes << "," << _seconds << "," << _steps << ";";
+	*/
+	ss << 1 << "," << _currentLevel << "," << _difficulty << "," << _camX << "," << _camY << "," << playerX << "," << playerY << "," << playerVelX << ","
+		<< playerVelY << "," << playerDir << "," << playerVerticalDir << "," << playerGravity << "," << playerJump << "," << playerIdle << "," << _deaths << ","
+		<< _hours << "," << _minutes << "," << _seconds << "," << _steps << ";";
+	save[_saveNum] = ss.str();
+
+	//Clear stringstream
+	ss.clear();
+	ss.str(std::string());
+	
+	for(iter = save.begin(); iter!=save.end();iter++)
+		ss << (*iter) << endl;
+
+	osaveFile << ss.str();
+
+	osaveFile.close();
+}
+
+void FileManager::Load()
+{
+	//active,level,difficulty,_camX,_camY,x,y,velX,velY,dir,vertical_dir,gravity,jump,idle,deaths,hours,minutes,seconds,steps;
+	ifstream saveFile;
+	saveFile.open("save/save.sav");
+	if(!saveFile.is_open())
+	{
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "FileManager", "Could not open save file", "ok sok", ALLEGRO_MESSAGEBOX_ERROR);
+		return;
+	}
+
+	string temp;
+	vector<string> save;
+	vector<string>::iterator iter;
+
+	while(getline(saveFile,temp))
+	{
+		save.push_back(temp);
+	}
+	saveFile.close();
+	temp = "";
+	//This variable keeps track of the place of the value to identify what it must do with it.
+	int valueNum=0;
+	float playerX=0, playerY=0, playerVelX=0, playerVelY=0, playerGravity;
+	bool playerDir=false, playerVerticalDir=false, playerJump=false, playerIdle=false;
+	for(unsigned int i=0; i<save[_saveNum].size(); i++)
+	{
+		if(save[_saveNum][i]==',' || save[_saveNum][i]==';')
+		{
+			switch(valueNum)
+			{
+			case 0:
+				if(!::atoi(temp.c_str()))
+					return;
+				break;
+			case 1:
+				_currentLevel = ::atoi(temp.c_str());
+				break;
+			case 2:
+				_difficulty = ::atoi(temp.c_str());
+				break;
+			case 3:
+				_camX = ::atoi(temp.c_str());
+				break;
+			case 4:
+				_camY = ::atoi(temp.c_str());
+				break;
+			case 5:
+				playerX = ::atof(temp.c_str());
+				break;
+			case 6:
+				playerY = ::atof(temp.c_str());
+				break;
+			case 7:
+				playerVelX = ::atof(temp.c_str());
+				break;
+			case 8:
+				playerVelY = ::atof(temp.c_str());
+				break;	
+			case 9:
+				if(temp == "0")
+					playerDir = false;
+				else if(temp=="1")
+					playerDir = true;
+				else
+					cout << "ERROR!";
+				break;
+			case 10:
+				if(temp == "0")
+					playerVerticalDir = false;
+				else if(temp=="1")
+					playerVerticalDir = true;
+				else
+					cout << "ERROR!";
+				//player->SetVerticalDir(::atoi(temp.c_str()));
+				break;
+			case 11:
+				playerGravity = ::atof(temp.c_str());
+				break;
+			case 12:
+				playerJump = ::atoi(temp.c_str());
+				break;
+			case 13:
+				playerIdle = ::atoi(temp.c_str());
+				break;
+			case 14:
+				_deaths = ::atoi(temp.c_str());
+				break;
+			case 15:
+				_hours = ::atoi(temp.c_str());
+				break;
+			case 16:
+				_minutes = ::atoi(temp.c_str());
+				break;
+			case 17:
+				_seconds = ::atoi(temp.c_str());
+				break;
+			case 18:
+				_steps = ::atoi(temp.c_str());
+				break;				
+			}
+			valueNum++;
+			temp = "";
+		}
+		else if(save[_saveNum][i]==';')
+		{
+			GameObjectManager::GetInstance().SetPlayerData(playerX, playerY, playerVelX, playerVelY, playerGravity, playerDir, playerVerticalDir, playerJump, playerIdle);
+			return;
+		}
+		else
+			temp += save[_saveNum][i];
+	}
+	return;
 }

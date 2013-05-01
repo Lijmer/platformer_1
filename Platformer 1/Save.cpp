@@ -1,7 +1,7 @@
 #include "Save.h"
+#include "GameObjectManager.h"
 
-
-Save::Save(GameObject*(*CreateObject)(int ID, int x, int y))
+Save::Save()
 {
 	active = false;
 	SetCollisionType(BB);
@@ -10,7 +10,6 @@ Save::Save(GameObject*(*CreateObject)(int ID, int x, int y))
 	boundLeft=0;
 	boundRight=28;
 	SetID(SAVE);
-	Save::CreateObject = CreateObject;
 }
 
 void Save::Init(float x, float y, char difficulty)
@@ -21,7 +20,7 @@ void Save::Init(float x, float y, char difficulty)
 	//If the difficulty is not the same as this object, it will create a wall in its place
 	if(difficulty < _difficulty)
 	{
-		CreateObject(0,x,y);
+		GameObjectManager::GetInstance().CreateObject(0,x,y);
 		SetAlive(false);
 	}
 }
@@ -53,8 +52,9 @@ void Save::Destroy()
 
 void Save::Collided(GameObject *other)
 {
-	if(other->GetID() == BULLET)
+	if(other->GetID() == BULLET && !active && GameObjectManager::GetInstance().D_object_exists(PLAYER))
 	{
+		FileManager::GetInstance().Save();
 		count = 0;
 		active=true;
 	}

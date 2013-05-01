@@ -65,7 +65,9 @@ enum _DIFFICULTY
 extern float _monitorWidth, _monitorHeight, _scaleScreen;
 
 extern int _camX, _camY, _camX_prev, _camY_prev;
-extern char _difficulty, _currentLevel;
+extern int _difficulty, _currentLevel, _saveNum;
 extern bool _keys[], _keys_pressed[], _keys_released[];
+extern int _hours, _minutes, _seconds, _steps;
+extern int _deaths;
 
 #endif

@@ -1,11 +1,9 @@
 #include "Player.h"
+#include "GameObjectManager.h"
 
-Player::Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize), 
-	bool(*PlaceMeeting)(int otherID, float x, float y, DynamicObject *object), GameObject*(*CreateObject)(int ID, int x, int y), void(*ReserveSpace)(char ID, int size),
-	void(*Shoot)(bool dir, float x, float y, float velX))
+Player::Player()
 {
 	//Most of this function is setting default values for variables.
-
 	collisionWallUp = false;
 	collisionWallDown = false;
 	collidedWithTreadmillLeft = false;
@@ -18,7 +16,6 @@ Player::Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, in
 	boundLeft=7;
 	boundRight=7;
 	jump=false;
-	direction = 270;
 
 	velX=0;
 	velY=0;
@@ -27,13 +24,6 @@ Player::Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, in
 	vertical_dir=true;
 
 	sprite = new spr_Player();
-
-	//Assign pointer functions
-	Player::PlaceFree = PlaceFree;
-	Player::PlaceMeeting = PlaceMeeting;
-	Player::CreateObject = CreateObject;
-	Player::ReserveSpace = ReserveSpace;
-	Player::Shoot = Shoot;
 
 	SetCollisionType(BB);
 
@@ -47,7 +37,6 @@ Player::Player(bool(*PlaceFree)(float x, float y, int boundUp, int boundDown, in
 	exceptionIDs[4] = TREADMILL_LEFT;
 	exceptionIDs[5] = TREADMILL_RIGHT;
 }
-
 Player::~Player()
 {
 	delete sprite;
@@ -57,34 +46,54 @@ void Player::Init(float x, float y)
 {
 	Player::x=x;
 	Player::y=y;
-	
 	sprite->Init(ImageManager::GetInstance().GetImage(0), 28, 26, 0, 2);
-
-	jump=false;
-	direction = 270;
-	dir=true;
-	gravity=0.62;
-
-	velX=0;
-	velY=0;
 }
 
 void Player::UpdateBegin()
 {}
 void Player::Update()
 {
-	collisionWallDown = !PlaceFree(x, y+1, boundUp, boundDown, boundLeft, boundRight, GetInstanceID(), exceptionIDs, exceptionIDsSize);
-	collisionWallUp = !PlaceFree(x, y-1, boundUp, boundDown, boundLeft, boundRight, GetInstanceID(), exceptionIDs, exceptionIDsSize);
+	collisionWallDown = !GameObjectManager::GetInstance().PlaceFree(x, y+1, boundUp, boundDown, boundLeft, boundRight, GetInstanceID(), exceptionIDs, exceptionIDsSize);
+	collisionWallUp = !GameObjectManager::GetInstance().PlaceFree(x, y-1, boundUp, boundDown, boundLeft, boundRight, GetInstanceID(), exceptionIDs, exceptionIDsSize);
 
-	if(PlaceMeeting(TREADMILL_LEFT, x, y+1, this))
+	//Treadmills
+	if(GameObjectManager::GetInstance().PlaceMeeting(TREADMILL_LEFT, x, y+1, this))
 		x-=1;
-	if(PlaceMeeting(TREADMILL_RIGHT, x, y+1, this))
+	if(GameObjectManager::GetInstance().PlaceMeeting(TREADMILL_RIGHT, x, y+1, this))
 		x+=1;
-	if(PlaceMeeting(HORIZONTAL_PLATFORM, x, y+1, this))
+
+	//Platforms
+	if(vertical_dir)
 	{
-		if(PlaceFree(x+velX,y,boundUp,boundDown,boundLeft,boundRight,GetInstanceID(),exceptionIDs,exceptionIDsSize))
-			x+=velX;
+		GameObject *horizontal_platform;
+		if(GameObjectManager::GetInstance().PlaceMeeting(HORIZONTAL_PLATFORM, x, y+1, this,horizontal_platform))
+		{
+			if(GameObjectManager::GetInstance().PlaceFree(x+horizontal_platform->GetVelX(),y,boundUp,boundDown,boundLeft,boundRight,GetInstanceID(),exceptionIDs,exceptionIDsSize))
+				x+=horizontal_platform->GetVelX();
+		}
+		GameObject *vertical_platform;
+		if(GameObjectManager::GetInstance().PlaceMeeting(VERTICAL_PLATFORM, x ,y+1, this, vertical_platform))
+		{
+			//if(PlaceFree(x, y+vertical_platform->GetVelY(), boundUp,boundDown,boundLeft,boundRight,GetInstanceID(),exceptionIDs,exceptionIDsSize))
+				y+=vertical_platform->GetVelY();
+		}
 	}
+	else
+	{
+		GameObject *horizontal_platform;
+		if(GameObjectManager::GetInstance().PlaceMeeting(HORIZONTAL_PLATFORM, x, y-1, this,horizontal_platform))
+		{
+			if(GameObjectManager::GetInstance().PlaceFree(x+horizontal_platform->GetVelX(),y,boundUp,boundDown,boundLeft,boundRight,GetInstanceID(),exceptionIDs,exceptionIDsSize))
+				x+=horizontal_platform->GetVelX();
+		}
+		GameObject *vertical_platform;
+		if(GameObjectManager::GetInstance().PlaceMeeting(VERTICAL_PLATFORM, x ,y-1, this, vertical_platform))
+		{
+			//if(PlaceFree(x, y+vertical_platform->GetVelY(), boundUp,boundDown,boundLeft,boundRight,GetInstanceID(),exceptionIDs,exceptionIDsSize))
+				y+=vertical_platform->GetVelY();
+		}
+	}
+
 	if(vertical_dir)
 	{
 		if(collisionWallDown)
@@ -115,7 +124,7 @@ void Player::Update()
 	//Stuff that depends on buttons being pressed down.
 	Jump();
 	Move();	
-	Blast();
+	Shoot();
 	InvertGravity();
 	
 	//Maximum velocity for going down and going up.
@@ -148,30 +157,26 @@ void Player::Update()
 }
 void Player::UpdateEnd()
 {}
-
 void Player::Draw()
 {
 	sprite->Draw(x,y);
-	al_draw_filled_rectangle(x-boundLeft,y-boundUp,x+boundRight,y+boundDown,al_map_rgb(0,0,0));
+	//al_draw_filled_rectangle(x-boundLeft-_camX,y-boundUp-_camY,x+boundRight-_camX,y+boundDown-_camY,al_map_rgb(255,0,255));
 }
-
 void Player::Kill()
 {
+	_deaths++;
+	SetAlive(false);
 	SoundManager::GetInstance().Play(SPLAT);
 	//Create normal blood
 	for(int i=0; i<125; i++)
-		CreateObject(100,x,y);
+		GameObjectManager::GetInstance().CreateObject(100,x,y);
 	//create head, torso, arms and feet
-	CreateObject(101,x,y);
-	CreateObject(102,x,y);
-	Destroy();
+	GameObjectManager::GetInstance().CreateObject(101,x,y);
+	GameObjectManager::GetInstance().CreateObject(102,x,y);
 }
-
 void Player::Destroy()
 {
-	GameObject::Destroy();
 }
-
 void Player::Collided(GameObject *other)
 {
 	if(other->GetID()==WALL || other->GetID()==WALL_FADE || other->GetID()==SAVE || other->GetID() == VERTICAL_PLATFORM ||
@@ -203,7 +208,6 @@ void Player::Collided(GameObject *other)
 	else if(other->GetID() == SPIKE || other->GetID() == SAW)
 	{
 		Kill();
-		SetAlive(false);
 	}
 }
 
@@ -261,8 +265,10 @@ inline void Player::Move()
 		sprite->SetDirection(false);
 		dir=false;
 		idle=false;
-		if(PlaceFree(x-3,y,boundUp-1, boundDown-2, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs, exceptionIDsSize))
+		if(GameObjectManager::GetInstance().PlaceFree(x-3,y,boundUp, boundDown, boundLeft, boundRight, GetInstanceID(), exceptionIDs, exceptionIDsSize))
 			x-=3;
+		else
+			idle=true;
 
 	}
 
@@ -272,17 +278,21 @@ inline void Player::Move()
 		sprite->SetDirection(true);
 		idle=false;
 		dir=true;
-		if(PlaceFree(x+3,y, boundUp-1, boundDown-1, boundLeft+1, boundRight+1, GetInstanceID(), exceptionIDs, exceptionIDsSize))
+		if(GameObjectManager::GetInstance().PlaceFree(x+3,y, boundUp, boundDown, boundLeft, boundRight, GetInstanceID(), exceptionIDs, exceptionIDsSize))
 			x+=3;
+		else
+			idle=true;
 	}
 }
-inline void Player::Blast()
+inline void Player::Shoot()
 {
-	//Shoot
 	if(_keys_pressed[X_KEY])
 	{
 		SoundManager::GetInstance().Play(SHOOT);
-		Shoot(dir, x, y, velX);
+		if(dir)
+			GameObjectManager::GetInstance().CreateDynamicObject(95,x+14,y-2,velX+10,0);
+		else
+			GameObjectManager::GetInstance().CreateDynamicObject(95,x-14,y-1,velX-10,0);
 	}
 }
 inline void Player::InvertGravity()

@@ -63,7 +63,7 @@ void Blood::Destroy()
 
 void Blood::Collided(GameObject *other)
 {
-	if(other->GetID() == WALL || other->GetID() == WALL_FADE)
+	if(other->GetID() == WALL || other->GetID() == WALL_FADE || other->GetID() == TREADMILL_LEFT || other->GetID() == TREADMILL_RIGHT)
 	{
 		collided=true;
 		velX=0;
