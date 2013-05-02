@@ -1,4 +1,6 @@
 #include "FontManager.h"
+#include "DisplayManager.h"
+#include <allegro5/allegro_native_dialog.h>
 
 
 FontManager& FontManager::GetInstance()

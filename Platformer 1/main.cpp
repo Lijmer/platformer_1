@@ -3,25 +3,16 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_image.h>
-#include <allegro5/allegro_ttf.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_acodec.h>
-#include <allegro5/allegro_audio.h>
-//Basic Stuff
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include <algorithm>
-#include <math.h>
-
+#include "globals.h"
 //Backgroundstuff Objects
 #include "FileManager.h"
 #include "SoundManager.h"
-#include "imageManager.h"
+#include "ImageManager.h"
 #include "FontManager.h"
 #include "DisplayManager.h"
 #include "GameObjectManager.h"
+
+#include <iostream>
 
 //Function that is used to calculate the time it takes to run a certain piece of code
 inline double diffclock(clock_t clock1, clock_t clock2)
@@ -78,7 +69,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	}
 	if(!DisplayManager::GetInstance().CreateDisplay()) //Create display, if it fails to create a display, show error message en terminate (error message is in function)
 		return -1;
-
+	
 	al_install_keyboard();
 	al_init_primitives_addon();
 
@@ -88,7 +79,6 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	FontManager::GetInstance().Init();
 	ImageManager::GetInstance().Init();
 	SoundManager::GetInstance().Init();
-
 	GameObjectManager::GetInstance().Init();
 	//Play Music
 	//SoundManager::GetInstance().Play(50);
@@ -175,7 +165,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 					DisplayManager::GetInstance().ChangeState();
 				break;
 			case ALLEGRO_KEY_ALTGR:
-				//StressTest();
+				GameObjectManager::GetInstance().StressTest();
 				break;
 
 			}
@@ -226,12 +216,13 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 		{
 			render = true;			
 			UpdateTime();
-			GameObjectManager::GetInstance().Update();
+			/*GameObjectManager::GetInstance().Update();
 			GameObjectManager::GetInstance().Collisions();
 			GameObjectManager::GetInstance().Clean();
 			GameObjectManager::GetInstance().ActivateDeactivate();
 			GameObjectManager::GetInstance().MotionlessParticles();
-			
+			*/
+			GameObjectManager::GetInstance().TimerEvent();
 			_camX_prev=_camX;
 			_camY_prev=_camY;
 			//stillParticlesSize = stillParticles.size();
@@ -259,9 +250,9 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			al_clear_to_color(al_map_rgb(192,192,192));
 			
 			//BEGIN PROJECT RENDER=============================================================================================
+			//Draw all the objects
 			GameObjectManager::GetInstance().Draw();
-
-
+			//Draw text
 			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,5,0,"FPS: %f", gameFPS);
 			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,85,0,"_camX: %i\t_camY: %i", _camX, _camY);
 			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,105,0,"hours: %i\tminutes: %i\tseconds: %i\tsteps: %i", _hours, _minutes, _seconds, _steps);

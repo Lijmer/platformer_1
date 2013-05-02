@@ -1,5 +1,6 @@
 #include "DisplayManager.h"
-
+#include <allegro5/allegro_native_dialog.h>
+#include "globals.h"
 
 DisplayManager::DisplayManager(void)
 {

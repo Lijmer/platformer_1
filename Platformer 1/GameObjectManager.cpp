@@ -1,5 +1,10 @@
 #include "GameObjectManager.h"
 
+#include <algorithm>
+#include <iostream>
+#include "globals.h"
+#include "FontManager.h"
+
 #include "GameObject.h"
 #include "DynamicObject.h"
 #include "Particle.h"
@@ -127,7 +132,7 @@ void GameObjectManager::Init()
 	staticCanvas = al_create_bitmap(1024,768);
 	stillParticleCanvas = al_create_bitmap(1024,768);
 }
-void GameObjectManager::Update()
+inline void GameObjectManager::Update()
 {
 	//manage objects
 	if(dynamicObjects.capacity() > dynamicObjects.size()+100)
@@ -144,7 +149,7 @@ void GameObjectManager::Update()
 	for(particleIter=particles.begin(); particleIter!=particles.end(); particleIter++)
 		(*particleIter)->Update();
 }
-void GameObjectManager::Collisions()
+inline void GameObjectManager::Collisions()
 {
 	for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
 	{
@@ -180,7 +185,7 @@ void GameObjectManager::Collisions()
 		}
 	}
 }
-void GameObjectManager::Clean()
+inline void GameObjectManager::Clean()
 {
 	for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); )
 	{
@@ -205,10 +210,8 @@ void GameObjectManager::Clean()
 		else
 			++iter3;
 	}
-
-	MaxParticles();
 }
-void GameObjectManager::ActivateDeactivate()
+inline void GameObjectManager::ActivateDeactivate()
 {
 	if(_camX!=_camX_prev || _camY!=_camY_prev)
 	{
@@ -297,19 +300,34 @@ void GameObjectManager::ActivateDeactivate()
 		}
 	}
 }
-void GameObjectManager::MotionlessParticles()
+inline void GameObjectManager::MotionlessParticles()
 {
 	for(particleIter=particles.begin(); particleIter!=particles.end(); )
 	{
-		if((*particleIter)->GetVelX() == 0 && (*particleIter)->GetVelY() == 0)
+		//if((*particleIter)->GetVelX() >= -0.1 && (*particleIter)->GetVelX() <= 0.1 && (*particleIter)->GetVelY() >= -0.1 && (*particleIter)->GetVelY() <= 0.1)
+		if((*particleIter)->GetCollided())
 		{
-			stillParticlesBuffer.push_back((*particleIter));
+			if((*particleIter)->GetX() >= _camX && (*particleIter)->GetX() <= _camX+_SCREEN_WIDTH &&
+				(*particleIter)->GetY() >= _camY && (*particleIter)->GetY() <= _camY+_SCREEN_HEIGHT )
+			{
+				stillParticlesBuffer.push_back((*particleIter));
+			}
+			else
+			{
+				deactivatedParticles.push_back((*particleIter));
+			}
+			particleIter = particles.erase(particleIter);
+		}
+		else if((*particleIter)->GetX() < _camX || (*particleIter)->GetX() > _camX+_SCREEN_WIDTH ||
+				(*particleIter)->GetY() < _camY || (*particleIter)->GetY() > _camY+_SCREEN_HEIGHT )
+		{
+			delete (*particleIter);
 			particleIter = particles.erase(particleIter);
 		}
 		else
 			particleIter++;
 	}
-	if(stillParticlesBuffer.size() >= 125)
+	if(stillParticlesBuffer.size() >= 100)
 	{
 		for(particleIter = stillParticlesBuffer.begin(); particleIter!=stillParticlesBuffer.end(); )
 		{
@@ -325,13 +343,19 @@ void GameObjectManager::MotionlessParticles()
 		al_clear_to_color(al_map_rgba(0,0,0,0));
 		for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end(); particleIter++)
 		{
-			if((*particleIter)->GetX() > _camX && (*particleIter)->GetX() < _camX + _SCREEN_WIDTH &&
-				(*particleIter)->GetY() > _camY && (*particleIter)->GetY() < _camY + _SCREEN_HEIGHT)
-			{
-				(*particleIter)->Draw();
-			}
+			//if((*particleIter)->GetX() >= _camX && (*particleIter)->GetX() <= _camX + _SCREEN_WIDTH &&
+			//	(*particleIter)->GetY() >= _camY && (*particleIter)->GetY() <= _camY + _SCREEN_HEIGHT)
+			(*particleIter)->Draw();
 		}
 	}
+}
+void GameObjectManager::TimerEvent()
+{
+	Update();
+	Collisions();
+	Clean();
+	ActivateDeactivate();
+	MotionlessParticles();
 }
 void GameObjectManager::Draw()
 {
@@ -343,13 +367,14 @@ void GameObjectManager::Draw()
 		(*r_iter)->Draw();
 
 	//Draw Particles
+
+	al_draw_bitmap(stillParticleCanvas,0,0,0);
+
 	for(particleIter = stillParticlesBuffer.begin(); particleIter!=stillParticlesBuffer.end(); particleIter++)
 		(*particleIter)->Draw();
 
 	for(particleIter = particles.begin(); particleIter!=particles.end(); particleIter++)
 		(*particleIter)->Draw();
-
-	al_draw_bitmap(stillParticleCanvas,0,0,0);
 
 	
 
@@ -852,23 +877,6 @@ void GameObjectManager::DeleteDynamicObjects(void)
 		iter = deactivatedDynamicObjects.erase(iter);
 	}
 }
-void GameObjectManager::MaxParticles()
-{
-	while(particles.size()>1500)
-	{
-		particleIter = particles.begin();
-		(*particleIter)->Destroy();
-		delete (*particleIter);
-		particleIter=particles.erase(particleIter);
-	}
-	while(deactivatedParticles.size()>5000)
-	{
-		particleIter = deactivatedParticles.begin();
-		(*particleIter)->Destroy();
-		delete (*particleIter);
-		particleIter=deactivatedParticles.erase(particleIter);
-	}
-}
 void GameObjectManager::ReserveSpace(char ID, int size)
 {
 	if(ID==0) //Dynamic Objects
@@ -895,10 +903,12 @@ void GameObjectManager::ReserveSpace(char ID, int size)
 }
 void GameObjectManager::StressTest()
 {
-	for(unsigned int i=0; i<500000; i++)
+	if(player == NULL)
+		return;
+	for(unsigned int i=0; i<10000; i++)
 	{
 		blood = new Blood();
-		blood->Init(_SCREEN_WIDTH/2,_SCREEN_HEIGHT/2,rand()%260,((float)rand()/(float)RAND_MAX)*10+5);
+		blood->Init(player->GetX(),player->GetY(),rand()%360,((float)rand()/(float)RAND_MAX)*10+5);
 		particles.push_back(blood);
 	}
 }

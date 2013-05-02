@@ -12,7 +12,6 @@ public:
 	void Destroy();
 	void Collided(GameObject *other);
 private:
-	bool collided;
 	float gravity;
 	unsigned short direction;
 };

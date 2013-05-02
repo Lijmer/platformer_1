@@ -6,7 +6,7 @@ const float PI = (float)3.141592;
 const int _SCREEN_WIDTH = 1024;
 const int _SCREEN_HEIGHT = 768;
 
-enum _OBJECT_ID
+enum OBJECT_ID
 {
 	UNDEFINED=-1,
 	PLAYER=0,
@@ -32,7 +32,7 @@ enum COLLISION_TYPE{
 	PPC		// = Pixel Perfect Collision
 };
 
-enum _KEYS
+enum KEYS
 {
 	UP=0,
 	DOWN,
@@ -53,14 +53,13 @@ enum SND
 	SPLAT
 };
 
-enum _DIFFICULTY
+enum DIFFICULTY
 {
 	EASY=0,
 	MEDIUM,
 	HARD,
 	IMPOSSIBLE
 };
-
 
 extern float _monitorWidth, _monitorHeight, _scaleScreen;
 

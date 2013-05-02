@@ -1,9 +1,7 @@
 #pragma once
-#include "globals.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
-#include <iostream>
 class SoundManager
 {
 public:
@@ -12,7 +10,6 @@ public:
 
 	void Init();
 	void Play(int num);
-
 
 private:
 	SoundManager(void);

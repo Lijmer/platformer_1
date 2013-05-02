@@ -1,4 +1,5 @@
 #include "DynamicObject.h"
+#include <math.h>
 
 DynamicObject::DynamicObject(void)
 {

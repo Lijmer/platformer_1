@@ -11,7 +11,6 @@ public:
 	void Destroy();
 	void Collided(GameObject *other);
 protected:
-	bool collided;
 	float gravity;
 	bool kind;
 	bool frame;

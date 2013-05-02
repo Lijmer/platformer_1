@@ -1,12 +1,6 @@
 #pragma once
-#include "globals.h"
-#include "DisplayManager.h"
 #include <allegro5/allegro.h>
-#include <allegro5/allegro_image.h>
-#include <allegro5/allegro_native_dialog.h>
-#include <iostream>
 
-#include <string>
 
 class ImageManager
 {

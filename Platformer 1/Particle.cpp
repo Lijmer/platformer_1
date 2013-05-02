@@ -1,6 +1,5 @@
 #include "Particle.h"
 
-
 Particle::Particle(void)
 {
 	x=0;
@@ -8,6 +7,7 @@ Particle::Particle(void)
 	velX=0;
 	velY=0;
 	alive = true;
+	collided = false;
 	image = NULL;
 }
 
@@ -108,13 +108,13 @@ void Particle::Collided(GameObject *other)
 
 void Particle::Activate()
 {
-	if(x>_camX-64 && x<_camX+_SCREEN_WIDTH+64 && y>_camY-64 && y<_camY+_SCREEN_HEIGHT+64)
+	if(x>=_camX && x<=_camX+_SCREEN_WIDTH && y>=_camY && y<=_camY+_SCREEN_HEIGHT)
 		activated = true;
 }
 
 void Particle::Deactivate()
 {
-	if(x<_camX-64 || x>_camX+_SCREEN_WIDTH+64 || y<_camY-64 || y>_camY+_SCREEN_HEIGHT+64)
+	if(x<_camX || x>_camX+_SCREEN_WIDTH || y<_camY || y>_camY+_SCREEN_HEIGHT)
 		activated = false;
 }
 

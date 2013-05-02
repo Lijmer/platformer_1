@@ -3,9 +3,6 @@
 
 Blood::Blood(void)
 {
-	collided = false;
-	SetAlive(true);
-
 	gravity = .62;
 	x = 0;
 	y = 0;
@@ -22,10 +19,10 @@ Blood::~Blood(void)
 void Blood::Init(float x, float y, float dir, float spd)
 {
 	image = ImageManager::GetInstance().GetImage(100);
-	frameCount=0;
-	frameDelay=rand()%5+5;
+	//frameCount=0;
+	//frameDelay=rand()%5+5;
 	Particle::init(x,y,(cos(dir*PI/180.0))*spd,(sin(dir*PI/float(180.0)))*spd);
-	direction = rand()%360;
+	//direction = rand()%360;
 }
 
 void Blood::Update()

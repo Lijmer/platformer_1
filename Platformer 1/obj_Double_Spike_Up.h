@@ -1,6 +1,5 @@
 #pragma once
 #include "DynamicObject.h"
-#include "ImageManager.h"
 class obj_Double_Spike_Up : public DynamicObject
 {
 public:

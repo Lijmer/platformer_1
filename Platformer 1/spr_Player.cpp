@@ -1,5 +1,6 @@
 #include "spr_Player.h"
-
+#include "ImageManager.h"
+#include <allegro5/allegro_native_dialog.h>
 
 spr_Player::spr_Player(void)
 {

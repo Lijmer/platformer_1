@@ -1,4 +1,5 @@
 #include "SoundManager.h"
+#include "globals.h"
 
 SoundManager &SoundManager::GetInstance()
 {

@@ -1,9 +1,6 @@
 #pragma once
 #include "DynamicObject.h"
-#include "spr_Player.h"
-#include "SoundManager.h"
-#include "GameObjectManager.h"
-#include <time.h>
+class spr_Player;
 
 class Player : public DynamicObject
 {

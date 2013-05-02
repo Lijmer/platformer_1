@@ -1,13 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <algorithm>
-#include "globals.h"
-
-#include "FontManager.h"
-
-
-
+#include <allegro5/allegro.h>
 
 class GameObject;
 class DynamicObject;
@@ -43,6 +37,7 @@ class Blood;
 class Blood_Head;
 class Blood_Torso;
 
+
 class GameObjectManager
 {
 public:
@@ -50,13 +45,9 @@ public:
 	~GameObjectManager(void);
 
 	static GameObjectManager& GetInstance();
-
+		
 	void Init();
-	void Update();
-	void Collisions();
-	void Clean();
-	void ActivateDeactivate();
-	void MotionlessParticles();
+	void TimerEvent();
 	void Draw();
 
 	bool PlaceFree(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, 
@@ -73,11 +64,15 @@ public:
 	obj_Double_Spike_Up* Create_obj_Double_Spike_Up(float x,float y);
 	void DeleteDynamicObjects(void);
 	void ReserveSpace(char ID, int size);
-	void MaxParticles();
-	//void Shoot(bool dir, float x, float y, float velX);
 	void StressTest();
 
 private:
+	void Update();
+	void Collisions();
+	void Clean();
+	void ActivateDeactivate();
+	void MotionlessParticles();
+
 	#pragma region vectors
 	std::vector<DynamicObject *> dynamicObjects;
 	std::vector<DynamicObject *> pendingDynamicObjects;

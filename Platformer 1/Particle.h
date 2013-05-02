@@ -1,5 +1,7 @@
 #pragma once
 #include "GameObject.h"
+#include <math.h>
+
 class Particle
 {
 public:
@@ -22,6 +24,7 @@ public:
 	float GetVelX()		{return velX;}
 	float GetVelY()		{return velY;}
 	bool GetActivated()	{return activated;}
+	bool GetCollided()	{return collided;}
 
 	void SetAlive(bool alive)		{Particle::alive = alive;}
 	
@@ -30,6 +33,7 @@ protected:
 	float y;
 	float velX;
 	float velY;
+	bool collided;
 
 	ALLEGRO_BITMAP *image;
 

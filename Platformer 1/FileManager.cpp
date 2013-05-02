@@ -1,46 +1,48 @@
 #include "FileManager.h"
-
+#include <allegro5/allegro_native_dialog.h>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <vector>
+#include "DisplayManager.h"
+#include "GameObject.h"
+#include "GameObjectManager.h"
+#include <iostream>
 
 FileManager::FileManager()
 {
+	std::cout << "FileManager constructor" << std::endl;
 	//Save File structure:
 	//active,level,difficulty,x,y,velX,velY,_camX,_camY,dir,vertical_dir,gravity,jump,idle,deaths,hours,minutes,seconds,steps;
 	const int MAX_SAVE=3;
 	//Open the file
-	fstream saveFile;
+	std::fstream saveFile;
 	saveFile.open("save/save.sav");
 
 	//If the file doesn't exist, it will create a new file and write default values to it
 	if(!saveFile.is_open())
 	{
 		saveFile.close();
-		ofstream defaultSaveFile;
+		std::ofstream defaultSaveFile;
 		defaultSaveFile.open("save/save.sav");
 		for(int i=0; i<MAX_SAVE; i++)
 		{
-			defaultSaveFile << "0,0,0,0,0,96,726,0,0,1,1,0,1,1,0,0,0,0,0;" << endl;
+			defaultSaveFile << "0,0,0,96,725.919,0,0,0,0,1,1,0,1,1,0,0,0,0,0;" << std::endl;
 		}
 		defaultSaveFile.close();
 		saveFile.open("save/save.sav");
 	}
 
 	//Declare variables to read the file
-	string temp;
-	vector<string> save;
-	vector<string>::iterator iter;
+	std::string temp;
+	std::vector<std::string> save;
+	std::vector<std::string>::iterator iter;
 	//Read the file
-	while(getline(saveFile,temp))
+	while(std::getline(saveFile,temp))
 	{
 		save.push_back(temp);
 	}
 	
-	for(iter = save.begin(); iter!=save.end(); iter++)
-	{
-		cout << (*iter) << endl;
-	}
-
-	//cout << save[0];
-
 	//Close the file
 	saveFile.close();
 }
@@ -68,7 +70,7 @@ void FileManager::LoadLevel(char levelNum)
 
 
 	//Create ifstream object, this will be used to read data out of the file
-	ifstream levelFile;
+	std::ifstream levelFile;
 	
 	//Open the file based on the value passed in
 	if(levelNum == 0)
@@ -80,16 +82,16 @@ void FileManager::LoadLevel(char levelNum)
 	}
 
 	//Declaring some variables and iterators
-	string temp;
-	vector<string> lvl;
-	vector<string>::iterator iter;
-	vector<string>::iterator iter2;
+	std::string temp;
+	std::vector<std::string> lvl;
+	std::vector<std::string>::iterator iter;
+	std::vector<std::string>::iterator iter2;
 
 	//Declaring variables, which setting that will be read from the [properties] part will be stored.
 	int lvlWidth=-1, lvlHeight=-1, tileWidth=-1, tileHeight=-1;
 
 	//READ ALL THE DATA!
-	while(getline(levelFile,temp))
+	while(std::getline(levelFile,temp))
 		lvl.push_back(temp);
 
 	temp = "";
@@ -209,7 +211,7 @@ void FileManager::LoadLevel(char levelNum)
 							}
 							else
 							{
-								string error = "Unknown object ID: " + temp;
+								std::string error = "Unknown object ID: " + temp;
 								al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "FileManager", error.c_str() , "OkSok", 0);
 							}
 							if(++x>=lvlWidth)
@@ -235,13 +237,13 @@ void FileManager::RestartLevel(char levelNum)
 
 	//This does he exact same thing as LoadLevel, but it only creates DynamicObjects
 	GameObjectManager::GetInstance().DeleteDynamicObjects();
-	ifstream levelFile;
+	std::ifstream levelFile;
 	if(levelNum == 0)
 		levelFile.open("levels/level1.lvl");
-	string temp;
-	vector<string> lvl;
-	vector<string>::iterator iter;
-	vector<string>::iterator iter2;
+	std::string temp;
+	std::vector<std::string> lvl;
+	std::vector<std::string>::iterator iter;
+	std::vector<std::string>::iterator iter2;
 
 	int lvlWidth=-1, lvlHeight=-1, tileWidth=-1, tileHeight=-1;
 
@@ -288,7 +290,7 @@ void FileManager::RestartLevel(char levelNum)
 		else if((*iter) == "[map]")
 		{
 			int x=0,y=0;
-			string temp;
+			std::string temp;
 			for(iter2 = iter+1; iter2!=lvl.end(); iter2++)
 			{
 				if((*iter2) == ";")
@@ -359,7 +361,7 @@ void FileManager::RestartLevel(char levelNum)
 	//Load Player stuff*****************************************************************************************************
 	
 	//active,level,difficulty,_camX,_camY,x,y,velX,velY,dir,vertical_dir,gravity,jump,idle,deaths,hours,minutes,seconds,steps;
-	ifstream saveFile;
+	std::ifstream saveFile;
 	saveFile.open("save/save.sav");
 	if(!saveFile.is_open())
 	{
@@ -369,7 +371,7 @@ void FileManager::RestartLevel(char levelNum)
 	}
 
 	temp = "";
-	vector<string> save;
+	std::vector<std::string> save;
 	//vector<string>::iterator iter;
 
 	while(getline(saveFile,temp))
@@ -422,16 +424,12 @@ void FileManager::RestartLevel(char levelNum)
 					playerDir=false;
 				else if(temp=="1")
 					playerDir=true;
-				else
-					cout << "ERROR!";
 				break;
 			case 10:
 				if(temp == "0")
 					playerVerticalDir=false;
 				else if(temp=="1")
 					playerVerticalDir=true;
-				else
-					cout << "ERROR!";
 				//player->SetVerticalDir(::atoi(temp.c_str()));
 				break;
 			case 11:
@@ -463,7 +461,7 @@ void FileManager::Save()
 	//active,level,difficulty,_camX,_camY,x,y,velX,velY,dir,vertical_dir,gravity,jump,idle,deaths,hours,minutes,seconds,steps;
 
 	//Create an ifstream objec to read the file
-	ifstream isaveFile;
+	std::ifstream isaveFile;
 	isaveFile.open("save/save.sav");
 	//Check if it opened
 	if(!isaveFile.is_open())
@@ -472,9 +470,9 @@ void FileManager::Save()
 		return;
 	}
 	//Declare variables to read the file
-	string temp;
-	vector<string> save;
-	vector<string>::iterator iter;
+	std::string temp;
+	std::vector<std::string> save;
+	std::vector<std::string>::iterator iter;
 	//Read the file
 	while(getline(isaveFile,temp))
 	{
@@ -482,7 +480,7 @@ void FileManager::Save()
 	}
 
 	isaveFile.close();	
-	ofstream osaveFile;
+	std::ofstream osaveFile;
 	osaveFile.open("save/save.sav");
 
 	std::stringstream ss;
@@ -491,11 +489,7 @@ void FileManager::Save()
 	bool playerDir=false, playerVerticalDir=false, playerJump=false, playerIdle=false;
 	
 	GameObjectManager::GetInstance().GetPlayerData(playerX, playerY, playerVelX, playerVelY, playerGravity, playerDir, playerVerticalDir, playerJump, playerIdle);
-	/*
-	ss << 1 << "," << _currentLevel << "," << _difficulty << "," << _camX << "," << _camY << "," << player->GetX() << "," << player->GetY() << "," 
-		<< player->GetVelX() << "," << player->GetVelY() << ","  << player->GetDir() << "," << player->GetVerticalDir() << "," << player->GetGravity() << ","
-		<< player->GetJump() << "," << player->GetIdle() << "," << _deaths << "," << _hours << "," << _minutes << "," << _seconds << "," << _steps << ";";
-	*/
+
 	ss << 1 << "," << _currentLevel << "," << _difficulty << "," << _camX << "," << _camY << "," << playerX << "," << playerY << "," << playerVelX << ","
 		<< playerVelY << "," << playerDir << "," << playerVerticalDir << "," << playerGravity << "," << playerJump << "," << playerIdle << "," << _deaths << ","
 		<< _hours << "," << _minutes << "," << _seconds << "," << _steps << ";";
@@ -506,7 +500,7 @@ void FileManager::Save()
 	ss.str(std::string());
 	
 	for(iter = save.begin(); iter!=save.end();iter++)
-		ss << (*iter) << endl;
+		ss << (*iter) << std::endl;
 
 	osaveFile << ss.str();
 
@@ -516,7 +510,7 @@ void FileManager::Save()
 void FileManager::Load()
 {
 	//active,level,difficulty,_camX,_camY,x,y,velX,velY,dir,vertical_dir,gravity,jump,idle,deaths,hours,minutes,seconds,steps;
-	ifstream saveFile;
+	std::ifstream saveFile;
 	saveFile.open("save/save.sav");
 	if(!saveFile.is_open())
 	{
@@ -524,11 +518,11 @@ void FileManager::Load()
 		return;
 	}
 
-	string temp;
-	vector<string> save;
-	vector<string>::iterator iter;
+	std::string temp;
+	std::vector<std::string> save;
+	std::vector<std::string>::iterator iter;
 
-	while(getline(saveFile,temp))
+	while(std::getline(saveFile,temp))
 	{
 		save.push_back(temp);
 	}
@@ -577,16 +571,12 @@ void FileManager::Load()
 					playerDir = false;
 				else if(temp=="1")
 					playerDir = true;
-				else
-					cout << "ERROR!";
 				break;
 			case 10:
 				if(temp == "0")
 					playerVerticalDir = false;
 				else if(temp=="1")
 					playerVerticalDir = true;
-				else
-					cout << "ERROR!";
 				//player->SetVerticalDir(::atoi(temp.c_str()));
 				break;
 			case 11:

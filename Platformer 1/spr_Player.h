@@ -1,7 +1,6 @@
 #pragma once
 #include "BaseSprite.h"
-#include "ImageManager.h"
-#include <iostream>
+
 class spr_Player : public BaseSprite
 {
 public:

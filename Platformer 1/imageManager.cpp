@@ -1,5 +1,10 @@
 #include "imageManager.h"
 
+#include "DisplayManager.h"
+#include <allegro5/allegro_image.h>
+#include <allegro5/allegro_native_dialog.h>
+#include "globals.h"
+#include <string>
 
 ImageManager::ImageManager(void)
 {
