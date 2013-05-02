@@ -7,11 +7,9 @@
 #include "DisplayManager.h"
 #include "GameObject.h"
 #include "GameObjectManager.h"
-#include <iostream>
 
 FileManager::FileManager()
 {
-	std::cout << "FileManager constructor" << std::endl;
 	//Save File structure:
 	//active,level,difficulty,x,y,velX,velY,_camX,_camY,dir,vertical_dir,gravity,jump,idle,deaths,hours,minutes,seconds,steps;
 	const int MAX_SAVE=3;

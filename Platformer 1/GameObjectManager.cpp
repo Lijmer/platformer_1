@@ -1,7 +1,6 @@
 #include "GameObjectManager.h"
 
 #include <algorithm>
-#include <iostream>
 #include "globals.h"
 #include "FontManager.h"
 

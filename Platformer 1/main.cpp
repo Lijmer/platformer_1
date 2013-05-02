@@ -12,7 +12,6 @@
 #include "DisplayManager.h"
 #include "GameObjectManager.h"
 
-#include <iostream>
 
 //Function that is used to calculate the time it takes to run a certain piece of code
 inline double diffclock(clock_t clock1, clock_t clock2)
