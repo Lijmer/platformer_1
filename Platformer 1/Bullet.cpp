@@ -30,7 +30,7 @@ void Bullet::Update()
 	x_previous = x;
 	y_previous = y;
 	x+=velX;
-	if(x<_camX || x>_camX+_SCREEN_WIDTH || y<_camY || y>_camY+_SCREEN_HEIGHT)
+	if(x<_camX-32 || x>_camX+_SCREEN_WIDTH+32 || y<_camY-32 || y>_camY+_SCREEN_HEIGHT+32)
 		SetAlive(false);
 }
 

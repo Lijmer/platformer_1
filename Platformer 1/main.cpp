@@ -36,6 +36,14 @@ inline void UpdateTime()
 		}
 	}
 }
+inline void ResetKeys()
+{
+	for(int i=0; i<_KEYS_SIZE; i++)
+	{
+		_keys_pressed[i]=false;
+		_keys_released[i]=false;
+	}
+}
 
 int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  This applications doesn't take parameters...
 {
@@ -95,14 +103,12 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 
 	al_start_timer(timer);
 	gameTime = al_current_time();
-	#pragma endregion Setting up the game before entering the loop (declaring variables, initing allegro, installing addons, registering event sources)
-	
+	#pragma endregion Setting up the game before entering the loop (declaring variables, initing allegro, installing addons, registering event sources)	
 	#pragma region Main Game Loop
 	while(!done)
 	{
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
-		
 		#pragma region Input
 		if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
@@ -131,13 +137,14 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 				_keys_pressed[SPACE] = true;
 				_keys[SPACE] = true;
 				break;
-			case ALLEGRO_KEY_Z:
-				_keys_pressed[Z_KEY]=true;
-				_keys[Z_KEY] = true;
+			case ALLEGRO_KEY_L:
+				_keys_pressed[L_KEY]=true;
+				_keys[L_KEY]=true;
+				FileManager::GetInstance().Load();
 				break;
-			case ALLEGRO_KEY_X:
-				_keys_pressed[X_KEY]=true;
-				_keys[X_KEY] = true;
+			case ALLEGRO_KEY_Q:
+				_keys_pressed[Q_KEY]=true;
+				_keys[Q_KEY]=true;
 				break;
 			case ALLEGRO_KEY_R:
 				_keys_pressed[R_KEY]=true;
@@ -146,24 +153,27 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 				_camX_prev=-1;
 				_camY_prev=-1;
 				break;
-			case ALLEGRO_KEY_Q:
-				if(GameObjectManager::GetInstance().D_object_exists(PLAYER))
-				{
-					GameObjectManager::GetInstance().KillPlayer();
-				}
+			case ALLEGRO_KEY_X:
+				_keys_pressed[X_KEY]=true;
+				_keys[X_KEY] = true;
 				break;
-			case ALLEGRO_KEY_L:
-				FileManager::GetInstance().Load();
-				break;
-			case ALLEGRO_KEY_ALT:
-				_keys[ALT] = true;
-				_keys_pressed[ALT]=true;
+			case ALLEGRO_KEY_Z:
+				_keys_pressed[Z_KEY]=true;
+				_keys[Z_KEY] = true;
 				break;
 			case ALLEGRO_KEY_ENTER:
+				_keys_pressed[ENTER]=true;
+				_keys[ENTER]=true;
 				if(_keys[ALT])
 					DisplayManager::GetInstance().ChangeState();
 				break;
+			case ALLEGRO_KEY_ALT:
+				_keys_pressed[ALT]=true;
+				_keys[ALT] = true;
+				break;
 			case ALLEGRO_KEY_ALTGR:
+				_keys_pressed[ALTGR]=true;
+				_keys[ALTGR]=true;
 				GameObjectManager::GetInstance().StressTest();
 				break;
 
@@ -177,30 +187,56 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 				done = true;
 				break;
 			case ALLEGRO_KEY_LEFT:
+				_keys_released[LEFT]=true;
 				_keys[LEFT] = false;
 				break;
 			case ALLEGRO_KEY_RIGHT:
+				_keys_released[RIGHT]=true;
 				_keys[RIGHT] = false;
 				break;
 			case ALLEGRO_KEY_UP:
+				_keys_released[UP]=true;
 				_keys[UP] = false;
 				break;
 			case ALLEGRO_KEY_DOWN:
+				_keys_released[DOWN]=true;
 				_keys[DOWN] = false;
 				break;
 			case ALLEGRO_KEY_SPACE:
+				_keys_released[SPACE]=true;
 				_keys[SPACE] = false;
 				break;
-			case ALLEGRO_KEY_Z:
-				_keys_released[Z_KEY]=true;
-				_keys[Z_KEY] = false;
+			case ALLEGRO_KEY_L:
+				_keys_released[L_KEY]=true;
+				_keys[L_KEY]=false;
+				break;
+			case ALLEGRO_KEY_Q:
+				_keys_released[Q_KEY]=true;
+				_keys[Q_KEY]=false;
+				break;
+			case ALLEGRO_KEY_R:
+				_keys_released[R_KEY]=true;
+				_keys[R_KEY]=false;
 				break;
 			case ALLEGRO_KEY_X:
 				_keys_released[X_KEY]=true;
 				_keys[X_KEY] = false;
 				break;
+			case ALLEGRO_KEY_Z:
+				_keys_released[Z_KEY]=true;
+				_keys[Z_KEY] = false;
+				break;
+			case ALLEGRO_KEY_ENTER:
+				_keys_released[ENTER]=true;
+				_keys[ENTER]=false;
+				break;
 			case ALLEGRO_KEY_ALT:
+				_keys_released[ALT]=true;
 				_keys[ALT] = false;
+				break;
+			case ALLEGRO_KEY_ALTGR:
+				_keys_released[ALTGR]=true;
+				_keys[ALTGR]=false;
 				break;
 			}
 		}
@@ -209,28 +245,19 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			done=true;
 		}
 		#pragma endregion Get input from the user
-
 		#pragma region Timer event
 		else if(ev.type == ALLEGRO_EVENT_TIMER)
 		{
-			render = true;			
+			render = true;
 			UpdateTime();
-			/*GameObjectManager::GetInstance().Update();
-			GameObjectManager::GetInstance().Collisions();
-			GameObjectManager::GetInstance().Clean();
-			GameObjectManager::GetInstance().ActivateDeactivate();
-			GameObjectManager::GetInstance().MotionlessParticles();
-			*/
+			if(_keys_pressed[Q_KEY] && GameObjectManager::GetInstance().D_object_exists(PLAYER))
+				GameObjectManager::GetInstance().KillPlayer();
 			GameObjectManager::GetInstance().TimerEvent();
 			_camX_prev=_camX;
 			_camY_prev=_camY;
-			//stillParticlesSize = stillParticles.size();
-			//Reset keys
-			for(int i=0; i<8; i++)
-				_keys_pressed[i]=false;
+			ResetKeys();
 		}
 		#pragma endregion This is where the magic happens ;)
-
 		#pragma region Draw
 		if(render && al_is_event_queue_empty(event_queue))
 		{
@@ -252,10 +279,12 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			//Draw all the objects
 			GameObjectManager::GetInstance().Draw();
 			//Draw text
+			/*
 			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,5,0,"FPS: %f", gameFPS);
 			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,85,0,"_camX: %i\t_camY: %i", _camX, _camY);
 			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,105,0,"hours: %i\tminutes: %i\tseconds: %i\tsteps: %i", _hours, _minutes, _seconds, _steps);
 			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,125,0,"Deaths: %i", _deaths);
+			*/
 			//Draw borders
 			al_draw_filled_rectangle(-(_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0, 0, 0, _SCREEN_HEIGHT,al_map_rgb(0,0,0));
 			al_draw_filled_rectangle(_SCREEN_WIDTH + (_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0, 0, _SCREEN_WIDTH, _SCREEN_HEIGHT, al_map_rgb(0,0,0));
@@ -268,7 +297,6 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 		#pragma endregion All drawing stuff happens in here
 	}
 	#pragma endregion
-
 	#pragma region Clean up
 	//SHELL OBJECTS=================================
 	al_destroy_timer(timer);

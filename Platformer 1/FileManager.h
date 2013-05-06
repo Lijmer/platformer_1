@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 class FileManager
 {
 public:
@@ -10,5 +11,7 @@ public:
 
 	void Save();
 	void Load();
+private:
+	void CreateObject(const std::string &ID, float x, float y);
+	void CreateDynamicObject(const std::string &ID, float x, float y);
 };
-

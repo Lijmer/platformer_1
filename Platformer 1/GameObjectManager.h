@@ -40,6 +40,7 @@ class Blood_Torso;
 
 class GameObjectManager
 {
+friend class FileManager;
 public:
 	GameObjectManager(void);
 	~GameObjectManager(void);
@@ -62,7 +63,6 @@ public:
 	void SetPlayerData(float x, float y, float velX, float velY, float gravity, bool dir, bool vertical_dir, bool jump, bool idle);
 	obj_Double_Spike_Down* Create_obj_Double_Spike_Down(float x,float y);
 	obj_Double_Spike_Up* Create_obj_Double_Spike_Up(float x,float y);
-	void DeleteDynamicObjects(void);
 	void ReserveSpace(char ID, int size);
 	void StressTest();
 
@@ -72,6 +72,7 @@ private:
 	void Clean();
 	void ActivateDeactivate();
 	void MotionlessParticles();
+	void DeleteDynamicObjects(void);
 
 	#pragma region vectors
 	std::vector<DynamicObject *> dynamicObjects;

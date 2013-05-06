@@ -11,7 +11,7 @@ obj_Platform_Vertical::obj_Platform_Vertical()
 	boundLeft = 0;
 	boundRight = 32;
 	image = ImageManager::GetInstance().GetImage(10);
-
+	SetDepth(-50);
 	exceptionIDs[0] = WALL_FADE;
 	exceptionIDs[1] = SAVE;
 	exceptionIDs[2] = HORIZONTAL_PLATFORM;

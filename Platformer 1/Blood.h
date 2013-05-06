@@ -12,11 +12,6 @@ public:
 	void Collided(GameObject *other);
 protected:
 	float gravity;
-	bool kind;
-	bool frame;
 	unsigned short direction;
-
-	char frameCount;
-	char frameDelay;
 };
 

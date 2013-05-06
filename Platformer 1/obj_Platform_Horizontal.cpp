@@ -9,7 +9,7 @@ obj_Platform_Horizontal::obj_Platform_Horizontal()
 	boundLeft = 0;
 	boundRight = 32;
 	SetID(HORIZONTAL_PLATFORM);
-
+	SetDepth(-50);
 	exceptionIDs[0] = WALL_FADE;
 	exceptionIDs[1] = SAVE;
 	exceptionIDs[2] = VERTICAL_PLATFORM;

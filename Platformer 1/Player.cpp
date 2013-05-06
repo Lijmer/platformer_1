@@ -293,7 +293,7 @@ inline void Player::Shoot()
 	{
 		SoundManager::GetInstance().Play(SHOOT);
 		if(dir)
-			GameObjectManager::GetInstance().CreateDynamicObject(95,x+14,y-2,velX+10,0);
+			GameObjectManager::GetInstance().CreateDynamicObject(95,x+14,y-1,velX+10,0);
 		else
 			GameObjectManager::GetInstance().CreateDynamicObject(95,x-14,y-1,velX-10,0);
 	}

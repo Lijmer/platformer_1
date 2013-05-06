@@ -9,12 +9,12 @@ Spike_Left::Spike_Left(void)
 void Spike_Left::Init(float x,float y)
 {
 	StaticObject::Init(x,y);
-	xPoint1 = x+1;
-	yPoint1 = y+15;
-	xPoint2 = x+31;
-	yPoint2 = y+1;
-	xPoint3 = x+31;
-	yPoint3 = y+31;
+	xPoint1 = x;
+	yPoint1 = y+16;
+	xPoint2 = x+32;
+	yPoint2 = y;
+	xPoint3 = x+32;
+	yPoint3 = y+32;
 	SetCollisionType(TBB);
 	image = ImageManager::GetInstance().GetImage(5);
 }

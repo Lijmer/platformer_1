@@ -1,7 +1,6 @@
 #include "FileManager.h"
 #include <allegro5/allegro_native_dialog.h>
 #include <fstream>
-#include <string>
 #include <sstream>
 #include <vector>
 #include "DisplayManager.h"
@@ -66,7 +65,6 @@ void FileManager::LoadLevel(char levelNum)
 	 * 8. The file gets closed.
 	 */
 
-
 	//Create ifstream object, this will be used to read data out of the file
 	std::ifstream levelFile;
 	
@@ -90,7 +88,14 @@ void FileManager::LoadLevel(char levelNum)
 
 	//READ ALL THE DATA!
 	while(std::getline(levelFile,temp))
+	{
+		unsigned int found = temp.find("//");
+		if(found!=std::string::npos)
+		{
+			temp.erase(found);
+		}
 		lvl.push_back(temp);
+	}
 
 	temp = "";
 	//Close the file
@@ -109,18 +114,6 @@ void FileManager::LoadLevel(char levelNum)
 			{
 				if((*iter2) == ";")
 					break;
-				else if(!(*iter2).find("lvlWidth = "))
-				{
-					temp = (*iter2);
-					temp.erase(0,11);
-					lvlWidth=atoi(temp.c_str());
-				}
-				else if(!(*iter2).find("lvlHeight = "))
-				{
-					temp = (*iter2);
-					temp.erase(0,12);
-					lvlHeight=atoi(temp.c_str());
-				}
 				else if(!(*iter2).find("tileWidth = "))
 				{
 					temp = (*iter2);
@@ -136,7 +129,6 @@ void FileManager::LoadLevel(char levelNum)
 			}
 		}
 		//When the map section get found, it will loop trough the data, everytime it finds a space or a | it will run the CreateObject fuction with the right parameter
-		//When x is greater than lvlWidth, it will increase y by 1 and set x to 0
 		//When it finds ; it will stop the map section and start looking for the next one
 		else if((*iter) == "[map]")
 		{
@@ -154,79 +146,27 @@ void FileManager::LoadLevel(char levelNum)
 							temp += (*iter2)[i];
 						else
 						{
-							if(temp=="-1")
-							{}//If temp == -1 the rest doesn't have to be checked, since most is -1 it is at the top
-							else if(temp == "00")
-								GameObjectManager::GetInstance().CreateObject(0,x*tileWidth,y*tileHeight);
-							else if(temp == "01")
-								GameObjectManager::GetInstance().CreateObject(1,x*tileWidth,y*tileHeight);
-							else if(temp == "02")
-								GameObjectManager::GetInstance().CreateObject(2,x*tileWidth,y*tileHeight);
-							else if(temp == "03")
-								GameObjectManager::GetInstance().CreateObject(3,x*tileWidth,y*tileHeight);
-							else if(temp == "04")
-								GameObjectManager::GetInstance().CreateObject(4,x*tileWidth,y*tileHeight);
-							else if(temp == "05")
-								GameObjectManager::GetInstance().CreateObject(5,x*tileWidth,y*tileHeight);
-							else if(temp == "06")
-								GameObjectManager::GetInstance().CreateObject(6,x*tileWidth,y*tileHeight);
-							else if(temp == "07")
-								GameObjectManager::GetInstance().CreateObject(7,x*tileWidth,y*tileHeight);
-							else if(temp == "08")
-								GameObjectManager::GetInstance().CreateObject(8,x*tileWidth,y*tileHeight);
-							else if(temp == "09")
-								GameObjectManager::GetInstance().CreateObject(9,x*tileWidth,y*tileHeight);
-							else if(temp == "10")
-								GameObjectManager::GetInstance().CreateObject(10,x*tileWidth,y*tileHeight);
-							else if(temp == "11")
-								GameObjectManager::GetInstance().CreateObject(11,x*tileWidth,y*tileHeight);
-							else if(temp == "12")
-								GameObjectManager::GetInstance().CreateObject(12,x*tileWidth,y*tileHeight);
-							else if(temp == "13")
-								GameObjectManager::GetInstance().CreateObject(13,x*tileWidth,y*tileHeight);
-							else if(temp == "14")
-								GameObjectManager::GetInstance().CreateObject(14,x*tileWidth,y*tileHeight);
-							else if(temp == "15")
-								GameObjectManager::GetInstance().CreateObject(15,x*tileWidth,y*tileHeight);
-							else if(temp == "16")
-								GameObjectManager::GetInstance().CreateObject(16,x*tileWidth,y*tileHeight);
-							else if(temp == "17")
-								GameObjectManager::GetInstance().CreateObject(17,x*tileWidth,y*tileHeight);
-							else if(temp == "18")
-								GameObjectManager::GetInstance().CreateObject(18,x*tileWidth,y*tileHeight);
-							else if(temp == "96")
-								GameObjectManager::GetInstance().CreateObject(96,x*tileWidth,y*tileHeight);
-							else if(temp == "97")
-								GameObjectManager::GetInstance().CreateObject(97,x*tileWidth,y*tileHeight);
-							else if(temp == "98")
-								GameObjectManager::GetInstance().CreateObject(98,x*tileWidth,y*tileHeight);
-							else if(temp == "99")
-								GameObjectManager::GetInstance().CreateObject(99,x*tileWidth,y*tileHeight);
-							else if(temp=="--")
+							//if a line starts with --, it doesn't check for any more object ID's on that line
+							if(temp=="--")
 							{
 								temp="";
-								continue;
+								y--;
+								break;
 							}
-							else
-							{
-								std::string error = "Unknown object ID: " + temp;
-								al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "FileManager", error.c_str() , "OkSok", 0);
-							}
-							if(++x>=lvlWidth)
-							{x=0; y++;}
-
+							CreateObject(temp, x*tileWidth, y*tileHeight);
+							x++;
 							temp="";
 						}
-					}
+					}//for loop through characters of line
+					y++;
+					x=0;
 				}
-
-			}
+			}//for loop 2 through lines
 		}
 		//When END is found, it will en the for loop and stop reading the file
 		else if((*iter) == "END")
 			break;
-	}
-	
+	}//for loop 1 through lines	
 }
 
 void FileManager::RestartLevel(char levelNum)
@@ -245,7 +185,7 @@ void FileManager::RestartLevel(char levelNum)
 
 	int lvlWidth=-1, lvlHeight=-1, tileWidth=-1, tileHeight=-1;
 
-	while(getline(levelFile,temp))
+	while(std::getline(levelFile,temp))
 	{
 		lvl.push_back(temp);
 	}
@@ -259,18 +199,6 @@ void FileManager::RestartLevel(char levelNum)
 			{
 				if((*iter2) == ";")
 					break;
-				else if(!(*iter2).find("lvlWidth = "))
-				{
-					temp = (*iter2);
-					temp.erase(0,11);
-					lvlWidth=atoi(temp.c_str());
-				}
-				else if(!(*iter2).find("lvlHeight = "))
-				{
-					temp = (*iter2);
-					temp.erase(0,12);
-					lvlHeight=atoi(temp.c_str());
-				}
 				else if(!(*iter2).find("tileWidth = "))
 				{
 					temp = (*iter2);
@@ -301,53 +229,20 @@ void FileManager::RestartLevel(char levelNum)
 							temp += (*iter2)[i];
 						else
 						{
-							if(temp == "05")
-								GameObjectManager::GetInstance().CreateObject(5,x*tileWidth,y*tileHeight);
-							else if(temp == "07")
-								GameObjectManager::GetInstance().CreateObject(7,x*tileWidth,y*tileHeight);
-							else if(temp == "08")
-								GameObjectManager::GetInstance().CreateObject(8,x*tileWidth,y*tileHeight);
-							else if(temp == "09")
-								GameObjectManager::GetInstance().CreateObject(9,x*tileWidth,y*tileHeight);
-							else if(temp == "10")
-								GameObjectManager::GetInstance().CreateObject(10,x*tileWidth,y*tileHeight);
-							else if(temp == "11")
-								GameObjectManager::GetInstance().CreateObject(11,x*tileWidth,y*tileHeight);
-							else if(temp == "12")
-								GameObjectManager::GetInstance().CreateObject(12,x*tileWidth,y*tileHeight);
-							else if(temp == "13")
-								GameObjectManager::GetInstance().CreateObject(13,x*tileWidth,y*tileHeight);
-							else if(temp == "14")
-								GameObjectManager::GetInstance().CreateObject(14,x*tileWidth,y*tileHeight);
-							else if(temp == "15")
-								GameObjectManager::GetInstance().CreateObject(15,x*tileWidth,y*tileHeight);
-							else if(temp == "16")
-								GameObjectManager::GetInstance().CreateObject(16,x*tileWidth,y*tileHeight);
-							else if(temp == "17")
-								GameObjectManager::GetInstance().CreateObject(17,x*tileWidth,y*tileHeight);
-							else if(temp == "18")
-								GameObjectManager::GetInstance().CreateObject(18,x*tileWidth,y*tileHeight);
-							else if(temp == "96")
-								GameObjectManager::GetInstance().CreateObject(96,x*tileWidth,y*tileHeight);
-							else if(temp == "97")
-								GameObjectManager::GetInstance().CreateObject(97,x*tileWidth,y*tileHeight);
-							else if(temp == "98")
-								GameObjectManager::GetInstance().CreateObject(98,x*tileWidth,y*tileHeight);
-							else if(temp == "99")
-								GameObjectManager::GetInstance().CreateObject(99,x*tileWidth,y*tileHeight);
-							else if(temp=="--")
+							if(temp=="--")
 							{
+								y--;
 								temp="";
-								continue;
+								break;
 							}
-							if(++x>=lvlWidth)
-							{x=0; y++;}
-
+							CreateDynamicObject(temp, x*tileWidth, y*tileHeight);
+							x++;
 							temp="";
 						}
 					}
+					y++;
+					x=0;
 				}
-
 			}
 		}
 		else if((*iter) == "END")
@@ -451,6 +346,102 @@ void FileManager::RestartLevel(char levelNum)
 			temp += save[_saveNum][i];
 	}
 	GameObjectManager::GetInstance().SetPlayerData(playerX, playerY, playerVelX, playerVelY, playerGravity, playerDir, playerVerticalDir, playerJump, playerIdle);
+}
+
+inline void FileManager::CreateObject(const std::string &ID,float x,float y)
+{
+	if(ID=="-1")
+		return;//If temp == -1 the rest doesn't have to be checked, since most is -1 it is at the top
+	else if(ID == "00")
+		GameObjectManager::GetInstance().CreateObject(0,x,y);
+	else if(ID == "01")
+		GameObjectManager::GetInstance().CreateObject(1,x,y);
+	else if(ID == "02")
+		GameObjectManager::GetInstance().CreateObject(2,x,y);
+	else if(ID == "03")
+		GameObjectManager::GetInstance().CreateObject(3,x,y);
+	else if(ID == "04")
+		GameObjectManager::GetInstance().CreateObject(4,x,y);
+	else if(ID == "05")
+		GameObjectManager::GetInstance().CreateObject(5,x,y);
+	else if(ID == "06")
+		GameObjectManager::GetInstance().CreateObject(6,x,y);
+	else if(ID == "07")
+		GameObjectManager::GetInstance().CreateObject(7,x,y);
+	else if(ID == "08")
+		GameObjectManager::GetInstance().CreateObject(8,x,y);
+	else if(ID == "09")
+		GameObjectManager::GetInstance().CreateObject(9,x,y);
+	else if(ID == "10")
+		GameObjectManager::GetInstance().CreateObject(10,x,y);
+	else if(ID == "11")
+		GameObjectManager::GetInstance().CreateObject(11,x,y);
+	else if(ID == "12")
+		GameObjectManager::GetInstance().CreateObject(12,x,y);
+	else if(ID == "13")
+		GameObjectManager::GetInstance().CreateObject(13,x,y);
+	else if(ID == "14")
+		GameObjectManager::GetInstance().CreateObject(14,x,y);
+	else if(ID == "15")
+		GameObjectManager::GetInstance().CreateObject(15,x,y);
+	else if(ID == "16")
+		GameObjectManager::GetInstance().CreateObject(16,x,y);
+	else if(ID == "17")
+		GameObjectManager::GetInstance().CreateObject(17,x,y);
+	else if(ID == "18")
+		GameObjectManager::GetInstance().CreateObject(18,x,y);
+	else if(ID == "96")
+		GameObjectManager::GetInstance().CreateObject(96,x,y);
+	else if(ID == "97")
+		GameObjectManager::GetInstance().CreateObject(97,x,y);
+	else if(ID == "98")
+		GameObjectManager::GetInstance().CreateObject(98,x,y);
+	else if(ID == "99")
+		GameObjectManager::GetInstance().CreateObject(99,x,y);
+	else //Give error message if object ID is unknown
+	{
+		std::string error = "Unknown object ID: " + ID;
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "FileManager", error.c_str() , "OkSok", 0);
+	}
+}
+inline void FileManager::CreateDynamicObject(const std::string &ID, float x, float y)
+{
+	if(ID == "-1")
+		return;
+	else if(ID == "05")
+		GameObjectManager::GetInstance().CreateObject(5,x,y);
+	else if(ID == "07")
+		GameObjectManager::GetInstance().CreateObject(7,x,y);
+	else if(ID == "08")
+		GameObjectManager::GetInstance().CreateObject(8,x,y);
+	else if(ID == "09")
+		GameObjectManager::GetInstance().CreateObject(9,x,y);
+	else if(ID == "10")
+		GameObjectManager::GetInstance().CreateObject(10,x,y);
+	else if(ID == "11")
+		GameObjectManager::GetInstance().CreateObject(11,x,y);
+	else if(ID == "12")
+		GameObjectManager::GetInstance().CreateObject(12,x,y);
+	else if(ID == "13")
+		GameObjectManager::GetInstance().CreateObject(13,x,y);
+	else if(ID == "14")
+		GameObjectManager::GetInstance().CreateObject(14,x,y);
+	else if(ID == "15")
+		GameObjectManager::GetInstance().CreateObject(15,x,y);
+	else if(ID == "16")
+		GameObjectManager::GetInstance().CreateObject(16,x,y);
+	else if(ID == "17")
+		GameObjectManager::GetInstance().CreateObject(17,x,y);
+	else if(ID == "18")
+		GameObjectManager::GetInstance().CreateObject(18,x,y);
+	else if(ID == "96")
+		GameObjectManager::GetInstance().CreateObject(96,x,y);
+	else if(ID == "97")
+		GameObjectManager::GetInstance().CreateObject(97,x,y);
+	else if(ID == "98")
+		GameObjectManager::GetInstance().CreateObject(98,x,y);
+	else if(ID == "99")
+		GameObjectManager::GetInstance().CreateObject(99,x,y);
 }
 
 void FileManager::Save()

@@ -1,6 +1,7 @@
 #include "GameObjectManager.h"
 
 #include <algorithm>
+#include <iostream>
 #include "globals.h"
 #include "FontManager.h"
 
@@ -337,7 +338,6 @@ inline void GameObjectManager::MotionlessParticles()
 	//If the size of the stillParticle vector has changed
 	if(stillParticlesSize != stillParticles.size())
 	{
-		stillParticlesSize = stillParticles.size();
 		al_set_target_bitmap(stillParticleCanvas);
 		al_clear_to_color(al_map_rgba(0,0,0,0));
 		for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end(); particleIter++)
@@ -347,6 +347,7 @@ inline void GameObjectManager::MotionlessParticles()
 			(*particleIter)->Draw();
 		}
 	}
+	stillParticlesSize = stillParticles.size();
 }
 void GameObjectManager::TimerEvent()
 {
@@ -366,23 +367,19 @@ void GameObjectManager::Draw()
 		(*r_iter)->Draw();
 
 	//Draw Particles
-
 	al_draw_bitmap(stillParticleCanvas,0,0,0);
-
 	for(particleIter = stillParticlesBuffer.begin(); particleIter!=stillParticlesBuffer.end(); particleIter++)
 		(*particleIter)->Draw();
-
 	for(particleIter = particles.begin(); particleIter!=particles.end(); particleIter++)
 		(*particleIter)->Draw();
-
-	
-
+	/*
 	if(D_object_exists(PLAYER))
 	{
 		al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,25,0,"X: %f\tY: %f", player->GetX(), player->GetY());
 		al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,45,0,"Gravity: %f", player->GetGravity());
 		al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,65,0,"velY: %f\tvelX: %f", player->GetVelY(), player->GetVelX());
 	}
+	*/
 }
 
 bool GameObjectManager::PlaceFree(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize)

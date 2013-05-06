@@ -10,12 +10,12 @@ enum OBJECT_ID
 {
 	UNDEFINED=-1,
 	PLAYER=0,
-	WALL=1,
-	SPIKE=2,
-	SAW=3,
-	WALL_FADE = 5,
-	WALL_FAKE=6,
-	TRIGGER_DOUBLE_SPIKE=7,
+	WALL,
+	SPIKE,
+	SAW,
+	WALL_FADE,
+	WALL_FAKE,
+	TRIGGER_DOUBLE_SPIKE,
 	VERTICAL_PLATFORM,
 	HORIZONTAL_PLATFORM,
 	TREADMILL_LEFT,
@@ -39,10 +39,14 @@ enum KEYS
 	LEFT,
 	RIGHT,
 	SPACE,
-	Z_KEY,
-	X_KEY,
+	L_KEY,
+	Q_KEY,
 	R_KEY,
-	ALT
+	X_KEY,
+	Z_KEY,
+	ENTER,
+	ALT,
+	ALTGR
 };
 
 enum SND
@@ -61,11 +65,13 @@ enum DIFFICULTY
 	IMPOSSIBLE
 };
 
+const int _KEYS_SIZE=13;
+
 extern float _monitorWidth, _monitorHeight, _scaleScreen;
 
 extern int _camX, _camY, _camX_prev, _camY_prev;
 extern int _difficulty, _currentLevel, _saveNum;
-extern bool _keys[], _keys_pressed[], _keys_released[];
+extern bool _keys[_KEYS_SIZE], _keys_pressed[_KEYS_SIZE], _keys_released[_KEYS_SIZE];
 extern int _hours, _minutes, _seconds, _steps;
 extern int _deaths;
 
