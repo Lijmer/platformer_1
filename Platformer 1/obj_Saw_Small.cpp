@@ -7,6 +7,8 @@ obj_Saw_Small::obj_Saw_Small(void)
 	SetCollisionType(CBB);
 	SetCollidable(true);
 	SetDepth(-13);
+	radius=32;
+	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_SAW);
 }
 
 
@@ -17,11 +19,8 @@ obj_Saw_Small::~obj_Saw_Small(void)
 
 void obj_Saw_Small::Init(float x, float y)
 {
-	radius=32;
 	obj_Saw_Small::x = x;
 	obj_Saw_Small::y = y;
-
-	image = ImageManager::GetInstance().GetImage(8);
 }
 void obj_Saw_Small::Update()
 {

@@ -7,6 +7,10 @@ DynamicObject::DynamicObject(void)
 	y_previous=0;
 }
 
+DynamicObject::~DynamicObject(void)
+{
+}
+
 void DynamicObject::Init(float x, float y, float velX, float velY)
 {
 	DynamicObject::velX = velX;

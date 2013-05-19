@@ -4,6 +4,7 @@ class DynamicObject : public GameObject
 {
 public:
 	DynamicObject(void);
+	virtual ~DynamicObject(void);
 
 	void Init(float x, float y, float velX, float velY);
 	void virtual UpdateBegin();

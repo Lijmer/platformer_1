@@ -1,3 +1,4 @@
+#pragma region includes
 //All stuff that needs to be included is in this file
 //#define true false //This line of code can fuck up everything ;)
 #include <allegro5/allegro.h>
@@ -11,7 +12,11 @@
 #include "FontManager.h"
 #include "DisplayManager.h"
 #include "GameObjectManager.h"
+#include "LevelManager.h"
 
+#include <iostream>
+#include "Exit.h"
+#pragma endregion
 
 //Function that is used to calculate the time it takes to run a certain piece of code
 inline double diffclock(clock_t clock1, clock_t clock2)
@@ -49,26 +54,18 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 {
 	#pragma region Setup
 
-	//==============================================
-	//PROJECT VARIABLES
-	//==============================================
-	bool done = false;
+	//Basic variables for the program to run normally
 	bool render = false;
 	int gameTime = 0;
 	int frames = 0;
 	float gameFPS = 0;
 	srand(time(unsigned int(0)));
-	_difficulty=0;
 
-	//==============================================
-	//ALLEGRO VARIABLES
-	//==============================================
+	//Create basic variables that allegro will need
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer;
 	
-	//==============================================
-	//ALLEGRO INIT FUNCTIONS
-	//==============================================
+	//Initialize allegro and create a display
 	if(!al_init())	//initialize Allegro (if it fails to do, show error message and terminate
 	{
 		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "Error!", "Couldn't initialize allegro 5", "Ok Sok", 0);
@@ -77,23 +74,18 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	if(!DisplayManager::GetInstance().CreateDisplay()) //Create display, if it fails to create a display, show error message en terminate (error message is in function)
 		return -1;
 	
+	//install addons
 	al_install_keyboard();
 	al_init_primitives_addon();
 
-	//==============================================
-	//PROJECT INIT
-	//==============================================
+	//Initialize managers
 	FontManager::GetInstance().Init();
 	ImageManager::GetInstance().Init();
 	SoundManager::GetInstance().Init();
 	GameObjectManager::GetInstance().Init();
-	//Play Music
-	//SoundManager::GetInstance().Play(50);
-	//Map
-	FileManager::GetInstance().LoadLevel(_currentLevel);
-	//==============================================
-	//TIMER INIT AND STARTUP
-	//==============================================
+	LevelManager::GetInstance().Init();
+	
+	//Create event_queue and timer
 	event_queue = al_create_event_queue();
 	timer = al_create_timer(1.0 / 60.0);
 
@@ -103,19 +95,22 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 
 	al_start_timer(timer);
 	gameTime = al_current_time();
-	#pragma endregion Setting up the game before entering the loop (declaring variables, initing allegro, installing addons, registering event sources)	
+	#pragma endregion Setting up the game before entering the loop (declaring variables, initing allegro, installing addons, registering event sources)
+
 	#pragma region Main Game Loop
-	while(!done)
+	while(!Exit::GetDone())
 	{
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
+
 		#pragma region Input
+		#pragma region key down
 		if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
 			switch(ev.keyboard.keycode)
 			{
 			case ALLEGRO_KEY_ESCAPE:
-				done = true;
+				Exit::ExitProgram();
 				break;
 			case ALLEGRO_KEY_LEFT:
 				_keys_pressed[LEFT]=true;
@@ -140,7 +135,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			case ALLEGRO_KEY_L:
 				_keys_pressed[L_KEY]=true;
 				_keys[L_KEY]=true;
-				FileManager::GetInstance().Load();
+				//FileManager::GetInstance().Load();
 				break;
 			case ALLEGRO_KEY_Q:
 				_keys_pressed[Q_KEY]=true;
@@ -149,7 +144,8 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			case ALLEGRO_KEY_R:
 				_keys_pressed[R_KEY]=true;
 				_keys[R_KEY]=true;
-				FileManager::GetInstance().RestartLevel(_currentLevel);
+				LevelManager::GetInstance().RestartLevel();
+				//FileManager::GetInstance().RestartLevel(_currentLevel);
 				_camX_prev=-1;
 				_camY_prev=-1;
 				break;
@@ -174,17 +170,17 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			case ALLEGRO_KEY_ALTGR:
 				_keys_pressed[ALTGR]=true;
 				_keys[ALTGR]=true;
-				GameObjectManager::GetInstance().StressTest();
 				break;
-
 			}
 		}
+		#pragma endregion
+		#pragma region key up
 		else if(ev.type == ALLEGRO_EVENT_KEY_UP)
 		{
 			switch(ev.keyboard.keycode)
 			{
 			case ALLEGRO_KEY_ESCAPE:
-				done = true;
+				Exit::ExitProgram(0);
 				break;
 			case ALLEGRO_KEY_LEFT:
 				_keys_released[LEFT]=true;
@@ -240,11 +236,15 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 				break;
 			}
 		}
+		#pragma endregion
+		#pragma region otherinput
 		else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
 		{
-			done=true;
+			Exit::ExitProgram();
 		}
+		#pragma endregion
 		#pragma endregion Get input from the user
+
 		#pragma region Timer event
 		else if(ev.type == ALLEGRO_EVENT_TIMER)
 		{
@@ -258,6 +258,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			ResetKeys();
 		}
 		#pragma endregion This is where the magic happens ;)
+
 		#pragma region Draw
 		if(render && al_is_event_queue_empty(event_queue))
 		{
@@ -297,10 +298,12 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 		#pragma endregion All drawing stuff happens in here
 	}
 	#pragma endregion
+
 	#pragma region Clean up
 	//SHELL OBJECTS=================================
 	al_destroy_timer(timer);
 	al_destroy_event_queue(event_queue);
 	#pragma endregion This destroys all objects and variables made in the platformer
-	return 0;
+	
+	return Exit::GetReturnValue();
 }

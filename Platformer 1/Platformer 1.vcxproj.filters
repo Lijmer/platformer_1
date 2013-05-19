@@ -225,6 +225,12 @@
     <ClCompile Include="GameObjectManager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
+    <ClCompile Include="Exit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="globals.h">
@@ -348,6 +354,12 @@
       <Filter>Header Files\Objects\Treadmill\Right</Filter>
     </ClInclude>
     <ClInclude Include="GameObjectManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Exit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelManager.h">
       <Filter>Header Files\Managers</Filter>
     </ClInclude>
   </ItemGroup>

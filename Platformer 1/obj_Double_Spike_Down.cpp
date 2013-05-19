@@ -18,7 +18,7 @@ obj_Double_Spike_Down::~obj_Double_Spike_Down(void)
 
 void obj_Double_Spike_Down::Init(float x, float y)
 {
-	image = ImageManager::GetInstance().GetImage(4);
+	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_SPIKE_DOWN);
 	obj_Double_Spike_Down::x=x;
 	obj_Double_Spike_Down::y=y;
 	startY = y;

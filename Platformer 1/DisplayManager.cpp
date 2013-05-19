@@ -2,6 +2,8 @@
 #include <allegro5/allegro_native_dialog.h>
 #include "globals.h"
 
+#include "Exit.h"
+
 DisplayManager::DisplayManager(void)
 {
 	display = NULL;

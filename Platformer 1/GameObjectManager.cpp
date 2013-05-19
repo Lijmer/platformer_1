@@ -1,3 +1,4 @@
+#pragma region Includes
 #include "GameObjectManager.h"
 
 #include <algorithm>
@@ -38,6 +39,8 @@
 #include "Blood_Head.h"
 #include "Blood_Torso.h"
 
+#pragma endregion
+//Public
 GameObjectManager::GameObjectManager(void)
 {
 	player = NULL;
@@ -77,6 +80,9 @@ GameObjectManager::GameObjectManager(void)
 }
 GameObjectManager::~GameObjectManager(void)
 {
+	std::vector<DynamicObject *>::iterator iter;
+	std::vector<StaticObject *>::iterator iter2;
+	std::vector<Particle *>::const_iterator particleIter;
 	for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); )
 	{
 		(*iter)->Destroy();
@@ -89,17 +95,17 @@ GameObjectManager::~GameObjectManager(void)
 		delete(*iter);
 		iter = deactivatedDynamicObjects.erase(iter);
 	}
-	for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); )
+	for(iter2 = staticObjects.begin(); iter2!=staticObjects.end(); )
 	{
-		(*iter3)->Destroy();
-		delete (*iter3);
-		iter3 = staticObjects.erase(iter3);
+		(*iter2)->Destroy();
+		delete (*iter2);
+		iter2 = staticObjects.erase(iter2);
 	}
-	for(iter3 = deactivatedStaticObjects.begin(); iter3!=deactivatedStaticObjects.end(); )
+	for(iter2 = deactivatedStaticObjects.begin(); iter2!=deactivatedStaticObjects.end(); )
 	{
-		(*iter3)->Destroy();
-		delete (*iter3);
-		iter3 = deactivatedStaticObjects.erase(iter3);
+		(*iter2)->Destroy();
+		delete (*iter2);
+		iter2 = deactivatedStaticObjects.erase(iter2);
 	}
 	for(particleIter = particles.begin(); particleIter !=particles.end();)
 	{
@@ -132,223 +138,7 @@ void GameObjectManager::Init()
 	staticCanvas = al_create_bitmap(1024,768);
 	stillParticleCanvas = al_create_bitmap(1024,768);
 }
-inline void GameObjectManager::Update()
-{
-	//manage objects
-	if(dynamicObjects.capacity() > dynamicObjects.size()+100)
-		dynamicObjects.shrink_to_fit();
-	sort(dynamicObjects.begin(),dynamicObjects.end(), SortFunction);
 
-	for(iter=dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
-		(*iter)->Update();
-	for(iter = pendingDynamicObjects.begin(); iter!=pendingDynamicObjects.end();)
-	{
-		dynamicObjects.push_back(*iter);
-		iter = pendingDynamicObjects.erase(iter);
-	}
-	for(particleIter=particles.begin(); particleIter!=particles.end(); particleIter++)
-		(*particleIter)->Update();
-}
-inline void GameObjectManager::Collisions()
-{
-	for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
-	{
-		//Check for collision with other dynamic objects
-		for(iter2 = iter; iter2!=dynamicObjects.end(); iter2++)
-		{
-			if((*iter)->GetInstanceID() == (*iter2)->GetInstanceID()) continue;
-			if((*iter)->GetID() == (*iter2)->GetID()) continue;
-			if(!(*iter)->CheckCollision((*iter2)))	continue;
-			(*iter)->Collided(*iter2);
-			(*iter2)->Collided(*iter);
-		}
-		for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); iter3++)
-		{
-			if(!(*iter)->CheckCollision((*iter3)))
-				continue;
-			(*iter)->Collided(*iter3);
-		}
-	}
-	for(particleIter=particles.begin(); particleIter!=particles.end(); particleIter++)
-	{
-		for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); iter3++)
-		{
-			if((*particleIter)->CheckCollision(*iter3))
-			{
-				(*particleIter)->Collided(*iter3);
-			}
-		}
-		for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
-		{
-			if((*particleIter)->CheckCollision(*iter))
-				(*particleIter)->Collided(*iter);
-		}
-	}
-}
-inline void GameObjectManager::Clean()
-{
-	for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); )
-	{
-		if(!(*iter)->GetAlive())
-		{
-			//(*iter)->Destroy();
-			delete (*iter);
-			iter = dynamicObjects.erase(iter);
-		}
-		else
-			++iter;
-	}
-
-	for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); )
-	{
-		if(!(*iter3)->GetAlive())
-		{
-			//(*iter3)->Destroy();
-			delete (*iter3);
-			iter3 = staticObjects.erase(iter3);
-		}
-		else
-			++iter3;
-	}
-}
-inline void GameObjectManager::ActivateDeactivate()
-{
-	if(_camX!=_camX_prev || _camY!=_camY_prev)
-	{
-		//Activate
-		for(iter = deactivatedDynamicObjects.begin(); iter!=deactivatedDynamicObjects.end();)
-		{
-			(*iter)->Activate();
-			if((*iter)->GetActivated())
-			{
-				dynamicObjects.push_back((*iter));
-				iter = deactivatedDynamicObjects.erase(iter);
-			}
-			else
-				iter++;
-		}
-		for(iter3 = deactivatedStaticObjects.begin(); iter3!=deactivatedStaticObjects.end();)
-		{
-			(*iter3)->Activate();
-			if((*iter3)->GetActivated())
-			{
-				staticObjects.push_back((*iter3));
-				iter3 = deactivatedStaticObjects.erase(iter3);
-			}
-			else
-				iter3++;
-		}
-		for(particleIter = deactivatedParticles.begin(); particleIter!=deactivatedParticles.end();)
-		{
-			(*particleIter)->Activate();
-			if((*particleIter)->GetActivated())
-			{
-				stillParticles.push_back((*particleIter));
-				particleIter = deactivatedParticles.erase(particleIter);
-			}
-			else
-				particleIter++;
-		}
-
-		//Deactivate
-		for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end();)
-		{
-			if((*iter)->GetID() != PLAYER)
-			{
-				(*iter)->Deactivate();
-				if(!(*iter)->GetActivated())
-				{
-					deactivatedDynamicObjects.push_back((*iter));
-					iter = dynamicObjects.erase(iter);
-				}
-				else
-					iter++;
-			}
-			else
-				iter++;
-		}
-		for(iter3 = staticObjects.begin(); iter3!=staticObjects.end();)
-		{
-			(*iter3)->Deactivate();
-			if(!(*iter3)->GetActivated())
-			{
-				deactivatedStaticObjects.push_back((*iter3));
-				iter3 = staticObjects.erase(iter3);
-			}
-			else
-				iter3++;
-		}
-		for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end();)
-		{
-			(*particleIter)->Deactivate();
-			if(!(*particleIter)->GetActivated())
-			{
-				deactivatedParticles.push_back((*particleIter));
-				particleIter = stillParticles.erase(particleIter);
-			}
-			else
-				particleIter++;
-		}
-
-		//Draw all staticobjects on the staticCanvas, This is so there will be less looping through the staticObjectsvector
-		sort(staticObjects.begin(),staticObjects.end(), &GameObjectManager::SortFunction);
-		al_set_target_bitmap(staticCanvas);
-		al_clear_to_color(al_map_rgba(0,0,0,0));
-		for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); iter3++)
-		{
-			(*iter3)->Draw();
-		}
-	}
-}
-inline void GameObjectManager::MotionlessParticles()
-{
-	for(particleIter=particles.begin(); particleIter!=particles.end(); )
-	{
-		//if((*particleIter)->GetVelX() >= -0.1 && (*particleIter)->GetVelX() <= 0.1 && (*particleIter)->GetVelY() >= -0.1 && (*particleIter)->GetVelY() <= 0.1)
-		if((*particleIter)->GetCollided())
-		{
-			if((*particleIter)->GetX() >= _camX && (*particleIter)->GetX() <= _camX+_SCREEN_WIDTH &&
-				(*particleIter)->GetY() >= _camY && (*particleIter)->GetY() <= _camY+_SCREEN_HEIGHT )
-			{
-				stillParticlesBuffer.push_back((*particleIter));
-			}
-			else
-			{
-				deactivatedParticles.push_back((*particleIter));
-			}
-			particleIter = particles.erase(particleIter);
-		}
-		else if((*particleIter)->GetX() < _camX || (*particleIter)->GetX() > _camX+_SCREEN_WIDTH ||
-				(*particleIter)->GetY() < _camY || (*particleIter)->GetY() > _camY+_SCREEN_HEIGHT )
-		{
-			delete (*particleIter);
-			particleIter = particles.erase(particleIter);
-		}
-		else
-			particleIter++;
-	}
-	if(stillParticlesBuffer.size() >= 100)
-	{
-		for(particleIter = stillParticlesBuffer.begin(); particleIter!=stillParticlesBuffer.end(); )
-		{
-			stillParticles.push_back((*particleIter));
-			particleIter = stillParticlesBuffer.erase(particleIter);
-		}
-	}
-	//If the size of the stillParticle vector has changed
-	if(stillParticlesSize != stillParticles.size())
-	{
-		al_set_target_bitmap(stillParticleCanvas);
-		al_clear_to_color(al_map_rgba(0,0,0,0));
-		for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end(); particleIter++)
-		{
-			//if((*particleIter)->GetX() >= _camX && (*particleIter)->GetX() <= _camX + _SCREEN_WIDTH &&
-			//	(*particleIter)->GetY() >= _camY && (*particleIter)->GetY() <= _camY + _SCREEN_HEIGHT)
-			(*particleIter)->Draw();
-		}
-	}
-	stillParticlesSize = stillParticles.size();
-}
 void GameObjectManager::TimerEvent()
 {
 	Update();
@@ -359,6 +149,8 @@ void GameObjectManager::TimerEvent()
 }
 void GameObjectManager::Draw()
 {
+	std::vector<DynamicObject *>::reverse_iterator r_iter;
+	std::vector<Particle *>::iterator particleIter;
 	//Draw static objects
 	al_draw_bitmap(staticCanvas,0,0,0);
 			
@@ -384,39 +176,41 @@ void GameObjectManager::Draw()
 
 bool GameObjectManager::PlaceFree(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize)
 {
-	for(staticPlaceFreeIter = staticObjects.begin(); staticPlaceFreeIter != staticObjects.end(); staticPlaceFreeIter++)
+	std::vector<StaticObject *>::iterator iter;
+	std::vector<DynamicObject *>::iterator iter2;
+	for(iter = staticObjects.begin(); iter != staticObjects.end(); iter++)
 	{		
-		if((*staticPlaceFreeIter)->GetID() != WALL) continue;
-		if(x + boundRight  > (*staticPlaceFreeIter)->GetX() - (*staticPlaceFreeIter)->GetBoundLeft() &&
-			x - boundLeft  < (*staticPlaceFreeIter)->GetX() + (*staticPlaceFreeIter)->GetBoundRight() &&
-			y + boundDown  > (*staticPlaceFreeIter)->GetY() - (*staticPlaceFreeIter)->GetBoundUp() &&
-			y - boundUp  < (*staticPlaceFreeIter)->GetY() + (*staticPlaceFreeIter)->GetBoundDown())
+		if((*iter)->GetID() != WALL) continue;
+		if(x + boundRight  > (*iter)->GetX() - (*iter)->GetBoundLeft() &&
+			x - boundLeft  < (*iter)->GetX() + (*iter)->GetBoundRight() &&
+			y + boundDown  > (*iter)->GetY() - (*iter)->GetBoundUp() &&
+			y - boundUp  < (*iter)->GetY() + (*iter)->GetBoundDown())
 		{
 			return false;
 		}
 		else
 			continue;
 	}
-	for(dynamicPlaceFreeIter = dynamicObjects.begin(); dynamicPlaceFreeIter != dynamicObjects.end(); dynamicPlaceFreeIter++)
+	for(iter2 = dynamicObjects.begin(); iter2 != dynamicObjects.end(); iter2++)
 	{
 		bool cont = true;
 
 		for(int i=0; i<exceptionIDsSize; i++)
 		{
-			if((*dynamicPlaceFreeIter)->GetID() == exceptionIDs[i])
+			if((*iter2)->GetID() == exceptionIDs[i])
 			{
 				cont = false;
 				break;
 			}
 		}
 
-		if(cont || instanceID == (*dynamicPlaceFreeIter)->GetInstanceID())
+		if(cont || instanceID == (*iter2)->GetInstanceID())
 			continue;
 
-		if(x + boundRight  > (*dynamicPlaceFreeIter)->GetX() - (*dynamicPlaceFreeIter)->GetBoundLeft() &&
-			x - boundLeft  < (*dynamicPlaceFreeIter)->GetX() + (*dynamicPlaceFreeIter)->GetBoundRight() &&
-			y + boundDown  > (*dynamicPlaceFreeIter)->GetY() - (*dynamicPlaceFreeIter)->GetBoundUp() &&
-			y - boundUp  < (*dynamicPlaceFreeIter)->GetY() + (*dynamicPlaceFreeIter)->GetBoundDown())
+		if(x + boundRight  > (*iter2)->GetX() - (*iter2)->GetBoundLeft() &&
+			x - boundLeft  < (*iter2)->GetX() + (*iter2)->GetBoundRight() &&
+			y + boundDown  > (*iter2)->GetY() - (*iter2)->GetBoundUp() &&
+			y - boundUp  < (*iter2)->GetY() + (*iter2)->GetBoundDown())
 		{
 			return false;
 		}
@@ -427,20 +221,21 @@ bool GameObjectManager::PlaceFree(float x, float y, int boundUp, int boundDown, 
 }
 bool GameObjectManager::PlaceMeeting(int otherID, float x, float y, DynamicObject *object)
 {
+	std::vector<DynamicObject *>::iterator iter;
 	float oldX = object->GetX();
 	float oldY = object->GetY();
 
 	object->SetX(x);
 	object->SetY(y);
 
-	for(dynamicPlaceFreeIter = dynamicObjects.begin(); dynamicPlaceFreeIter != dynamicObjects.end(); dynamicPlaceFreeIter++)
+	for(iter = dynamicObjects.begin(); iter != dynamicObjects.end(); iter++)
 	{
-		if((*dynamicPlaceFreeIter)->GetInstanceID() == object->GetInstanceID())
+		if((*iter)->GetInstanceID() == object->GetInstanceID())
 			continue;
-		if((*dynamicPlaceFreeIter)->GetID() != otherID)
+		if((*iter)->GetID() != otherID)
 			continue;
 				
-		if(object->CheckCollision(*dynamicPlaceFreeIter))
+		if(object->CheckCollision(*iter))
 		{
 			object->SetX(oldX);
 			object->SetY(oldY);
@@ -453,24 +248,25 @@ bool GameObjectManager::PlaceMeeting(int otherID, float x, float y, DynamicObjec
 }
 bool GameObjectManager::PlaceMeeting(int otherID, float x, float y, DynamicObject *object, GameObject *&other)
 {
+	std::vector<DynamicObject *>::iterator iter;
 	float oldX = object->GetX();
 	float oldY = object->GetY();
 
 	object->SetX(x);
 	object->SetY(y);
 
-	for(dynamicPlaceFreeIter = dynamicObjects.begin(); dynamicPlaceFreeIter != dynamicObjects.end(); dynamicPlaceFreeIter++)
+	for(iter = dynamicObjects.begin(); iter != dynamicObjects.end(); iter++)
 	{
-		if((*dynamicPlaceFreeIter)->GetInstanceID() == object->GetInstanceID())
+		if((*iter)->GetInstanceID() == object->GetInstanceID())
 			continue;
-		if((*dynamicPlaceFreeIter)->GetID() != otherID)
+		if((*iter)->GetID() != otherID)
 			continue;
 				
-		if(object->CheckCollision(*dynamicPlaceFreeIter))
+		if(object->CheckCollision(*iter))
 		{
 			object->SetX(oldX);
 			object->SetY(oldY);
-			other = (*dynamicPlaceFreeIter);
+			other = (*iter);
 			return true;
 		}
 	}
@@ -478,8 +274,10 @@ bool GameObjectManager::PlaceMeeting(int otherID, float x, float y, DynamicObjec
 	object->SetY(oldY);
 	return false;
 }
+
 bool GameObjectManager::D_object_exists(int ID)
 {
+	std::vector<DynamicObject*>::iterator iter;
 	for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
 	{
 		if((*iter)->GetID() == ID)
@@ -492,6 +290,7 @@ bool GameObjectManager::D_object_exists(int ID)
 	}
 	return false;
 }
+
 GameObject* GameObjectManager::CreateObject(int ID,int x,int y)
 {
 	if(ID==0)
@@ -809,6 +608,7 @@ DynamicObject* GameObjectManager::CreateDynamicObject(int ID, float x, float y, 
 	}
 	return NULL;
 }
+
 void GameObjectManager::KillPlayer()
 {
 	if(player!=NULL)
@@ -844,6 +644,7 @@ void GameObjectManager::SetPlayerData(float x, float y, float velX, float velY, 
 		player->SetIdle(idle);
 	}
 }
+
 obj_Double_Spike_Down* GameObjectManager::Create_obj_Double_Spike_Down(float x,float y)
 {
 	obj_double_spike_down = new obj_Double_Spike_Down;
@@ -858,21 +659,8 @@ obj_Double_Spike_Up* GameObjectManager::Create_obj_Double_Spike_Up(float x,float
 	dynamicObjects.push_back(obj_double_spike_up);
 	return obj_double_spike_up;
 }
-void GameObjectManager::DeleteDynamicObjects(void)
-{
-	for(iter=dynamicObjects.begin();iter!=dynamicObjects.end();)
-	{
-		(*iter)->Destroy();
-		delete (*iter);
-		iter = dynamicObjects.erase(iter);
-	}
-	for(iter=deactivatedDynamicObjects.begin();iter!=deactivatedDynamicObjects.end();)
-	{
-		(*iter)->Destroy();
-		delete (*iter);
-		iter = deactivatedDynamicObjects.erase(iter);
-	}
-}
+
+
 void GameObjectManager::ReserveSpace(char ID, int size)
 {
 	if(ID==0) //Dynamic Objects
@@ -897,18 +685,306 @@ void GameObjectManager::ReserveSpace(char ID, int size)
 	}
 
 }
-void GameObjectManager::StressTest()
+
+void GameObjectManager::DeleteDynamicObjects(void)
 {
-	if(player == NULL)
-		return;
-	for(unsigned int i=0; i<10000; i++)
+	std::vector<DynamicObject *>::iterator iter;
+	for(iter=dynamicObjects.begin();iter!=dynamicObjects.end();)
 	{
-		blood = new Blood();
-		blood->Init(player->GetX(),player->GetY(),rand()%360,((float)rand()/(float)RAND_MAX)*10+5);
-		particles.push_back(blood);
+		(*iter)->Destroy();
+		delete (*iter);
+		iter = dynamicObjects.erase(iter);
+	}
+	for(iter=deactivatedDynamicObjects.begin();iter!=deactivatedDynamicObjects.end();)
+	{
+		(*iter)->Destroy();
+		delete (*iter);
+		iter = deactivatedDynamicObjects.erase(iter);
 	}
 }
+void GameObjectManager::DeleteStaticObjects(void)
+{
+	std::vector<StaticObject *>::iterator iter;
+	//static
+	for(iter = staticObjects.begin(); iter!=staticObjects.end();)
+	{
+		(*iter)->Destroy();
+		delete (*iter);
+		iter = staticObjects.erase(iter);
+	}
+	for(iter = deactivatedStaticObjects.begin(); iter!=deactivatedStaticObjects.end();)
+	{
+		(*iter)->Destroy();
+		delete (*iter);
+		iter = deactivatedStaticObjects.erase(iter);
+	}
+}
+void GameObjectManager::DeleteParticles(void)
+{
+	std::vector<Particle *>::iterator pIter;
+	for(pIter = particles.begin(); pIter!=particles.end();)
+	{
+		(*pIter)->Destroy();
+		delete (*pIter);
+		pIter = particles.erase(pIter);
+	}
+	for(pIter = stillParticles.begin(); pIter!=stillParticles.end();)
+	{
+		(*pIter)->Destroy();
+		delete (*pIter);
+		pIter = stillParticles.erase(pIter);
+	}
+	for(pIter = stillParticlesBuffer.begin(); pIter!=stillParticlesBuffer.end();)
+	{
+		(*pIter)->Destroy();
+		delete (*pIter);
+		pIter = stillParticlesBuffer.erase(pIter);
+	}
+	for(pIter = deactivatedParticles.begin(); pIter!=deactivatedParticles.end();)
+	{
+		(*pIter)->Destroy();
+		delete (*pIter);
+		pIter = deactivatedParticles.erase(pIter);
+	}
 
+}
+void GameObjectManager::DeleteAllObjects(void)
+{
+	DeleteDynamicObjects();
+	DeleteStaticObjects();
+	DeleteParticles();
+}
+
+//Private
+inline void GameObjectManager::Update()
+{
+	std::vector<DynamicObject *>::iterator iter;
+	std::vector<Particle *>::iterator particleIter;
+	//manage objects
+	if(dynamicObjects.capacity() > dynamicObjects.size()+100)
+		dynamicObjects.shrink_to_fit();
+	sort(dynamicObjects.begin(),dynamicObjects.end(), SortFunction);
+
+	for(iter=dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
+		(*iter)->Update();
+	for(iter = pendingDynamicObjects.begin(); iter!=pendingDynamicObjects.end();)
+	{
+		dynamicObjects.push_back(*iter);
+		iter = pendingDynamicObjects.erase(iter);
+	}
+	for(particleIter=particles.begin(); particleIter!=particles.end(); particleIter++)
+		(*particleIter)->Update();
+}
+inline void GameObjectManager::Collisions()
+{
+	std::vector<DynamicObject *>::iterator iter;
+	std::vector<DynamicObject *>::iterator iter2;
+	std::vector<StaticObject *>::iterator iter3;
+	std::vector<Particle *>::iterator particleIter;
+	for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
+	{
+		//Check for collision with other dynamic objects
+		for(iter2 = iter+1; iter2!=dynamicObjects.end(); iter2++)
+		{
+			if((*iter)->GetInstanceID() == (*iter2)->GetInstanceID()) continue;
+			if((*iter)->GetID() == (*iter2)->GetID()) continue;
+			if(!(*iter)->CheckCollision((*iter2)))	continue;
+			(*iter)->Collided(*iter2);
+			(*iter2)->Collided(*iter);
+		}
+		for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); iter3++)
+		{
+			if(!(*iter)->CheckCollision((*iter3)))
+				continue;
+			(*iter)->Collided(*iter3);
+		}
+	}
+	for(particleIter=particles.begin(); particleIter!=particles.end(); particleIter++)
+	{
+		for(iter3 = staticObjects.begin(); iter3!=staticObjects.end(); iter3++)
+		{
+			if((*particleIter)->CheckCollision(*iter3))
+			{
+				(*particleIter)->Collided(*iter3);
+			}
+		}
+		for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); iter++)
+		{
+			if((*particleIter)->CheckCollision(*iter))
+				(*particleIter)->Collided(*iter);
+		}
+	}
+}
+inline void GameObjectManager::Clean()
+{
+	std::vector<DynamicObject *>::iterator iter;
+	std::vector<StaticObject *>::iterator iter2;
+	for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end(); )
+	{
+		if(!(*iter)->GetAlive())
+		{
+			//(*iter)->Destroy();
+			delete (*iter);
+			iter = dynamicObjects.erase(iter);
+		}
+		else
+			++iter;
+	}
+
+	for(iter2 = staticObjects.begin(); iter2!=staticObjects.end(); )
+	{
+		if(!(*iter2)->GetAlive())
+		{
+			//(*iter)->Destroy();
+			delete (*iter2);
+			iter2 = staticObjects.erase(iter2);
+		}
+		else
+			++iter2;
+	}
+}
+inline void GameObjectManager::ActivateDeactivate()
+{
+	std::vector<DynamicObject *>::iterator iter;
+	std::vector<StaticObject *>::iterator iter2;
+	std::vector<Particle *>::iterator particleIter;
+	if(_camX!=_camX_prev || _camY!=_camY_prev)
+	{
+		//Activate
+		for(iter = deactivatedDynamicObjects.begin(); iter!=deactivatedDynamicObjects.end();)
+		{
+			(*iter)->Activate();
+			if((*iter)->GetActivated())
+			{
+				dynamicObjects.push_back((*iter));
+				iter = deactivatedDynamicObjects.erase(iter);
+			}
+			else
+				iter++;
+		}
+		for(iter2 = deactivatedStaticObjects.begin(); iter2!=deactivatedStaticObjects.end();)
+		{
+			(*iter2)->Activate();
+			if((*iter2)->GetActivated())
+			{
+				staticObjects.push_back((*iter2));
+				iter2 = deactivatedStaticObjects.erase(iter2);
+			}
+			else
+				iter2++;
+		}
+		for(particleIter = deactivatedParticles.begin(); particleIter!=deactivatedParticles.end();)
+		{
+			(*particleIter)->Activate();
+			if((*particleIter)->GetActivated())
+			{
+				stillParticles.push_back((*particleIter));
+				particleIter = deactivatedParticles.erase(particleIter);
+			}
+			else
+				particleIter++;
+		}
+
+		//Deactivate
+		for(iter = dynamicObjects.begin(); iter!=dynamicObjects.end();)
+		{
+			if((*iter)->GetID() != PLAYER)
+			{
+				(*iter)->Deactivate();
+				if(!(*iter)->GetActivated())
+				{
+					deactivatedDynamicObjects.push_back((*iter));
+					iter = dynamicObjects.erase(iter);
+				}
+				else
+					iter++;
+			}
+			else
+				iter++;
+		}
+		for(iter2 = staticObjects.begin(); iter2!=staticObjects.end();)
+		{
+			(*iter2)->Deactivate();
+			if(!(*iter2)->GetActivated())
+			{
+				deactivatedStaticObjects.push_back((*iter2));
+				iter2 = staticObjects.erase(iter2);
+			}
+			else
+				iter2++;
+		}
+		for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end();)
+		{
+			(*particleIter)->Deactivate();
+			if(!(*particleIter)->GetActivated())
+			{
+				deactivatedParticles.push_back((*particleIter));
+				particleIter = stillParticles.erase(particleIter);
+			}
+			else
+				particleIter++;
+		}
+
+		//Draw all staticobjects on the staticCanvas, This is so there will be less looping through the staticObjectsvector
+		sort(staticObjects.begin(),staticObjects.end(), &GameObjectManager::SortFunction);
+		al_set_target_bitmap(staticCanvas);
+		al_clear_to_color(al_map_rgba(0,0,0,0));
+		for(iter2 = staticObjects.begin(); iter2!=staticObjects.end(); iter2++)
+		{
+			(*iter2)->Draw();
+		}
+	}
+}
+inline void GameObjectManager::MotionlessParticles()
+{
+	std::vector<Particle *>::iterator particleIter;
+	for(particleIter=particles.begin(); particleIter!=particles.end(); )
+	{
+		//if((*particleIter)->GetVelX() >= -0.1 && (*particleIter)->GetVelX() <= 0.1 && (*particleIter)->GetVelY() >= -0.1 && (*particleIter)->GetVelY() <= 0.1)
+		if((*particleIter)->GetCollided())
+		{
+			if((*particleIter)->GetX() >= _camX && (*particleIter)->GetX() <= _camX+_SCREEN_WIDTH &&
+				(*particleIter)->GetY() >= _camY && (*particleIter)->GetY() <= _camY+_SCREEN_HEIGHT )
+			{
+				stillParticlesBuffer.push_back((*particleIter));
+			}
+			else
+			{
+				deactivatedParticles.push_back((*particleIter));
+			}
+			particleIter = particles.erase(particleIter);
+		}
+		else if((*particleIter)->GetX() < _camX || (*particleIter)->GetX() > _camX+_SCREEN_WIDTH ||
+				(*particleIter)->GetY() < _camY || (*particleIter)->GetY() > _camY+_SCREEN_HEIGHT )
+		{
+			delete (*particleIter);
+			particleIter = particles.erase(particleIter);
+		}
+		else
+			particleIter++;
+	}
+	if(stillParticlesBuffer.size() >= 100)
+	{
+		for(particleIter = stillParticlesBuffer.begin(); particleIter!=stillParticlesBuffer.end(); )
+		{
+			stillParticles.push_back((*particleIter));
+			particleIter = stillParticlesBuffer.erase(particleIter);
+		}
+	}
+	//If the size of the stillParticle vector has changed
+	if(stillParticlesSize != stillParticles.size())
+	{
+		al_set_target_bitmap(stillParticleCanvas);
+		al_clear_to_color(al_map_rgba(0,0,0,0));
+		for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end(); particleIter++)
+		{
+			//if((*particleIter)->GetX() >= _camX && (*particleIter)->GetX() <= _camX + _SCREEN_WIDTH &&
+			//	(*particleIter)->GetY() >= _camY && (*particleIter)->GetY() <= _camY + _SCREEN_HEIGHT)
+			(*particleIter)->Draw();
+		}
+	}
+	stillParticlesSize = stillParticles.size();
+}
 inline int GameObjectManager::SortFunction(GameObject *i, GameObject *j)
 {
 	return (i->GetDepth()<j->GetDepth());

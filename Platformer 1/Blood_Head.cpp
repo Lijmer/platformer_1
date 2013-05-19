@@ -5,6 +5,7 @@ Blood_Head::Blood_Head(void)
 {
 	gravity=.62;
 	collided=false;
+	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_BLOOD_HEAD);
 }
 
 
@@ -14,7 +15,6 @@ Blood_Head::~Blood_Head(void)
 
 void Blood_Head::Init(float x, float y, float dir, float spd)
 {
-	image = ImageManager::GetInstance().GetImage(101);
 	Particle::init(x,y,(cos(dir*PI/180.0))*spd,(sin(dir*PI/180.0))*spd);
 	direction = rand()%360;
 }

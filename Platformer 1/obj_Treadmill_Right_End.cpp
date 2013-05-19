@@ -3,7 +3,7 @@
 
 obj_Treadmill_Right_End::obj_Treadmill_Right_End(void)
 {
-	image = ImageManager::GetInstance().GetImage(13);
+	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_TREADMILL_END);
 }
 
 

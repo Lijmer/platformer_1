@@ -16,7 +16,7 @@ void Spike_Down::Init(float x, float y)
 	xPoint3 = x+15;
 	yPoint3 = y+31;
 	SetCollisionType(TBB);
-	image = ImageManager::GetInstance().GetImage(4);
+	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_SPIKE_DOWN);
 }
 
 void Spike_Down::Draw()

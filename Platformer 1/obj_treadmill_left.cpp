@@ -21,7 +21,7 @@ obj_Treadmill_Left::obj_Treadmill_Left(void)
 	boundLeft = 0;
 	boundRight = 32;
 
-	image = ImageManager::GetInstance().GetImage(12);
+	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_TREADMILL);
 
 	frameCount = 0;
 	currentFrame = 0;

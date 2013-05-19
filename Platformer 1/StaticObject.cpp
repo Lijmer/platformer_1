@@ -6,6 +6,8 @@ StaticObject::StaticObject(void)
 	SetID(UNDEFINED);
 	SetDepth(0);
 }
+StaticObject::~StaticObject(void)
+{}
 
 
 void StaticObject::Init(float x, float y)

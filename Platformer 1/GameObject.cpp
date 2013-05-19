@@ -29,6 +29,11 @@ GameObject::GameObject()
 
 }
 
+GameObject::~GameObject()
+{
+
+}
+
 
 void GameObject::Init(float x, float y)
 {

@@ -26,6 +26,7 @@ Player::Player()
 	vertical_dir=true;
 
 	sprite = new spr_Player();
+	sprite->Init(ImageManager::GetInstance().GetImage(ImageManager::IMG_PLAYER), 28, 26, 0, 2);
 
 	SetCollisionType(BB);
 
@@ -48,7 +49,6 @@ void Player::Init(float x, float y)
 {
 	Player::x=x;
 	Player::y=y;
-	sprite->Init(ImageManager::GetInstance().GetImage(0), 28, 26, 0, 2);
 }
 
 void Player::UpdateBegin()

@@ -6,6 +6,8 @@ obj_Saw::obj_Saw(void)
 	SetID(SAW);
 	SetCollisionType(CBB);
 	SetDepth(12);
+	radius=64;
+	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_SAW);
 }
 
 
@@ -16,11 +18,8 @@ obj_Saw::~obj_Saw(void)
 
 void obj_Saw::Init(float x, float y)
 {
-	radius=64;
 	obj_Saw::x = x;
 	obj_Saw::y = y;
-
-	image = ImageManager::GetInstance().GetImage(8);
 }
 void obj_Saw::Update()
 {

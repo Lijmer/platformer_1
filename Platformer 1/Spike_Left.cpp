@@ -16,7 +16,7 @@ void Spike_Left::Init(float x,float y)
 	xPoint3 = x+32;
 	yPoint3 = y+32;
 	SetCollisionType(TBB);
-	image = ImageManager::GetInstance().GetImage(5);
+	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_SPIKE_LEFT);
 }
 
 void Spike_Left::Draw()

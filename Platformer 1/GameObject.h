@@ -9,6 +9,7 @@ class GameObject
 {
 public:
 	GameObject();
+	virtual ~GameObject();
 
 	void Init(float x, float y);
 	void Activate();

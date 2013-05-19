@@ -4,6 +4,7 @@ class StaticObject : public GameObject
 {
 public:
 	StaticObject(void);
+	virtual ~StaticObject(void);
 
 	void Init(float x, float y);
 	void virtual Draw();

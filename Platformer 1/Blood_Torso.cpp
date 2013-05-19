@@ -5,6 +5,7 @@ Blood_Torso::Blood_Torso(void)
 {
 	gravity=.62;
 	collided=false;
+	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_BLOOD_TORSO);
 }
 
 
@@ -14,7 +15,6 @@ Blood_Torso::~Blood_Torso(void)
 
 void Blood_Torso::Init(float x, float y, float dir, float spd)
 {
-	image = ImageManager::GetInstance().GetImage(102);
 	Particle::init(x,y,(cos(dir*PI/180.0))*spd,(sin(dir*PI/180.0))*spd);
 	direction = rand()%360;
 }

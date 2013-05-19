@@ -3,8 +3,11 @@
 
 obj_Saw_Bar::obj_Saw_Bar()
 {
-	image = ImageManager::GetInstance().GetImage(9);
+	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_SAW_BAR);
 	SetDepth(-12);
+	
+	SetCollidable(false);
+	direction = 0;
 }
 
 
@@ -16,8 +19,6 @@ obj_Saw_Bar::~obj_Saw_Bar(void)
 
 void obj_Saw_Bar::Init(float x, float y)
 {
-	SetCollidable(false);
-	direction = 0;
 	obj_Saw_Bar::x = x;
 	obj_Saw_Bar::y = y;
 	saw = GameObjectManager::GetInstance().CreateObject(9,x+120,y);

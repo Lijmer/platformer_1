@@ -11,11 +11,11 @@ Wall_Fade::Wall_Fade()
 	boundRight=32;
 	SetCollisionType(BB);
 	SetID(WALL_FADE);
+	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_WALL);
 }
 
 void Wall_Fade::Init(float x, float y)
 {
-	image = ImageManager::GetInstance().GetImage(2);
 	DynamicObject::Init(x,y,0,0);
 }
 

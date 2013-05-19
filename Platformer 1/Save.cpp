@@ -1,5 +1,6 @@
 #include "Save.h"
 #include "GameObjectManager.h"
+#include "LevelManager.h"
 
 Save::Save()
 {
@@ -14,7 +15,7 @@ Save::Save()
 
 void Save::Init(float x, float y, char difficulty)
 {
-	image = ImageManager::GetInstance().GetImage(7);
+	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_SAVE);
 	DynamicObject::Init(x,y,0,0);
 
 	//If the difficulty is not the same as this object, it will create a wall in its place
@@ -54,7 +55,7 @@ void Save::Collided(GameObject *other)
 {
 	if(other->GetID() == BULLET && !active && GameObjectManager::GetInstance().D_object_exists(PLAYER))
 	{
-		FileManager::GetInstance().Save();
+		LevelManager::GetInstance().Save();
 		count = 0;
 		active=true;
 	}

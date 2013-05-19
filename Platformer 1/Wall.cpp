@@ -10,7 +10,7 @@ Wall::Wall(void)
 	SetID(WALL);
 	SetDepth(-10);
 	SetCollisionType(BB);
-	image =  ImageManager::GetInstance().GetImage(2);
+	image =  ImageManager::GetInstance().GetImage(ImageManager::IMG_WALL);
 	SetAlive(true);
 }
 

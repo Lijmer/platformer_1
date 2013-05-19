@@ -15,7 +15,7 @@ void Spike_Right::Init(float x,float y)
 	xPoint3 = x+1;
 	yPoint3 = y+31;
 	SetCollisionType(TBB);
-	image = ImageManager::GetInstance().GetImage(6);
+	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_SPIKE_RIGHT);
 }
 
 void Spike_Right::Draw()

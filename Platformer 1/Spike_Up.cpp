@@ -16,7 +16,7 @@ void Spike_Up::Init(float x, float y)
 	xPoint3 = x+15;
 	yPoint3 = y+1;
 	SetCollisionType(TBB);
-	image = ImageManager::GetInstance().GetImage(3);
+	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_SPIKE_UP);
 }
 
 void Spike_Up::Draw()

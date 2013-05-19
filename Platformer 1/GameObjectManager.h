@@ -64,7 +64,11 @@ public:
 	obj_Double_Spike_Down* Create_obj_Double_Spike_Down(float x,float y);
 	obj_Double_Spike_Up* Create_obj_Double_Spike_Up(float x,float y);
 	void ReserveSpace(char ID, int size);
-	void StressTest();
+
+	void DeleteDynamicObjects(void);
+	void DeleteStaticObjects(void);
+	void DeleteParticles(void);
+	void DeleteAllObjects(void);
 
 private:
 	void Update();
@@ -72,7 +76,7 @@ private:
 	void Clean();
 	void ActivateDeactivate();
 	void MotionlessParticles();
-	void DeleteDynamicObjects(void);
+	static int SortFunction(GameObject *i, GameObject *j);
 
 	#pragma region vectors
 	std::vector<DynamicObject *> dynamicObjects;
@@ -84,18 +88,6 @@ private:
 	std::vector<Particle *> stillParticles;
 	std::vector<Particle *> stillParticlesBuffer;
 	std::vector<Particle *> deactivatedParticles;
-	#pragma endregion
-	#pragma region iterators
-	std::vector<DynamicObject *>::iterator iter;
-	std::vector<DynamicObject *>::iterator iter2;
-	std::vector<DynamicObject *>::iterator dynamicPlaceFreeIter;
-	std::vector<DynamicObject *>::reverse_iterator r_iter; 
-	std::vector<DynamicObject *>::reverse_iterator r_iter2;
-	std::vector<StaticObject *>::iterator iter3;
-	std::vector<StaticObject *>::iterator iter4;
-	std::vector<StaticObject *>::iterator staticPlaceFreeIter;
-	std::vector<StaticObject *>::reverse_iterator r_iter3;
-	std::vector<Particle *>::iterator particleIter;
 	#pragma endregion
 	#pragma region object pointers
 	Player *player;
@@ -133,5 +125,4 @@ private:
 
 	int stillParticlesSize;
 	
-	static int SortFunction(GameObject *i, GameObject *j);
 };

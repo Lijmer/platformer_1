@@ -70,7 +70,7 @@ const int _KEYS_SIZE=13;
 extern float _monitorWidth, _monitorHeight, _scaleScreen;
 
 extern int _camX, _camY, _camX_prev, _camY_prev;
-extern int _difficulty, _currentLevel, _saveNum;
+extern int _difficulty, _currentLevel;
 extern bool _keys[_KEYS_SIZE], _keys_pressed[_KEYS_SIZE], _keys_released[_KEYS_SIZE];
 extern int _hours, _minutes, _seconds, _steps;
 extern int _deaths;

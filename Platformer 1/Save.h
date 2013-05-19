@@ -1,6 +1,5 @@
 #pragma once
-#include "dynamicobject.h"
-#include "FileManager.h"
+#include "DynamicObject.h"
 class Save : public DynamicObject
 {
 public:

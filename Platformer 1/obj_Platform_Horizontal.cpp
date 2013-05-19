@@ -3,7 +3,7 @@
 
 obj_Platform_Horizontal::obj_Platform_Horizontal()
 {
-	image = ImageManager::GetInstance().GetImage(10);
+	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_PLATFORM);
 	boundUp = 0;
 	boundDown = 16;
 	boundLeft = 0;
