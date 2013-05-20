@@ -24,14 +24,12 @@ enum OBJECT_ID
 	BULLET,
 	PARTICLE
 };
-
 enum COLLISION_TYPE{
 	BB,		// = Bounding Box
 	TBB,	// = Triangle Bounding Box
 	CBB,	// = Circle Bounding Box
 	PPC		// = Pixel Perfect Collision
 };
-
 enum KEYS
 {
 	UP=0,
@@ -48,7 +46,6 @@ enum KEYS
 	ALT,
 	ALTGR
 };
-
 enum SND
 {
 	SHOOT,
@@ -56,7 +53,6 @@ enum SND
 	JUMP2,
 	SPLAT
 };
-
 enum DIFFICULTY
 {
 	EASY=0,
@@ -72,6 +68,7 @@ extern float _monitorWidth, _monitorHeight, _scaleScreen;
 extern int _camX, _camY, _camX_prev, _camY_prev;
 extern int _difficulty, _currentLevel;
 extern bool _keys[_KEYS_SIZE], _keys_pressed[_KEYS_SIZE], _keys_released[_KEYS_SIZE];
+extern float _mouseX, _mouseY;
 extern int _hours, _minutes, _seconds, _steps;
 extern int _deaths;
 

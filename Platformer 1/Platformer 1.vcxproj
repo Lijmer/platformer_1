@@ -85,6 +85,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="obj_Double_Spike_Down.cpp" />
     <ClCompile Include="obj_Double_Spike_Up.cpp" />
+    <ClCompile Include="obj_Menu_Button.cpp" />
+    <ClCompile Include="obj_Menu_Initer.cpp" />
     <ClCompile Include="obj_Platform_Horizontal.cpp" />
     <ClCompile Include="obj_Platform_Vertical.cpp" />
     <ClCompile Include="obj_Saw.cpp" />
@@ -130,6 +132,8 @@
     <ClInclude Include="LevelManager.h" />
     <ClInclude Include="obj_Double_Spike_Down.h" />
     <ClInclude Include="obj_Double_Spike_Up.h" />
+    <ClInclude Include="obj_Menu_Button.h" />
+    <ClInclude Include="obj_Menu_Initer.h" />
     <ClInclude Include="obj_Platform_Horizontal.h" />
     <ClInclude Include="obj_Platform_Vertical.h" />
     <ClInclude Include="obj_Saw.h" />

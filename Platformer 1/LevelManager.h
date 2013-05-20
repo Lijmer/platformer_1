@@ -34,6 +34,7 @@ private:
 	//Give other managers command to load there shit
 	void LoadImages(int level);
 	void LoadSounds(int level);
+	void LoadMusic(int level);
 
 	void DeleteDynamicObjects();
 	void DeleteStaticObjects();

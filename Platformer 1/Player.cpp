@@ -148,6 +148,11 @@ void Player::Update()
 	_camX = int(x/_SCREEN_WIDTH)*_SCREEN_WIDTH;
 	_camY = int(y/_SCREEN_HEIGHT)*_SCREEN_HEIGHT;
 
+	//TROLOLOLOLOL
+	if(_mouseX > x-boundLeft && _mouseX < x+boundRight &&
+		_mouseY > y-boundUp && _mouseY < y+boundDown)
+		Kill();
+
 	//Reset Variables
 	collisionWallUp = false;
 	collisionWallDown = false;

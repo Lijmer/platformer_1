@@ -14,7 +14,6 @@
 #include "GameObjectManager.h"
 #include "LevelManager.h"
 
-#include <iostream>
 #include "Exit.h"
 #pragma endregion
 
@@ -53,18 +52,7 @@ inline void ResetKeys()
 int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  This applications doesn't take parameters...
 {
 	#pragma region Setup
-
-	//Basic variables for the program to run normally
-	bool render = false;
-	int gameTime = 0;
-	int frames = 0;
-	float gameFPS = 0;
-	srand(time(unsigned int(0)));
-
-	//Create basic variables that allegro will need
-	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
-	ALLEGRO_TIMER *timer;
-	
+	#pragma region Init Allegro and create display
 	//Initialize allegro and create a display
 	if(!al_init())	//initialize Allegro (if it fails to do, show error message and terminate
 	{
@@ -72,29 +60,42 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 		return -1;
 	}
 	if(!DisplayManager::GetInstance().CreateDisplay()) //Create display, if it fails to create a display, show error message en terminate (error message is in function)
-		return -1;
-	
+		return -2;
+	#pragma endregion
+	#pragma region Install addons
 	//install addons
 	al_install_keyboard();
+	al_install_mouse();
 	al_init_primitives_addon();
-
+	#pragma endregion
+	#pragma region Init Managers
 	//Initialize managers
-	FontManager::GetInstance().Init();
-	ImageManager::GetInstance().Init();
-	SoundManager::GetInstance().Init();
+	//(most of them get automaticly initialized from the constructor)
 	GameObjectManager::GetInstance().Init();
 	LevelManager::GetInstance().Init();
-	
+	#pragma endregion
+	#pragma region Basic variables
+	//Basic variables for the program to run normally
+	bool render = false;
+	int gameTime = al_current_time();
+	int frames = 0;
+	float gameFPS = 0;
+	srand(time(unsigned int(0)));
+	float mX=0;
+	float mY=0;
+	#pragma endregion
+	#pragma region Events and Timers
 	//Create event_queue and timer
-	event_queue = al_create_event_queue();
-	timer = al_create_timer(1.0 / 60.0);
+	ALLEGRO_EVENT_QUEUE *event_queue = al_create_event_queue();
+	ALLEGRO_TIMER *timer = al_create_timer(1.0 / 60.0);
 
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
+	al_register_event_source(event_queue, al_get_mouse_event_source());
 	al_register_event_source(event_queue, al_get_display_event_source(DisplayManager::GetInstance().GetDisplay()));
 
 	al_start_timer(timer);
-	gameTime = al_current_time();
+	#pragma endregion
 	#pragma endregion Setting up the game before entering the loop (declaring variables, initing allegro, installing addons, registering event sources)
 
 	#pragma region Main Game Loop
@@ -137,6 +138,9 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 				_keys[L_KEY]=true;
 				//FileManager::GetInstance().Load();
 				break;
+			case ALLEGRO_KEY_M:
+				SoundManager::GetInstance().ToggleMusic();
+				break;
 			case ALLEGRO_KEY_Q:
 				_keys_pressed[Q_KEY]=true;
 				_keys[Q_KEY]=true;
@@ -148,6 +152,9 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 				//FileManager::GetInstance().RestartLevel(_currentLevel);
 				_camX_prev=-1;
 				_camY_prev=-1;
+				break;
+			case ALLEGRO_KEY_S:
+				SoundManager::GetInstance().ToggleSound();
 				break;
 			case ALLEGRO_KEY_X:
 				_keys_pressed[X_KEY]=true;
@@ -237,6 +244,13 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			}
 		}
 		#pragma endregion
+		#pragma region Mouse Input
+		else if(ev.type==ALLEGRO_EVENT_MOUSE_AXES)
+		{
+			mX=ev.mouse.x;
+			mY=ev.mouse.y;			
+		}
+		#pragma endregion
 		#pragma region otherinput
 		else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
 		{
@@ -253,8 +267,21 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			if(_keys_pressed[Q_KEY] && GameObjectManager::GetInstance().D_object_exists(PLAYER))
 				GameObjectManager::GetInstance().KillPlayer();
 			GameObjectManager::GetInstance().TimerEvent();
+			SoundManager::GetInstance().Update();
 			_camX_prev=_camX;
 			_camY_prev=_camY;
+
+			if(DisplayManager::GetInstance().GetState() == DisplayManager::WINDOWED)
+			{
+				_mouseX=mX+_camX;
+				_mouseY=mY+_camY;
+			}
+			else if(DisplayManager::GetInstance().GetState() == DisplayManager::FULLSCREEN_WINDOW)
+			{
+				_mouseX = ((mX - (_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0)/_scaleScreen)+_camX;
+				_mouseY = ((mY - (_monitorHeight - (_SCREEN_HEIGHT * _scaleScreen))/2.0)/_scaleScreen)+_camY;
+			}
+
 			ResetKeys();
 		}
 		#pragma endregion This is where the magic happens ;)
@@ -300,10 +327,9 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	#pragma endregion
 
 	#pragma region Clean up
-	//SHELL OBJECTS=================================
 	al_destroy_timer(timer);
 	al_destroy_event_queue(event_queue);
-	#pragma endregion This destroys all objects and variables made in the platformer
+	#pragma endregion Destroy timer and event_queue, the rest is done by destructors
 	
 	return Exit::GetReturnValue();
 }

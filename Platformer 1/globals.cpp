@@ -9,3 +9,6 @@ float _monitorWidth = 0, _monitorHeight = 0, _scaleScreen;
 bool _keys_pressed[_KEYS_SIZE]		=	{false, false, false, false, false, false, false, false, false, false, false, false, false};
 bool _keys_released[_KEYS_SIZE]		=	{false, false, false, false, false, false, false, false, false, false, false, false, false};
 bool _keys[_KEYS_SIZE]				=	{false, false, false, false, false, false, false, false, false, false, false, false, false};
+
+float _mouseX = 0;
+float _mouseY = 0;

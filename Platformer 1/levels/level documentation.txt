@@ -1,0 +1,78 @@
+Every level needs 4 sections: 'properties', 'images', 'sounds', 'map'. To start a section put the section name between '[' and ']'. To end a section put a ';' on a new line.
+The content of the section needs to be seperated with a new line.
+You can make comments by putting '//'. Everything after the '//' won't be read. If the '//' is put at the beginning of a line, it won't even read the new line.
+
+
+[properties]
+The properties section can have the following content in the following style
+
+tileWidth = #value
+tileHeight = #value
+
+Every propertie needs to be on a new line. The spaces at the '=' sign are necessary.
+
+
+[images]
+The images section consists out of a single line with image ID's in the following style
+
+#value,#vaule,#value,
+
+Every value ends with a comma to seperate them. Spaces are illegal.
+A list of image ID's
+0	img_player (this also contains img_blood_head, img_blood_torso and img_blood_arm)
+-2	img_button
+1	img_wall
+2	img_spike_up
+3	img_spike_down
+4	img_spike_left
+5	img_spike_right
+6	img_save
+7	img_saw
+8	img_saw_bar
+9	img_platform
+10	img_treadmill_begin
+11	img_treadmill
+12	img_treadmill_end
+
+
+[sounds]
+The style of the sound section is the same as the image section.
+A list of sound ID's
+-2	snd_click
+0	snd_shoot
+1	snd_jump1
+2	snd_jump2
+3	snd_splat
+
+
+[map]
+This is basicly the lay out of the level with object ID's. Every ID has its own object. Object ID's are seperated with a ' '. It is recommended to use a '|' if it is also the end of the screen, this is just to make reading the file easier for the user. It is also recommended to put a series of '--' add the bottom of every screen, this alo makes reading the file easier for the user.
+It uses the following object ID's
+
+-2	obj_menu_button
+-1	nothing
+00	wall
+01	spike_up
+02	spike_down
+03	spike_left
+04	spike_right
+05	wall_fade
+06	wall_fake
+07	obj_double_spike_trigger
+08	obj_saw
+09	obj_saw_small
+10	obj_saw_bar (includes an obj_saw_small and a wall)
+11	obj_platform_vertical
+12	obj_platform_horizontal
+13	obj_treadmill_left_begin
+14	obj_treadmill_left
+15	obj_treadmill_left_end
+16	obj_treadmill_right_begin
+17	obj_treadmill_right
+18	obj_treadmill_right_end
+96	save_pussy
+97	save_medium
+98	save_hard
+99	player
+
+View level1.lvl for an example on how everything is layed out.

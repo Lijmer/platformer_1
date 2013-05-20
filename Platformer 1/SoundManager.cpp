@@ -18,18 +18,56 @@ SoundManager &SoundManager::GetInstance()
 
 SoundManager::SoundManager(void)
 {
+	al_install_audio();
+	al_init_acodec_addon();
+	al_reserve_samples(4);
+	voice = al_create_voice(44100, ALLEGRO_AUDIO_DEPTH_INT16, ALLEGRO_CHANNEL_CONF_2);
+	mixer = al_create_mixer(44100, ALLEGRO_AUDIO_DEPTH_FLOAT32, ALLEGRO_CHANNEL_CONF_2);
+
+	musicEnabled = true;
+	soundEnabled = true;
+	paused=false;
+
+	musicVolume = 1.0f;
+	soundVolume = 1.0f;
 }
 
 SoundManager::~SoundManager(void)
 {
 	DestroyAllSounds();
+	DestroyMusic();
+	DestroyMixer();
+	DestroyVoice();
+	al_uninstall_audio();
 }
 
-void SoundManager::Init()
+void SoundManager::Update()
 {
-	al_install_audio();
-	al_init_acodec_addon();
-	al_reserve_samples(4);
+	if(musicEnabled && !paused)
+		al_set_audio_stream_playing(music, true);
+	else if(!musicEnabled || paused)
+		al_set_audio_stream_playing(music, false);
+	al_set_audio_stream_gain(music, musicVolume);
+}
+
+void SoundManager::Pause()
+{
+	if(paused)
+		paused=false;
+	if(!paused)
+		paused=true;
+}
+void SoundManager::ChangeMusicVolume()
+{
+	musicVolume+=0.1;
+	if(musicVolume>=1.1)
+		musicVolume=0;
+}
+void SoundManager::ChangeSoundVolume()
+{
+	soundVolume+=0.1;
+	if(soundVolume>=1.1)
+		soundVolume=0;
 }
 
 void SoundManager::Play(int num)
@@ -91,6 +129,32 @@ void SoundManager::Play(int num)
 	}
 }
 
+void SoundManager::PlayMusic(int num, bool loop)
+{
+	DestroyMusic();
+
+	if(num==0)
+		music = al_load_audio_stream("music/music_menu.ogg", 4, 2048);
+	else if(num==1)
+		music = al_load_audio_stream("music/level1.ogg", 4, 2048);
+
+	if(music==NULL)
+	{
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(),
+			"Error!", "SoundManager", "Couldn't load music", "ok sok", ALLEGRO_MESSAGEBOX_ERROR);
+		return;
+	}
+
+	al_set_audio_stream_loop_secs(music, .0f, al_get_audio_stream_length_secs(music));
+	if(loop)
+		al_set_audio_stream_playmode(music, ALLEGRO_PLAYMODE_LOOP);
+	else
+		al_set_audio_stream_playmode(music, ALLEGRO_PLAYMODE_ONCE);
+	al_attach_audio_stream_to_mixer(music, mixer);
+	al_attach_mixer_to_voice(mixer,voice);
+
+}
+
 void SoundManager::LoadSounds(int levelNum)
 {
 	DestroyAllSounds();
@@ -147,4 +211,28 @@ inline void SoundManager::DestroyAllSounds()
 		al_destroy_sample(snd_jump2);
 	if(snd_splat)
 		al_destroy_sample(snd_splat);
+}
+inline void SoundManager::DestroyMusic()
+{
+	if(music!=NULL)
+	{
+		al_detach_audio_stream(music);
+		al_destroy_audio_stream(music);
+	}
+}
+inline void SoundManager::DestroyMixer()
+{
+	if(mixer!=NULL)
+	{
+		al_detach_mixer(mixer);
+		al_destroy_mixer(mixer);
+	}
+}
+inline void SoundManager::DestroyVoice()
+{
+	if(voice!=NULL)
+	{
+		al_detach_voice(voice);
+		al_destroy_voice(voice);
+	}
 }

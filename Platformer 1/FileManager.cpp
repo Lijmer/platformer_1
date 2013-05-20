@@ -8,8 +8,12 @@
 #include "GameObjectManager.h"
 #include "LevelManager.h"
 
+#include <iostream>
+
 FileManager::FileManager()
 {
+	currentLevelInLevelVector=-1;
+
 	//Save File structure:
 	//active,level,difficulty,_camX,_camY,x,y,velX,velY,dir,vertical_dir,gravity,jump,idle,deaths,hours,minutes,seconds,steps;
 	const int MAX_SAVE=3;
@@ -49,119 +53,6 @@ FileManager& FileManager::GetInstance()
 {
 	static FileManager instance;
 	return instance;
-}
-
-inline void FileManager::CreateObject(const std::string &ID,float x,float y)
-{
-	if(ID=="-1")
-		return;//If temp == -1 the rest doesn't have to be checked, since most is -1 it is at the top
-	else if(ID == "00")
-		GameObjectManager::GetInstance().CreateObject(0,x,y);
-	else if(ID == "01")
-		GameObjectManager::GetInstance().CreateObject(1,x,y);
-	else if(ID == "02")
-		GameObjectManager::GetInstance().CreateObject(2,x,y);
-	else if(ID == "03")
-		GameObjectManager::GetInstance().CreateObject(3,x,y);
-	else if(ID == "04")
-		GameObjectManager::GetInstance().CreateObject(4,x,y);
-	else if(ID == "05")
-		GameObjectManager::GetInstance().CreateObject(5,x,y);
-	else if(ID == "06")
-		GameObjectManager::GetInstance().CreateObject(6,x,y);
-	else if(ID == "07")
-		GameObjectManager::GetInstance().CreateObject(7,x,y);
-	else if(ID == "08")
-		GameObjectManager::GetInstance().CreateObject(8,x,y);
-	else if(ID == "09")
-		GameObjectManager::GetInstance().CreateObject(9,x,y);
-	else if(ID == "10")
-		GameObjectManager::GetInstance().CreateObject(10,x,y);
-	else if(ID == "11")
-		GameObjectManager::GetInstance().CreateObject(11,x,y);
-	else if(ID == "12")
-		GameObjectManager::GetInstance().CreateObject(12,x,y);
-	else if(ID == "13")
-		GameObjectManager::GetInstance().CreateObject(13,x,y);
-	else if(ID == "14")
-		GameObjectManager::GetInstance().CreateObject(14,x,y);
-	else if(ID == "15")
-		GameObjectManager::GetInstance().CreateObject(15,x,y);
-	else if(ID == "16")
-		GameObjectManager::GetInstance().CreateObject(16,x,y);
-	else if(ID == "17")
-		GameObjectManager::GetInstance().CreateObject(17,x,y);
-	else if(ID == "18")
-		GameObjectManager::GetInstance().CreateObject(18,x,y);
-	else if(ID == "96")
-		GameObjectManager::GetInstance().CreateObject(96,x,y);
-	else if(ID == "97")
-		GameObjectManager::GetInstance().CreateObject(97,x,y);
-	else if(ID == "98")
-		GameObjectManager::GetInstance().CreateObject(98,x,y);
-	else if(ID == "99")
-		GameObjectManager::GetInstance().CreateObject(99,x,y);
-	else //Give error message if object ID is unknown
-	{
-		std::string error = "Unknown object ID: " + ID;
-		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "FileManager", error.c_str() , "OkSok", 0);
-	}
-}
-inline void FileManager::CreateDynamicObject(const std::string &ID, float x, float y)
-{
-	if(ID == "-1")
-		return;
-	else if(ID == "05")
-		GameObjectManager::GetInstance().CreateObject(5,x,y);
-	else if(ID == "07")
-		GameObjectManager::GetInstance().CreateObject(7,x,y);
-	else if(ID == "08")
-		GameObjectManager::GetInstance().CreateObject(8,x,y);
-	else if(ID == "09")
-		GameObjectManager::GetInstance().CreateObject(9,x,y);
-	else if(ID == "10")
-		GameObjectManager::GetInstance().CreateObject(10,x,y);
-	else if(ID == "11")
-		GameObjectManager::GetInstance().CreateObject(11,x,y);
-	else if(ID == "12")
-		GameObjectManager::GetInstance().CreateObject(12,x,y);
-	else if(ID == "13")
-		GameObjectManager::GetInstance().CreateObject(13,x,y);
-	else if(ID == "14")
-		GameObjectManager::GetInstance().CreateObject(14,x,y);
-	else if(ID == "15")
-		GameObjectManager::GetInstance().CreateObject(15,x,y);
-	else if(ID == "16")
-		GameObjectManager::GetInstance().CreateObject(16,x,y);
-	else if(ID == "17")
-		GameObjectManager::GetInstance().CreateObject(17,x,y);
-	else if(ID == "18")
-		GameObjectManager::GetInstance().CreateObject(18,x,y);
-	else if(ID == "96")
-		GameObjectManager::GetInstance().CreateObject(96,x,y);
-	else if(ID == "97")
-		GameObjectManager::GetInstance().CreateObject(97,x,y);
-	else if(ID == "98")
-		GameObjectManager::GetInstance().CreateObject(98,x,y);
-	else if(ID == "99")
-		GameObjectManager::GetInstance().CreateObject(99,x,y);
-}
-inline void FileManager::CreateStaticObject(const std::string &ID,float x,float y)
-{
-	if(ID=="-1")
-		return;//If temp == -1 the rest doesn't have to be checked, since most is -1 it is at the top
-	else if(ID == "00")
-		GameObjectManager::GetInstance().CreateObject(0,x,y);
-	else if(ID == "01")
-		GameObjectManager::GetInstance().CreateObject(1,x,y);
-	else if(ID == "02")
-		GameObjectManager::GetInstance().CreateObject(2,x,y);
-	else if(ID == "03")
-		GameObjectManager::GetInstance().CreateObject(3,x,y);
-	else if(ID == "04")
-		GameObjectManager::GetInstance().CreateObject(4,x,y);
-	else if(ID == "06")
-		GameObjectManager::GetInstance().CreateObject(6,x,y);
 }
 
 void FileManager::Save(int saveNum)
@@ -325,30 +216,12 @@ void FileManager::Load(int saveNum)
 
 void FileManager::LoadDynamicObjects(int levelNum)
 {
-	std::ifstream levelFile;
-	levelFile.open(GetFilePath(levelNum));
-	if(!levelFile.is_open())
-	{
-		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(),
-			"Error!", "FileManager", "Couldn't open level file", "Ok", ALLEGRO_MESSAGEBOX_ERROR);
-		return;
-	}
+	
 	std::string temp;
-	std::vector<std::string> levelVector;
+	std::vector<std::string> levelVector = LoadLevelFile(levelNum);
 	std::vector<std::string>::iterator stringIter;
 	std::vector<std::string>::iterator stringIter2;
 
-	while(std::getline(levelFile, temp))
-	{
-		unsigned found = temp.find("//");
-		if(found != std::string::npos)
-		{
-			temp.erase(found);
-		}
-		if(temp.size()>0)
-			levelVector.push_back(temp);
-	}
-	levelFile.close();
 
 	temp="";
 	int tileWidth=0, tileHeight=0;
@@ -413,30 +286,12 @@ void FileManager::LoadDynamicObjects(int levelNum)
 }
 void FileManager::LoadStaticObjects(int levelNum)
 {
-	std::ifstream levelFile;
-	levelFile.open(GetFilePath(levelNum));
-	if(!levelFile.is_open())
-	{
-		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(),
-			"Error!", "FileManager", "Couldn't open level file", "Ok", ALLEGRO_MESSAGEBOX_ERROR);
-		return;
-	}
 	std::string temp;
-	std::vector<std::string> levelVector;
+	std::vector<std::string> levelVector = LoadLevelFile(levelNum);
 	std::vector<std::string>::iterator stringIter;
 	std::vector<std::string>::iterator stringIter2;
 
-	while(std::getline(levelFile, temp))
-	{
-		unsigned found = temp.find("//");
-		if(found != std::string::npos)
-		{
-			temp.erase(found);
-		}
-		if(temp.size()>0)
-			levelVector.push_back(temp);
-	}
-	levelFile.close();
+	
 	
 	temp="";
 	int tileWidth=0, tileHeight=0;
@@ -500,7 +355,7 @@ void FileManager::LoadStaticObjects(int levelNum)
 	}
 }
 
-std::vector<int>& FileManager::LoadImageNums(int levelNum)
+const std::vector<int>& FileManager::LoadImageNums(int levelNum)
 {
 	std::vector<int>::iterator intIter;
 	//clear imageNums
@@ -508,31 +363,10 @@ std::vector<int>& FileManager::LoadImageNums(int levelNum)
 	{
 		intIter = imageNums.erase(intIter);
 	}
-	//open levelfile
-	std::ifstream levelFile;
-	levelFile.open(GetFilePath(levelNum));
-	if(!levelFile.is_open())
-	{
-		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(),
-			"Error!", "FileManager", "Couldn't load levelFile", "Ok",ALLEGRO_MESSAGEBOX_ERROR);
-		return imageNums;
-	}
-
-	std::string temp;
-	std::vector<std::string> levelVector;
+	std::vector<std::string> levelVector = LoadLevelFile(levelNum);
 	std::vector<std::string>::iterator stringIter;
 	std::vector<std::string>::iterator stringIter2;
-	//push all lines in a vector
-	while(std::getline(levelFile, temp))
-	{
-		unsigned found = temp.find("//");
-		if(found != std::string::npos)
-		{
-			temp.erase(found);
-		}
-		if(temp.size() > 0)
-			levelVector.push_back(temp);
-	}
+	std::string temp;
 
 	temp="";
 
@@ -566,7 +400,7 @@ std::vector<int>& FileManager::LoadImageNums(int levelNum)
 	}
 	return imageNums;
 }
-std::vector<int>& FileManager::LoadSoundNums(int levelNum)
+const std::vector<int>& FileManager::LoadSoundNums(int levelNum)
 {
 	std::vector<int>::iterator intIter;
 	//clear soundNums
@@ -574,31 +408,11 @@ std::vector<int>& FileManager::LoadSoundNums(int levelNum)
 	{
 		intIter = soundNums.erase(intIter);
 	}
-	//open levelfile
-	std::ifstream levelFile;
-	levelFile.open(GetFilePath(levelNum));
-	if(!levelFile.is_open())
-	{
-		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(),
-			"Error!", "FileManager", "Couldn't load levelFile", "Ok",ALLEGRO_MESSAGEBOX_ERROR);
-		return soundNums;
-	}
-
-	std::string temp;
-	std::vector<std::string> levelVector;
+	
+	std::vector<std::string> levelVector = LoadLevelFile(levelNum);
 	std::vector<std::string>::iterator stringIter;
 	std::vector<std::string>::iterator stringIter2;
-	//push all lines in a vector
-	while(std::getline(levelFile, temp))
-	{
-		unsigned found = temp.find("//");
-		if(found != std::string::npos)
-		{
-			temp.erase(found);
-		}
-		if(temp.size() > 0)
-			levelVector.push_back(temp);
-	}
+	std::string temp;
 
 	temp="";
 
@@ -632,16 +446,217 @@ std::vector<int>& FileManager::LoadSoundNums(int levelNum)
 	}
 	return soundNums;
 }
+const std::vector<int>& FileManager::LoadMusicNums(int levelNum)
+{
+	std::vector<int>::iterator intIter;
+	for(intIter = musicNums.begin(); intIter!=musicNums.end();)
+	{
+		intIter = musicNums.erase(intIter);
+	}
+
+	std::vector<std::string> levelVector = LoadLevelFile(levelNum);
+	std::vector<std::string>::iterator stringIter;
+	std::vector<std::string>::iterator stringIter2;
+	std::string temp("");
+
+	for(stringIter = levelVector.begin(); stringIter!=levelVector.end(); stringIter++)
+	{
+		if((*stringIter) == "[music]")
+		{
+			for(stringIter2 = stringIter+1; stringIter2!=levelVector.end(); stringIter2++)
+			{
+				if((*stringIter2) != ";")
+				{
+					for(unsigned i=0; i<(*stringIter2).size(); i++)
+					{
+						if((*stringIter2)[i] != ',')
+						{
+							temp += (*stringIter2)[i];
+						}
+						else
+						{
+							musicNums.push_back(::atoi(temp.c_str()));
+							temp="";
+						}
+					}
+				}
+				else
+					break;
+			}
+		}
+		else if((*stringIter) == "END")
+			break;
+	}
+	return musicNums;
+}
+
 
 //Private
+inline void FileManager::CreateObject(const std::string &ID,float x,float y)
+{
+	if(ID=="-1")
+		return;//If temp == -1 the rest doesn't have to be checked, since most is -1 it is at the top
+	else if(ID == "00")
+		GameObjectManager::GetInstance().CreateObject(0,x,y);
+	else if(ID == "01")
+		GameObjectManager::GetInstance().CreateObject(1,x,y);
+	else if(ID == "02")
+		GameObjectManager::GetInstance().CreateObject(2,x,y);
+	else if(ID == "03")
+		GameObjectManager::GetInstance().CreateObject(3,x,y);
+	else if(ID == "04")
+		GameObjectManager::GetInstance().CreateObject(4,x,y);
+	else if(ID == "05")
+		GameObjectManager::GetInstance().CreateObject(5,x,y);
+	else if(ID == "06")
+		GameObjectManager::GetInstance().CreateObject(6,x,y);
+	else if(ID == "07")
+		GameObjectManager::GetInstance().CreateObject(7,x,y);
+	else if(ID == "08")
+		GameObjectManager::GetInstance().CreateObject(8,x,y);
+	else if(ID == "09")
+		GameObjectManager::GetInstance().CreateObject(9,x,y);
+	else if(ID == "10")
+		GameObjectManager::GetInstance().CreateObject(10,x,y);
+	else if(ID == "11")
+		GameObjectManager::GetInstance().CreateObject(11,x,y);
+	else if(ID == "12")
+		GameObjectManager::GetInstance().CreateObject(12,x,y);
+	else if(ID == "13")
+		GameObjectManager::GetInstance().CreateObject(13,x,y);
+	else if(ID == "14")
+		GameObjectManager::GetInstance().CreateObject(14,x,y);
+	else if(ID == "15")
+		GameObjectManager::GetInstance().CreateObject(15,x,y);
+	else if(ID == "16")
+		GameObjectManager::GetInstance().CreateObject(16,x,y);
+	else if(ID == "17")
+		GameObjectManager::GetInstance().CreateObject(17,x,y);
+	else if(ID == "18")
+		GameObjectManager::GetInstance().CreateObject(18,x,y);
+	else if(ID == "96")
+		GameObjectManager::GetInstance().CreateObject(96,x,y);
+	else if(ID == "97")
+		GameObjectManager::GetInstance().CreateObject(97,x,y);
+	else if(ID == "98")
+		GameObjectManager::GetInstance().CreateObject(98,x,y);
+	else if(ID == "99")
+		GameObjectManager::GetInstance().CreateObject(99,x,y);
+	else //Give error message if object ID is unknown
+	{
+		std::string error = "Unknown object ID: " + ID;
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "FileManager", error.c_str() , "OkSok", 0);
+	}
+}
+inline void FileManager::CreateDynamicObject(const std::string &ID, float x, float y)
+{
+	if(ID == "-1")
+		return;
+	else if(ID == "05")
+		GameObjectManager::GetInstance().CreateObject(5,x,y);
+	else if(ID == "07")
+		GameObjectManager::GetInstance().CreateObject(7,x,y);
+	else if(ID == "08")
+		GameObjectManager::GetInstance().CreateObject(8,x,y);
+	else if(ID == "09")
+		GameObjectManager::GetInstance().CreateObject(9,x,y);
+	else if(ID == "10")
+		GameObjectManager::GetInstance().CreateObject(10,x,y);
+	else if(ID == "11")
+		GameObjectManager::GetInstance().CreateObject(11,x,y);
+	else if(ID == "12")
+		GameObjectManager::GetInstance().CreateObject(12,x,y);
+	else if(ID == "13")
+		GameObjectManager::GetInstance().CreateObject(13,x,y);
+	else if(ID == "14")
+		GameObjectManager::GetInstance().CreateObject(14,x,y);
+	else if(ID == "15")
+		GameObjectManager::GetInstance().CreateObject(15,x,y);
+	else if(ID == "16")
+		GameObjectManager::GetInstance().CreateObject(16,x,y);
+	else if(ID == "17")
+		GameObjectManager::GetInstance().CreateObject(17,x,y);
+	else if(ID == "18")
+		GameObjectManager::GetInstance().CreateObject(18,x,y);
+	else if(ID == "96")
+		GameObjectManager::GetInstance().CreateObject(96,x,y);
+	else if(ID == "97")
+		GameObjectManager::GetInstance().CreateObject(97,x,y);
+	else if(ID == "98")
+		GameObjectManager::GetInstance().CreateObject(98,x,y);
+	else if(ID == "99")
+		GameObjectManager::GetInstance().CreateObject(99,x,y);
+}
+inline void FileManager::CreateStaticObject(const std::string &ID,float x,float y)
+{
+	if(ID=="-1")
+		return;//If temp == -1 the rest doesn't have to be checked, since most is -1 it is at the top
+	else if(ID == "00")
+		GameObjectManager::GetInstance().CreateObject(0,x,y);
+	else if(ID == "01")
+		GameObjectManager::GetInstance().CreateObject(1,x,y);
+	else if(ID == "02")
+		GameObjectManager::GetInstance().CreateObject(2,x,y);
+	else if(ID == "03")
+		GameObjectManager::GetInstance().CreateObject(3,x,y);
+	else if(ID == "04")
+		GameObjectManager::GetInstance().CreateObject(4,x,y);
+	else if(ID == "06")
+		GameObjectManager::GetInstance().CreateObject(6,x,y);
+	else if(ID == "-2")
+		GameObjectManager::GetInstance().CreateObject(-2,x,y);
+}
 inline char const* FileManager::GetFilePath(int levelNum)
 {
 	switch(levelNum)
 	{
 	case LevelManager::LVL_MENU:
-		return "level/menu.lvl";
+		return "levels/menu.lvl";
 	case LevelManager::LVL_LEVEL1:
 		return "levels/level1.lvl";
 	}
 	return NULL;
+}
+inline const std::vector<std::string>& FileManager::LoadLevelFile(int levelNum)
+{
+	if(levelNum==currentLevelInLevelVector)
+	{
+		return levelVector;
+	}
+	else
+		currentLevelInLevelVector = levelNum;
+	
+	std::vector<std::string>::iterator strIter;
+	//clear levelFile
+	for(strIter = levelVector.begin(); strIter!=levelVector.end(); )
+		strIter = levelVector.erase(strIter);
+
+
+	//open levelfile
+	bool endFound=false;
+	std::ifstream levelFile;
+	levelFile.open(GetFilePath(levelNum));
+	if(!levelFile.is_open())
+	{
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(),
+			"Error!", "FileManager", "Couldn't load levelFile", "Ok",ALLEGRO_MESSAGEBOX_ERROR);
+		return levelVector;
+	}
+
+	std::string temp;
+	//push all lines in a vector
+	while(std::getline(levelFile, temp) && !endFound)
+	{
+		unsigned found = temp.find("//");
+		if(found != std::string::npos)
+		{
+			temp.erase(found);
+		}
+		if(temp.size() > 0)
+			levelVector.push_back(temp);
+		if(temp=="END")
+			endFound=true;
+	}
+
+	return levelVector;
 }

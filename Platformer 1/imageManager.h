@@ -10,9 +10,6 @@ public:
 		
 	static ImageManager &GetInstance();
 
-	void Init();
-	void Load();
-
 	void LoadImages(int currentLevel);
 	
 
@@ -62,5 +59,7 @@ private:
 	ALLEGRO_BITMAP *img_blood_torso;
 	ALLEGRO_BITMAP *img_blood_arm;
 	ALLEGRO_BITMAP *img_blood_foot;
+
+	ALLEGRO_BITMAP *img_button;
 };
 

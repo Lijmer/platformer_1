@@ -2,7 +2,6 @@
 #include "GameObjectManager.h"
 
 #include <algorithm>
-#include <iostream>
 #include "globals.h"
 #include "FontManager.h"
 
@@ -38,6 +37,9 @@
 #include "Blood.h"
 #include "Blood_Head.h"
 #include "Blood_Torso.h"
+
+#include "obj_Menu_Button.h"
+#include "obj_Menu_Initer.h"
 
 #pragma endregion
 //Public
@@ -135,6 +137,7 @@ GameObjectManager& GameObjectManager::GetInstance()
 
 void GameObjectManager::Init()
 {
+	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	staticCanvas = al_create_bitmap(1024,768);
 	stillParticleCanvas = al_create_bitmap(1024,768);
 }
@@ -164,6 +167,12 @@ void GameObjectManager::Draw()
 		(*particleIter)->Draw();
 	for(particleIter = particles.begin(); particleIter!=particles.end(); particleIter++)
 		(*particleIter)->Draw();
+
+	std::vector<obj_Menu_Button*>::iterator btnIter;
+	for(btnIter = buttons.begin(); btnIter!=buttons.end(); btnIter++)
+	{
+		(*btnIter)->Draw();
+	}
 	/*
 	if(D_object_exists(PLAYER))
 	{
@@ -476,6 +485,13 @@ GameObject* GameObjectManager::CreateObject(int ID,int x,int y)
 		particles.push_back(blood_torso);
 		return NULL;
 	}
+	else if(ID==-2)
+	{
+		obj_menu_initer = new obj_Menu_Initer;
+		obj_menu_initer->Init();
+		staticObjects.push_back(obj_menu_initer);
+		return obj_menu_initer;
+	}
 	return NULL;
 }
 DynamicObject* GameObjectManager::CreateDynamicObject(int ID, float x, float y, float velX, float velY)
@@ -607,6 +623,13 @@ DynamicObject* GameObjectManager::CreateDynamicObject(int ID, float x, float y, 
 		return player;
 	}
 	return NULL;
+}
+obj_Menu_Button* GameObjectManager::CreateButton(float x, float y, int kind)
+{
+	obj_menu_button = new obj_Menu_Button;
+	obj_menu_button->Init(x,y,kind);
+	buttons.push_back(obj_menu_button);
+	return obj_menu_button;
 }
 
 void GameObjectManager::KillPlayer()
@@ -748,11 +771,21 @@ void GameObjectManager::DeleteParticles(void)
 	}
 
 }
+void GameObjectManager::DeleteButtons(void)
+{
+	std::vector<obj_Menu_Button *>::iterator iter;
+	for(iter = buttons.begin(); iter!=buttons.end();)
+	{
+		delete (*iter);
+		iter = buttons.erase(iter);
+	}
+}
 void GameObjectManager::DeleteAllObjects(void)
 {
 	DeleteDynamicObjects();
 	DeleteStaticObjects();
 	DeleteParticles();
+	DeleteButtons();
 }
 
 //Private
@@ -985,6 +1018,24 @@ inline void GameObjectManager::MotionlessParticles()
 	}
 	stillParticlesSize = stillParticles.size();
 }
+inline void GameObjectManager::UpdateButtons()
+{
+	std::vector<obj_Menu_Button *>::iterator iter;
+	for(iter = buttons.begin(); iter!=buttons.end(); iter++)
+	{
+		(*iter)->Update();
+	}
+	if(_keys_pressed[UP])
+		obj_Menu_Button::PreviousButton();
+	if(_keys_pressed[DOWN])
+		obj_Menu_Button::NextButton();
+	if(_keys_pressed[ENTER])
+	{
+		buttons[obj_Menu_Button::GetSelectedButton()]->Execute();
+	}
+
+}
+
 inline int GameObjectManager::SortFunction(GameObject *i, GameObject *j)
 {
 	return (i->GetDepth()<j->GetDepth());

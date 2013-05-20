@@ -12,8 +12,33 @@
 
 #include "exit.h"
 
+
 ImageManager::ImageManager(void)
 {
+	al_init_image_addon();
+	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
+
+	img_player = NULL;
+	img_wall = NULL;
+	img_spike_up = NULL;
+	img_spike_down = NULL;
+	img_spike_left = NULL;
+	img_spike_right = NULL;
+	img_save = NULL;
+	img_saw = NULL;
+	img_saw_bar = NULL;
+	img_platform = NULL;
+	img_treadmill_begin = NULL;
+	img_treadmill = NULL;
+	img_treadmill_end = NULL;
+	
+	img_blood = NULL;
+	img_blood_head = NULL;
+	img_blood_torso = NULL;
+	img_blood_arm = NULL;
+	img_blood_foot = NULL;
+
+	img_button = NULL;
 }
 
 
@@ -27,80 +52,6 @@ ImageManager &ImageManager::GetInstance()
 {
 	static ImageManager instance;
 	return instance;
-}
-
-void ImageManager::Init()
-{
-	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
-	al_init_image_addon();
-	/*img_player = al_load_bitmap("img/player/sprite_sheet.png");
-	img_wall = al_load_bitmap("img/tiles/32x32/wall.png");
-	img_spike_up = al_load_bitmap("img/tiles/32x32/spike_up.png");
-	img_spike_down = al_load_bitmap("img/tiles/32x32/spike_down.png");
-	img_spike_left = al_load_bitmap("img/tiles/32x32/spike_left.png");
-	img_spike_right = al_load_bitmap("img/tiles/32x32/spike_right.png");
-	img_save = al_load_bitmap("img/tiles/other/save.png");
-	img_saw = al_load_bitmap("img/tiles/128x128/saw.png");
-	img_saw_bar = al_load_bitmap("img/other/saw_bar.png");
-	img_platform = al_load_bitmap("img/tiles/other/platform.png");
-	img_treadmill_begin = al_load_bitmap("img/tiles/32x32/treadmill_begin.png");
-	img_treadmill = al_load_bitmap("img/tiles/32x32/treadmill.png");
-	img_treadmill_end = al_load_bitmap("img/tiles/32x32/treadmill_end.png");
-	
-	img_blood = al_load_bitmap("img/player/blood/blood_pixel.png");
-	img_blood_head = al_load_bitmap("img/player/blood/head.png");
-	img_blood_torso = al_load_bitmap("img/player/blood/torso.png");
-	img_blood_arm = al_load_bitmap("img/player/blood/arm.png");
-	img_blood_foot = al_load_bitmap("img/player/blood/foot.png");
-
-	//std::string error = "";
-
-	try
-	{
-		if(img_player==NULL)
-			throw "img_player";
-		else if(img_wall==NULL)
-			throw "img_wall";
-		else if(img_spike_up == NULL)
-			throw "img_spike_up";
-		else if(img_spike_down == NULL)
-			throw "img_spike_down";
-		else if(img_spike_left == NULL)
-			throw "img_spike_left";
-		else if(img_spike_right == NULL)
-			throw "img_spike_right";
-		else if(img_save == NULL)
-			throw "img_save";
-		else if(img_saw == NULL)
-			throw "img_saw";
-		else if(img_saw_bar == NULL)
-			throw "img_saw_bar";
-		else if(img_platform == NULL)
-			throw "img_platform";
-		else if(img_treadmill_begin == NULL)
-			throw "img_treadmill_begin";
-		else if(img_treadmill == NULL)
-			throw "img_treadmill";
-		else if(img_treadmill_end == NULL)
-			throw "img_treadmill_end";
-		else if(img_blood == NULL)
-			throw "img_blood";
-
-		else if(img_blood_head == NULL)
-			throw "img_blood_head";
-		else if(img_blood_torso == NULL)
-			throw "img_blood_torso";
-		else if(img_blood_arm == NULL)
-			throw "img_blood_arm";
-		else if(img_blood_foot == NULL)
-			throw "img_blood_foot";
-	}catch(char const* error)
-	{
-		std::stringstream finalErrorMessage;
-		finalErrorMessage << "Couldn't load " << error << ".";
-		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "ImageManager", finalErrorMessage.str().c_str(), "ok", ALLEGRO_MESSAGEBOX_ERROR);
-		Exit::ExitProgram(-1);
-	}*/
 }
 
 
@@ -165,6 +116,9 @@ ALLEGRO_BITMAP* ImageManager::GetImage(char ID)
 	case 104:
 		return img_blood_foot;
 		break;
+	case -2:
+		return img_button;
+		break;
 	}
 	al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "ImageManager", "NULL or unknown value passed into image manager", "", 0);
 	return NULL;
@@ -173,6 +127,7 @@ ALLEGRO_BITMAP* ImageManager::GetImage(char ID)
 void ImageManager::LoadImages(int currentLevel)
 {
 	DestroyAllImages();
+	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	std::vector<int> imgNums = FileManager::GetInstance().LoadImageNums(currentLevel);
 	std::vector<int>::iterator iter;
 
@@ -258,6 +213,11 @@ void ImageManager::LoadImages(int currentLevel)
 				img_treadmill_end = al_load_bitmap("img/tiles/32x32/treadmill_end.png");
 				if(img_treadmill_end == NULL)
 					throw "img_treadmill_end";
+				break;
+			case -2:
+				img_button = al_load_bitmap("img/button.png");
+				if(img_button == NULL)
+					throw "img_button";
 				break;
 			}
 		}

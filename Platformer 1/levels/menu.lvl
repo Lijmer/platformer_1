@@ -1,0 +1,14 @@
+[properties]
+tileWidth = 0
+tileHeight = 0
+;
+[images]
+-2,
+;
+[sounds]
+-2,
+;
+[map]
+-2|
+;
+END

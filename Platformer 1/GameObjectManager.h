@@ -37,6 +37,8 @@ class Blood;
 class Blood_Head;
 class Blood_Torso;
 
+class obj_Menu_Button;
+class obj_Menu_Initer;
 
 class GameObjectManager
 {
@@ -56,8 +58,11 @@ public:
 	bool PlaceMeeting(int otherID, float x, float y, DynamicObject *object);
 	bool PlaceMeeting(int otherID, float x, float y, DynamicObject *object, GameObject *&other);
 	bool D_object_exists(int ID);
+	
 	GameObject* CreateObject(int ID,int x,int y);
 	DynamicObject* CreateDynamicObject(int ID, float x, float y, float velX, float velY);
+	obj_Menu_Button* CreateButton(float x, float y, int kind);
+	
 	void KillPlayer();
 	void GetPlayerData(float &x, float &y, float &velX, float &velY, float &gravity, bool &dir, bool &vertical_dir, bool &jump, bool &idle);
 	void SetPlayerData(float x, float y, float velX, float velY, float gravity, bool dir, bool vertical_dir, bool jump, bool idle);
@@ -68,6 +73,7 @@ public:
 	void DeleteDynamicObjects(void);
 	void DeleteStaticObjects(void);
 	void DeleteParticles(void);
+	void DeleteButtons(void);
 	void DeleteAllObjects(void);
 
 private:
@@ -76,6 +82,7 @@ private:
 	void Clean();
 	void ActivateDeactivate();
 	void MotionlessParticles();
+	void UpdateButtons();
 	static int SortFunction(GameObject *i, GameObject *j);
 
 	#pragma region vectors
@@ -88,6 +95,7 @@ private:
 	std::vector<Particle *> stillParticles;
 	std::vector<Particle *> stillParticlesBuffer;
 	std::vector<Particle *> deactivatedParticles;
+	std::vector<obj_Menu_Button *> buttons;
 	#pragma endregion
 	#pragma region object pointers
 	Player *player;
@@ -118,6 +126,9 @@ private:
 	Blood *blood;
 	Blood_Head *blood_head;
 	Blood_Torso *blood_torso;
+
+	obj_Menu_Button *obj_menu_button;
+	obj_Menu_Initer *obj_menu_initer;
 #pragma endregion
 
 	ALLEGRO_BITMAP *staticCanvas;

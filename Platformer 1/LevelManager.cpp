@@ -22,7 +22,7 @@ LevelManager::~LevelManager(void)
 
 void LevelManager::Init(void)
 {
-	currentLevel=LVL_LEVEL1;
+	currentLevel=LVL_MENU;
 	saveNum=0;
 	LoadLevel(currentLevel);
 }
@@ -89,6 +89,7 @@ inline void LevelManager::LoadLevel(int level)
 {
 	LoadImages(level);
 	LoadSounds(level);
+	SoundManager::GetInstance().PlayMusic(1, true);
 	GameObjectManager::GetInstance().DeleteAllObjects();
 	FileManager::GetInstance().LoadStaticObjects(level);
 	FileManager::GetInstance().LoadDynamicObjects(level);
@@ -109,6 +110,10 @@ inline void LevelManager::LoadImages(int level)
 inline void LevelManager::LoadSounds(int level)
 {
 	SoundManager::GetInstance().LoadSounds(level);
+}
+inline void LevelManager::LoadMusic(int level)
+{
+	SoundManager::GetInstance().LoadMusic(level);
 }
 
 inline void LevelManager::DeleteDynamicObjects()

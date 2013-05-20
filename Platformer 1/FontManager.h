@@ -9,7 +9,6 @@ public:
 	static FontManager& GetInstance();
 	~FontManager(void);
 
-	void Init();
 
 	ALLEGRO_FONT* GetFont(char ID);
 	
