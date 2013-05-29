@@ -34,7 +34,7 @@ void obj_Platform_Horizontal::Update()
 
 void obj_Platform_Horizontal::Draw()
 {
-	al_draw_bitmap(image, x, y, 0);
+	al_draw_bitmap(image, x-_camX, y-_camY, 0);
 }
 
 void obj_Platform_Horizontal::Destroy()

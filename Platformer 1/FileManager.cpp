@@ -7,12 +7,16 @@
 #include "GameObject.h"
 #include "GameObjectManager.h"
 #include "LevelManager.h"
+#include "ButtonManager.h"
 
 #include <iostream>
 
 FileManager::FileManager()
 {
 	currentLevelInLevelVector=-1;
+	currentLevelProperties=-1;
+	tileSize[0] = 0;
+	tileSize[1] = 0;
 
 	//Save File structure:
 	//active,level,difficulty,_camX,_camY,x,y,velX,velY,dir,vertical_dir,gravity,jump,idle,deaths,hours,minutes,seconds,steps;
@@ -57,29 +61,11 @@ FileManager& FileManager::GetInstance()
 
 void FileManager::Save(int saveNum)
 {
-	//Save File structure:
-	//active,level,difficulty,_camX,_camY,x,y,velX,velY,dir,vertical_dir,gravity,jump,idle,deaths,hours,minutes,seconds,steps;
-
-	//Create an ifstream objec to read the file
-	std::ifstream isaveFile;
-	isaveFile.open("save/save.sav");
-	//Check if it opened
-	if(!isaveFile.is_open())
-	{
-		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "FileManager", "Could not open save file", "ok sok", ALLEGRO_MESSAGEBOX_ERROR);
-		return;
-	}
 	//Declare variables to read the file
 	std::string temp;
-	std::vector<std::string> save;
+	std::vector<std::string> save = LoadSaveFile();
 	std::vector<std::string>::iterator iter;
-	//Read the file
-	while(getline(isaveFile,temp))
-	{
-		save.push_back(temp);
-	}
-
-	isaveFile.close();	
+	
 	std::ofstream osaveFile;
 	osaveFile.open("save/save.sav");
 
@@ -108,24 +94,9 @@ void FileManager::Save(int saveNum)
 }
 void FileManager::Load(int saveNum)
 {
-	//active,level,difficulty,_camX,_camY,x,y,velX,velY,dir,vertical_dir,gravity,jump,idle,deaths,hours,minutes,seconds,steps;
-	std::ifstream saveFile;
-	saveFile.open("save/save.sav");
-	if(!saveFile.is_open())
-	{
-		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "FileManager", "Could not open save file", "ok sok", ALLEGRO_MESSAGEBOX_ERROR);
-		return;
-	}
-
 	std::string temp;
-	std::vector<std::string> save;
+	const std::vector<std::string> save = LoadSaveFile();;
 	std::vector<std::string>::iterator iter;
-
-	while(std::getline(saveFile,temp))
-	{
-		save.push_back(temp);
-	}
-	saveFile.close();
 	temp = "";
 	//This variable keeps track of the place of the value to identify what it must do with it.
 	int valueNum=0;
@@ -216,39 +187,22 @@ void FileManager::Load(int saveNum)
 
 void FileManager::LoadDynamicObjects(int levelNum)
 {
-	
+	_camX=-1;_camY=-1;	
 	std::string temp;
 	std::vector<std::string> levelVector = LoadLevelFile(levelNum);
 	std::vector<std::string>::iterator stringIter;
 	std::vector<std::string>::iterator stringIter2;
 
+	const int *tileSize = LoadLevelProperties(levelNum);
+
+	const int tileWidth = tileSize[0];
+	const int tileHeight = tileSize[1];
 
 	temp="";
-	int tileWidth=0, tileHeight=0;
 
 	for(stringIter = levelVector.begin(); stringIter!=levelVector.end(); stringIter++)
 	{
-		if((*stringIter) == "[properties]")
-		{
-			for(stringIter2 = stringIter+1; stringIter2!=levelVector.end(); stringIter2++)
-			{
-				if((*stringIter2) == ";")
-					break;
-				else if(!(*stringIter2).find("tileWidth = "))
-				{
-					temp = (*stringIter2);
-					temp.erase(0,12);
-					tileWidth = atoi(temp.c_str());
-				}
-				else if(!(*stringIter2).find("tileHeight = "))
-				{
-					temp = (*stringIter2);
-					temp.erase(0,13);
-					tileHeight = atoi(temp.c_str());
-				}
-			}
-		}
-		else if((*stringIter) == "[map]")
+		if((*stringIter) == "[map]")
 		{
 			int x=0,y=0;
 			std::string temp;
@@ -290,9 +244,59 @@ void FileManager::LoadStaticObjects(int levelNum)
 	std::vector<std::string> levelVector = LoadLevelFile(levelNum);
 	std::vector<std::string>::iterator stringIter;
 	std::vector<std::string>::iterator stringIter2;
+	
+	const int *tileSize = LoadLevelProperties(levelNum);
 
-	
-	
+	const int tileWidth = tileSize[0];
+	const int tileHeight = tileSize[1];
+
+	temp="";
+
+	for(stringIter = levelVector.begin(); stringIter!=levelVector.end(); stringIter++)
+	{
+		if((*stringIter) == "[map]")
+		{
+			int x=0,y=0;
+			std::string temp;
+			for(stringIter2 = stringIter+1; stringIter2!=levelVector.end(); stringIter2++)
+			{
+				if((*stringIter2) == ";")
+					break;
+				else
+				{
+					for(unsigned int i=0; i<(*stringIter2).size(); i++)
+					{
+						if((*stringIter2)[i] != ' ' && (*stringIter2)[i] != '|')
+							temp += (*stringIter2)[i];
+						else
+						{
+							if(temp=="--")
+							{
+								y--;
+								temp="";
+								break;
+							}
+							CreateStaticObject(temp, x*tileWidth, y*tileHeight);
+							x++;
+							temp="";
+						}
+					}
+					y++;
+					x=0;
+				}
+			}
+		}
+		else if((*stringIter) == "END")
+			break;
+	}
+}
+void FileManager::LoadMainMenu(int levelNum)
+{
+	std::string temp;
+	std::vector<std::string> levelVector = LoadLevelFile(levelNum);
+	std::vector<std::string>::iterator stringIter;
+	std::vector<std::string>::iterator stringIter2;
+
 	temp="";
 	int tileWidth=0, tileHeight=0;
 
@@ -340,7 +344,10 @@ void FileManager::LoadStaticObjects(int levelNum)
 								temp="";
 								break;
 							}
-							CreateStaticObject(temp, x*tileWidth, y*tileHeight);
+							if(temp=="-2")
+							{
+								ButtonManager::GetInstance().LoadMainMenu();
+							}
 							x++;
 							temp="";
 						}
@@ -446,14 +453,8 @@ const std::vector<int>& FileManager::LoadSoundNums(int levelNum)
 	}
 	return soundNums;
 }
-const std::vector<int>& FileManager::LoadMusicNums(int levelNum)
+int FileManager::LoadMusicNum(int levelNum)
 {
-	std::vector<int>::iterator intIter;
-	for(intIter = musicNums.begin(); intIter!=musicNums.end();)
-	{
-		intIter = musicNums.erase(intIter);
-	}
-
 	std::vector<std::string> levelVector = LoadLevelFile(levelNum);
 	std::vector<std::string>::iterator stringIter;
 	std::vector<std::string>::iterator stringIter2;
@@ -475,8 +476,7 @@ const std::vector<int>& FileManager::LoadMusicNums(int levelNum)
 						}
 						else
 						{
-							musicNums.push_back(::atoi(temp.c_str()));
-							temp="";
+							return ::atoi(temp.c_str());
 						}
 					}
 				}
@@ -487,9 +487,8 @@ const std::vector<int>& FileManager::LoadMusicNums(int levelNum)
 		else if((*stringIter) == "END")
 			break;
 	}
-	return musicNums;
+	return -1;
 }
-
 
 //Private
 inline void FileManager::CreateObject(const std::string &ID,float x,float y)
@@ -603,8 +602,6 @@ inline void FileManager::CreateStaticObject(const std::string &ID,float x,float 
 		GameObjectManager::GetInstance().CreateObject(4,x,y);
 	else if(ID == "06")
 		GameObjectManager::GetInstance().CreateObject(6,x,y);
-	else if(ID == "-2")
-		GameObjectManager::GetInstance().CreateObject(-2,x,y);
 }
 inline char const* FileManager::GetFilePath(int levelNum)
 {
@@ -627,10 +624,8 @@ inline const std::vector<std::string>& FileManager::LoadLevelFile(int levelNum)
 		currentLevelInLevelVector = levelNum;
 	
 	std::vector<std::string>::iterator strIter;
-	//clear levelFile
-	for(strIter = levelVector.begin(); strIter!=levelVector.end(); )
-		strIter = levelVector.erase(strIter);
-
+	
+	levelVector.clear();
 
 	//open levelfile
 	bool endFound=false;
@@ -657,6 +652,85 @@ inline const std::vector<std::string>& FileManager::LoadLevelFile(int levelNum)
 		if(temp=="END")
 			endFound=true;
 	}
+	levelFile.close();
+
+	if(levelFile.is_open())
+	{
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(),
+			"Error!", "FileManager", "Couldn't close levelFile", "Ok",ALLEGRO_MESSAGEBOX_ERROR);
+	}
 
 	return levelVector;
+}
+inline const std::vector<std::string>& FileManager::LoadSaveFile()
+{
+	std::vector<std::string>::iterator iter;
+	saveVector.clear();
+
+	std::ifstream saveFile;
+	saveFile.open("save/save.sav");
+	//Check if it opened
+	if(!saveFile.is_open())
+	{
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "FileManager", "Could not open save file", "ok sok", ALLEGRO_MESSAGEBOX_ERROR);
+		return saveVector;
+	}
+	//Declare variables to read the file
+	std::string temp;
+	while(getline(saveFile,temp))
+	{
+		saveVector.push_back(temp);
+	}
+	saveFile.close();
+
+	
+	if(saveFile.is_open())
+	{
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(),
+			"Error!", "FileManager", "Couldn't close saveFile", "Ok",ALLEGRO_MESSAGEBOX_ERROR);
+	}
+
+	return saveVector;
+}
+inline const int* FileManager::LoadLevelProperties(int levelNum)
+{
+	if(currentLevelProperties == levelNum)
+		return tileSize;
+	else
+		currentLevelProperties = levelNum;
+
+	std::string temp;
+	std::vector<std::string> levelVector = LoadLevelFile(levelNum);
+	std::vector<std::string>::iterator stringIter;
+	std::vector<std::string>::iterator stringIter2;
+
+	temp="";
+	int tileWidth=0, tileHeight=0;
+
+	for(stringIter = levelVector.begin(); stringIter!=levelVector.end(); stringIter++)
+	{
+		if((*stringIter) == "[properties]")
+		{
+			for(stringIter2 = stringIter+1; stringIter2!=levelVector.end(); stringIter2++)
+			{
+				if((*stringIter2) == ";")
+					break;
+				else if(!(*stringIter2).find("tileWidth = "))
+				{
+					temp = (*stringIter2);
+					temp.erase(0,12);
+					tileSize[0] = atoi(temp.c_str());
+				}
+				else if(!(*stringIter2).find("tileHeight = "))
+				{
+					temp = (*stringIter2);
+					temp.erase(0,13);
+					tileSize[1] = atoi(temp.c_str());
+				}
+			}
+		}
+		else if((*stringIter) == "END")
+			break;
+	}
+	return tileSize;
 }

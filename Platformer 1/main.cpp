@@ -12,10 +12,17 @@
 #include "FontManager.h"
 #include "DisplayManager.h"
 #include "GameObjectManager.h"
+#include "ButtonManager.h"
 #include "LevelManager.h"
+#include <iostream>
 
 #include "Exit.h"
 #pragma endregion
+
+float mX=0;
+float mY=0;
+
+void GetInput(const ALLEGRO_EVENT &ev);
 
 //Function that is used to calculate the time it takes to run a certain piece of code
 inline double diffclock(clock_t clock1, clock_t clock2)
@@ -42,10 +49,14 @@ inline void UpdateTime()
 }
 inline void ResetKeys()
 {
-	for(int i=0; i<_KEYS_SIZE; i++)
+	for(int i=0; i<KEYS_SIZE; i++)
 	{
 		_keys_pressed[i]=false;
 		_keys_released[i]=false;
+	}
+	for(int i=0; i<M_SIZE; i++)
+	{
+		_mouse_pressed[i]=false;
 	}
 }
 
@@ -66,6 +77,9 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	//install addons
 	al_install_keyboard();
 	al_install_mouse();
+	al_install_joystick();
+	al_reconfigure_joysticks();
+
 	al_init_primitives_addon();
 	#pragma endregion
 	#pragma region Init Managers
@@ -81,8 +95,6 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	int frames = 0;
 	float gameFPS = 0;
 	srand(time(unsigned int(0)));
-	float mX=0;
-	float mY=0;
 	#pragma endregion
 	#pragma region Events and Timers
 	//Create event_queue and timer
@@ -92,6 +104,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
 	al_register_event_source(event_queue, al_get_mouse_event_source());
+	al_register_event_source(event_queue, al_get_joystick_event_source());
 	al_register_event_source(event_queue, al_get_display_event_source(DisplayManager::GetInstance().GetDisplay()));
 
 	al_start_timer(timer);
@@ -103,170 +116,23 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	{
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
-
-		#pragma region Input
-		#pragma region key down
-		if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
-		{
-			switch(ev.keyboard.keycode)
-			{
-			case ALLEGRO_KEY_ESCAPE:
-				Exit::ExitProgram();
-				break;
-			case ALLEGRO_KEY_LEFT:
-				_keys_pressed[LEFT]=true;
-				_keys[LEFT] = true;
-				break;
-			case ALLEGRO_KEY_RIGHT:
-				_keys_pressed[RIGHT]=true;
-				_keys[RIGHT] = true;
-				break;
-			case ALLEGRO_KEY_UP:
-				_keys_pressed[UP] = true;
-				_keys[UP] = true;
-				break;
-			case ALLEGRO_KEY_DOWN:
-				_keys_pressed[DOWN] = true;
-				_keys[DOWN] = true;
-				break;
-			case ALLEGRO_KEY_SPACE:
-				_keys_pressed[SPACE] = true;
-				_keys[SPACE] = true;
-				break;
-			case ALLEGRO_KEY_L:
-				_keys_pressed[L_KEY]=true;
-				_keys[L_KEY]=true;
-				//FileManager::GetInstance().Load();
-				break;
-			case ALLEGRO_KEY_M:
-				SoundManager::GetInstance().ToggleMusic();
-				break;
-			case ALLEGRO_KEY_Q:
-				_keys_pressed[Q_KEY]=true;
-				_keys[Q_KEY]=true;
-				break;
-			case ALLEGRO_KEY_R:
-				_keys_pressed[R_KEY]=true;
-				_keys[R_KEY]=true;
-				LevelManager::GetInstance().RestartLevel();
-				//FileManager::GetInstance().RestartLevel(_currentLevel);
-				_camX_prev=-1;
-				_camY_prev=-1;
-				break;
-			case ALLEGRO_KEY_S:
-				SoundManager::GetInstance().ToggleSound();
-				break;
-			case ALLEGRO_KEY_X:
-				_keys_pressed[X_KEY]=true;
-				_keys[X_KEY] = true;
-				break;
-			case ALLEGRO_KEY_Z:
-				_keys_pressed[Z_KEY]=true;
-				_keys[Z_KEY] = true;
-				break;
-			case ALLEGRO_KEY_ENTER:
-				_keys_pressed[ENTER]=true;
-				_keys[ENTER]=true;
-				if(_keys[ALT])
-					DisplayManager::GetInstance().ChangeState();
-				break;
-			case ALLEGRO_KEY_ALT:
-				_keys_pressed[ALT]=true;
-				_keys[ALT] = true;
-				break;
-			case ALLEGRO_KEY_ALTGR:
-				_keys_pressed[ALTGR]=true;
-				_keys[ALTGR]=true;
-				break;
-			}
-		}
-		#pragma endregion
-		#pragma region key up
-		else if(ev.type == ALLEGRO_EVENT_KEY_UP)
-		{
-			switch(ev.keyboard.keycode)
-			{
-			case ALLEGRO_KEY_ESCAPE:
-				Exit::ExitProgram(0);
-				break;
-			case ALLEGRO_KEY_LEFT:
-				_keys_released[LEFT]=true;
-				_keys[LEFT] = false;
-				break;
-			case ALLEGRO_KEY_RIGHT:
-				_keys_released[RIGHT]=true;
-				_keys[RIGHT] = false;
-				break;
-			case ALLEGRO_KEY_UP:
-				_keys_released[UP]=true;
-				_keys[UP] = false;
-				break;
-			case ALLEGRO_KEY_DOWN:
-				_keys_released[DOWN]=true;
-				_keys[DOWN] = false;
-				break;
-			case ALLEGRO_KEY_SPACE:
-				_keys_released[SPACE]=true;
-				_keys[SPACE] = false;
-				break;
-			case ALLEGRO_KEY_L:
-				_keys_released[L_KEY]=true;
-				_keys[L_KEY]=false;
-				break;
-			case ALLEGRO_KEY_Q:
-				_keys_released[Q_KEY]=true;
-				_keys[Q_KEY]=false;
-				break;
-			case ALLEGRO_KEY_R:
-				_keys_released[R_KEY]=true;
-				_keys[R_KEY]=false;
-				break;
-			case ALLEGRO_KEY_X:
-				_keys_released[X_KEY]=true;
-				_keys[X_KEY] = false;
-				break;
-			case ALLEGRO_KEY_Z:
-				_keys_released[Z_KEY]=true;
-				_keys[Z_KEY] = false;
-				break;
-			case ALLEGRO_KEY_ENTER:
-				_keys_released[ENTER]=true;
-				_keys[ENTER]=false;
-				break;
-			case ALLEGRO_KEY_ALT:
-				_keys_released[ALT]=true;
-				_keys[ALT] = false;
-				break;
-			case ALLEGRO_KEY_ALTGR:
-				_keys_released[ALTGR]=true;
-				_keys[ALTGR]=false;
-				break;
-			}
-		}
-		#pragma endregion
-		#pragma region Mouse Input
-		else if(ev.type==ALLEGRO_EVENT_MOUSE_AXES)
-		{
-			mX=ev.mouse.x;
-			mY=ev.mouse.y;			
-		}
-		#pragma endregion
-		#pragma region otherinput
-		else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
-		{
-			Exit::ExitProgram();
-		}
-		#pragma endregion
-		#pragma endregion Get input from the user
+		GetInput(ev);
 
 		#pragma region Timer event
-		else if(ev.type == ALLEGRO_EVENT_TIMER)
+		if(ev.type == ALLEGRO_EVENT_TIMER)
 		{
 			render = true;
 			UpdateTime();
+			if(_keys_pressed[R_KEY])
+			{
+				LevelManager::GetInstance().RestartLevel();
+				_camX_prev=-1;
+				_camY_prev=-1;
+			}
 			if(_keys_pressed[Q_KEY] && GameObjectManager::GetInstance().D_object_exists(PLAYER))
 				GameObjectManager::GetInstance().KillPlayer();
 			GameObjectManager::GetInstance().TimerEvent();
+			ButtonManager::GetInstance().TimerEvent();
 			SoundManager::GetInstance().Update();
 			_camX_prev=_camX;
 			_camY_prev=_camY;
@@ -306,6 +172,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			//BEGIN PROJECT RENDER=============================================================================================
 			//Draw all the objects
 			GameObjectManager::GetInstance().Draw();
+			ButtonManager::GetInstance().Draw();
 			//Draw text
 			/*
 			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,5,0,"FPS: %f", gameFPS);
@@ -332,4 +199,357 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	#pragma endregion Destroy timer and event_queue, the rest is done by destructors
 	
 	return Exit::GetReturnValue();
+}
+
+void GetInput(const ALLEGRO_EVENT &ev)
+{
+	#pragma region key down
+	if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
+	{
+		switch(ev.keyboard.keycode)
+		{
+		case ALLEGRO_KEY_ESCAPE:
+			Exit::ExitProgram();
+			break;
+		case ALLEGRO_KEY_LEFT:
+			_keys_pressed[LEFT]=true;
+			_keys[LEFT] = true;
+			break;
+		case ALLEGRO_KEY_RIGHT:
+			_keys_pressed[RIGHT]=true;
+			_keys[RIGHT] = true;
+			break;
+		case ALLEGRO_KEY_UP:
+			_keys_pressed[UP] = true;
+			_keys[UP] = true;
+			break;
+		case ALLEGRO_KEY_DOWN:
+			_keys_pressed[DOWN] = true;
+			_keys[DOWN] = true;
+			break;
+		case ALLEGRO_KEY_SPACE:
+			_keys_pressed[SPACE] = true;
+			_keys[SPACE] = true;
+			break;
+		case ALLEGRO_KEY_L:
+			_keys_pressed[L_KEY]=true;
+			_keys[L_KEY]=true;
+			//FileManager::GetInstance().Load();
+			break;
+		case ALLEGRO_KEY_M:
+			SoundManager::GetInstance().ToggleMusic();
+			break;
+		case ALLEGRO_KEY_Q:
+			_keys_pressed[Q_KEY]=true;
+			_keys[Q_KEY]=true;
+			break;
+		case ALLEGRO_KEY_R:
+			_keys_pressed[R_KEY]=true;
+			_keys[R_KEY]=true;
+			break;
+		case ALLEGRO_KEY_S:
+			SoundManager::GetInstance().ToggleSound();
+			break;
+		case ALLEGRO_KEY_X:
+			_keys_pressed[X_KEY]=true;
+			_keys[X_KEY] = true;
+			break;
+		case ALLEGRO_KEY_Z:
+			_keys_pressed[Z_KEY]=true;
+			_keys[Z_KEY] = true;
+			break;
+		case ALLEGRO_KEY_ENTER:
+			_keys_pressed[ENTER]=true;
+			_keys[ENTER]=true;
+			if(_keys[ALT])
+				DisplayManager::GetInstance().ChangeState();
+			break;
+		case ALLEGRO_KEY_ALT:
+			_keys_pressed[ALT]=true;
+			_keys[ALT] = true;
+			break;
+		case ALLEGRO_KEY_ALTGR:
+			_keys_pressed[ALTGR]=true;
+			_keys[ALTGR]=true;
+			break;
+		}
+	}
+	#pragma endregion
+	#pragma region key up
+	else if(ev.type == ALLEGRO_EVENT_KEY_UP)
+	{
+		switch(ev.keyboard.keycode)
+		{
+		case ALLEGRO_KEY_ESCAPE:
+			Exit::ExitProgram(0);
+			break;
+		case ALLEGRO_KEY_LEFT:
+			_keys_released[LEFT]=true;
+			_keys[LEFT] = false;
+			break;
+		case ALLEGRO_KEY_RIGHT:
+			_keys_released[RIGHT]=true;
+			_keys[RIGHT] = false;
+			break;
+		case ALLEGRO_KEY_UP:
+			_keys_released[UP]=true;
+			_keys[UP] = false;
+			break;
+		case ALLEGRO_KEY_DOWN:
+			_keys_released[DOWN]=true;
+			_keys[DOWN] = false;
+			break;
+		case ALLEGRO_KEY_SPACE:
+			_keys_released[SPACE]=true;
+			_keys[SPACE] = false;
+			break;
+		case ALLEGRO_KEY_L:
+			_keys_released[L_KEY]=true;
+			_keys[L_KEY]=false;
+			break;
+		case ALLEGRO_KEY_Q:
+			_keys_released[Q_KEY]=true;
+			_keys[Q_KEY]=false;
+			break;
+		case ALLEGRO_KEY_R:
+			_keys_released[R_KEY]=true;
+			_keys[R_KEY]=false;
+			break;
+		case ALLEGRO_KEY_X:
+			_keys_released[X_KEY]=true;
+			_keys[X_KEY] = false;
+			break;
+		case ALLEGRO_KEY_Z:
+			_keys_released[Z_KEY]=true;
+			_keys[Z_KEY] = false;
+			break;
+		case ALLEGRO_KEY_ENTER:
+			_keys_released[ENTER]=true;
+			_keys[ENTER]=false;
+			break;
+		case ALLEGRO_KEY_ALT:
+			_keys_released[ALT]=true;
+			_keys[ALT] = false;
+			break;
+		case ALLEGRO_KEY_ALTGR:
+			_keys_released[ALTGR]=true;
+			_keys[ALTGR]=false;
+			break;
+		}
+	}
+	#pragma endregion
+	#pragma region Mouse Input
+	else if(ev.type==ALLEGRO_EVENT_MOUSE_AXES)
+	{
+		mX=ev.mouse.x;
+		mY=ev.mouse.y;			
+	}
+	else if(ev.type==ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
+	{
+		if(ev.mouse.button & 1)
+		{
+			_mouse_pressed[M_LEFT]=true;
+		}
+		else if(ev.mouse.button & 2)
+		{
+			_mouse_pressed[M_RIGHT]=true;
+		}
+	}
+	#pragma endregion
+	#pragma region Joystick Input
+
+	#pragma region Joystick Button Down
+	else if(ev.type == ALLEGRO_EVENT_JOYSTICK_BUTTON_DOWN)
+	{
+		if(ev.joystick.button == 0 || ev.joystick.button == 1||
+			ev.joystick.button == 2 || ev.joystick.button == 3)
+		{
+			_keys[Z_KEY]=true;
+			_keys_pressed[Z_KEY]=true;
+		}
+		else if(ev.joystick.button == 4 || ev.joystick.button == 5 ||
+			ev.joystick.button == 6 || ev.joystick.button == 7)
+		{
+			_keys[X_KEY]=true;
+			_keys_pressed[X_KEY]=true;
+		}
+		else if(ev.joystick.button == 8)
+		{
+			_keys[R_KEY]=true;
+			_keys_pressed[R_KEY]=true;
+		}
+		else if(ev.joystick.button == 9)
+		{
+			_keys[ENTER]=true;
+			_keys_pressed[ENTER]=true;
+		}
+		else if(ev.joystick.button == 10)
+		{
+			_keys[ESCAPE]=true;
+			_keys_pressed[ESCAPE]=true;
+		}
+	}
+	#pragma endregion
+	#pragma region Joystick Button Up
+	else if(ev.type == ALLEGRO_EVENT_JOYSTICK_BUTTON_UP)
+	{
+		if(ev.joystick.button == 0 || ev.joystick.button == 1||
+			ev.joystick.button == 2 || ev.joystick.button == 3)
+		{
+			_keys[Z_KEY]=false;
+			_keys_released[Z_KEY]=true;
+		}
+		else if(ev.joystick.button == 4 || ev.joystick.button == 5 ||
+			ev.joystick.button == 6 || ev.joystick.button == 7)
+		{
+			_keys[X_KEY]=false;
+			_keys_released[X_KEY]=true;
+		}
+		else if(ev.joystick.button == 8)
+		{
+			_keys[R_KEY]=false;
+			_keys_released[R_KEY]=true;
+		}
+		else if(ev.joystick.button == 9)
+		{
+			_keys[ENTER]=false;
+			_keys_released[ENTER]=true;
+		}
+		else if(ev.joystick.button == 10)
+		{
+			_keys[ESCAPE]=false;
+			_keys_released[ESCAPE]=true;
+		}
+	}
+	#pragma endregion
+	#pragma region Joystick axis
+	else if(ev.type == ALLEGRO_EVENT_JOYSTICK_AXIS)
+	{
+		#pragma region D-pad
+		if(ev.joystick.stick == 2)
+		{
+			if(ev.joystick.axis == 0)
+			{
+				//left
+				if(ev.joystick.pos == -1)
+				{
+					_keys[LEFT]=true;
+					_keys_pressed[LEFT]=true;
+				}
+				//right
+				else if(ev.joystick.pos == 1)
+				{
+					_keys[RIGHT]=true;
+					_keys_pressed[RIGHT]=true;
+				}
+				//middle
+				else if(ev.joystick.pos == 0)
+				{
+					_keys[LEFT]=false;
+					_keys[RIGHT]=false;
+					_keys_released[LEFT]=true;
+					_keys_released[RIGHT]=true;
+				}
+			}
+			else if(ev.joystick.axis == 1)
+			{
+				//up
+				if(ev.joystick.pos == -1)
+				{
+					_keys[UP]=true;
+					_keys_pressed[UP]=true;
+				}
+				//down
+				else if(ev.joystick.pos == 1)
+				{
+					_keys[DOWN]=true;
+					_keys_pressed[DOWN]=true;
+				}
+				//middle
+				else if(ev.joystick.pos == 0)
+				{
+					_keys[UP]=false;
+					_keys[DOWN]=false;
+					_keys_released[UP]=true;
+					_keys_released[DOWN]=true;
+				}
+			}
+		}
+		#pragma endregion
+		#pragma region Left joystick
+		else if(ev.joystick.stick==0)
+		{
+			if(ev.joystick.axis==0)
+			{
+				//left
+				if(ev.joystick.pos <= -0.3)
+				{
+					if(!_keys[LEFT])
+						_keys_pressed[LEFT]=true;
+					_keys[LEFT]=true;
+					_keys[RIGHT]=false;
+					_keys_released[RIGHT]=true;
+				}
+				//right
+				else if(ev.joystick.pos >= .3)
+				{
+					if(!_keys[RIGHT])
+						_keys_pressed[RIGHT]=true; 
+					_keys[RIGHT]=true;
+						
+					_keys[LEFT]=false;
+					_keys_released[LEFT]=true;
+				}
+				//middle
+				else if(ev.joystick.pos > -0.3 && ev.joystick.pos < 0.3)
+				{
+					_keys[LEFT]=false;
+					_keys[RIGHT]=false;
+					_keys_released[LEFT]=true;
+					_keys_released[RIGHT]=true;
+				}
+			}
+			else if(ev.joystick.axis==1)
+			{
+				std::cout << ev.joystick.pos << std::endl;
+				//up
+				if(ev.joystick.pos <= -0.3)
+				{
+					if(!_keys[UP])
+						_keys_pressed[UP]=true;
+					_keys[UP]=true;
+					_keys[DOWN]=false;
+					_keys_released[DOWN]=true;
+				}
+				//down
+				else if(ev.joystick.pos >= .3)
+				{
+					if(!_keys[DOWN])
+						_keys_pressed[DOWN]=true; 
+					_keys[DOWN]=true;
+						
+					_keys[UP]=false;
+					_keys_released[UP]=true;
+				}
+				//middle
+				else if(ev.joystick.pos > -0.3 && ev.joystick.pos < 0.3)
+				{
+					_keys[UP]=false;
+					_keys[DOWN]=false;
+					_keys_released[UP]=true;
+					_keys_released[DOWN]=true;
+				}
+			}
+		}
+		#pragma endregion
+	}
+	#pragma endregion
+
+	#pragma endregion
+	#pragma region otherinput
+	else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
+	{
+		Exit::ExitProgram();
+	}
+	#pragma endregion
 }

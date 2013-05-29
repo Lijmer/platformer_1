@@ -32,7 +32,7 @@ enum COLLISION_TYPE{
 };
 enum KEYS
 {
-	UP=0,
+	UP,
 	DOWN,
 	LEFT,
 	RIGHT,
@@ -44,15 +44,17 @@ enum KEYS
 	Z_KEY,
 	ENTER,
 	ALT,
-	ALTGR
+	ALTGR,
+	ESCAPE,
+	KEYS_SIZE
 };
-enum SND
+enum MOUSE
 {
-	SHOOT,
-	JUMP1,
-	JUMP2,
-	SPLAT
+	M_LEFT,
+	M_RIGHT,
+	M_SIZE
 };
+
 enum DIFFICULTY
 {
 	EASY=0,
@@ -61,13 +63,13 @@ enum DIFFICULTY
 	IMPOSSIBLE
 };
 
-const int _KEYS_SIZE=13;
 
 extern float _monitorWidth, _monitorHeight, _scaleScreen;
 
 extern int _camX, _camY, _camX_prev, _camY_prev;
 extern int _difficulty, _currentLevel;
-extern bool _keys[_KEYS_SIZE], _keys_pressed[_KEYS_SIZE], _keys_released[_KEYS_SIZE];
+extern bool _keys[KEYS_SIZE], _keys_pressed[KEYS_SIZE], _keys_released[KEYS_SIZE];
+extern bool _mouse[M_SIZE], _mouse_pressed[M_SIZE], _mouse_released[M_SIZE];
 extern float _mouseX, _mouseY;
 extern int _hours, _minutes, _seconds, _steps;
 extern int _deaths;

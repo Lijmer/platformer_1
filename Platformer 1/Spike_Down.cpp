@@ -9,12 +9,12 @@ Spike_Down::Spike_Down(void)
 void Spike_Down::Init(float x, float y)
 {
 	StaticObject::Init(x,y);
-	xPoint1 = x+1;
-	yPoint1 = y+1;
-	xPoint2 = x+31;
-	yPoint2 = y+1;
-	xPoint3 = x+15;
-	yPoint3 = y+31;
+	xPoint1 = x;
+	yPoint1 = y;
+	xPoint2 = x+32;
+	yPoint2 = y;
+	xPoint3 = x+16;
+	yPoint3 = y+32;
 	SetCollisionType(TBB);
 	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_SPIKE_DOWN);
 }

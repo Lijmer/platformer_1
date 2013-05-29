@@ -71,7 +71,9 @@
     <ClCompile Include="Blood.cpp" />
     <ClCompile Include="Blood_Head.cpp" />
     <ClCompile Include="Blood_Torso.cpp" />
+    <ClCompile Include="btn_Menu.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="ButtonManager.cpp" />
     <ClCompile Include="DisplayManager.cpp" />
     <ClCompile Include="DynamicObject.cpp" />
     <ClCompile Include="Exit.cpp" />
@@ -85,8 +87,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="obj_Double_Spike_Down.cpp" />
     <ClCompile Include="obj_Double_Spike_Up.cpp" />
-    <ClCompile Include="obj_Menu_Button.cpp" />
-    <ClCompile Include="obj_Menu_Initer.cpp" />
+    <ClCompile Include="obj_Help_Text.cpp" />
     <ClCompile Include="obj_Platform_Horizontal.cpp" />
     <ClCompile Include="obj_Platform_Vertical.cpp" />
     <ClCompile Include="obj_Saw.cpp" />
@@ -119,7 +120,9 @@
     <ClInclude Include="Blood.h" />
     <ClInclude Include="Blood_Head.h" />
     <ClInclude Include="Blood_Torso.h" />
+    <ClInclude Include="btn_Menu.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="ButtonManager.h" />
     <ClInclude Include="DisplayManager.h" />
     <ClInclude Include="DynamicObject.h" />
     <ClInclude Include="Exit.h" />
@@ -132,6 +135,7 @@
     <ClInclude Include="LevelManager.h" />
     <ClInclude Include="obj_Double_Spike_Down.h" />
     <ClInclude Include="obj_Double_Spike_Up.h" />
+    <ClInclude Include="obj_Help_Text.h" />
     <ClInclude Include="obj_Menu_Button.h" />
     <ClInclude Include="obj_Menu_Initer.h" />
     <ClInclude Include="obj_Platform_Horizontal.h" />

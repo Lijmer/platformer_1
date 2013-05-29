@@ -174,7 +174,7 @@ void Player::Kill()
 {
 	_deaths++;
 	SetAlive(false);
-	SoundManager::GetInstance().Play(SPLAT);
+	SoundManager::GetInstance().Play(SoundManager::SPLAT);
 	//Create normal blood
 	for(int i=0; i<125; i++)
 		GameObjectManager::GetInstance().CreateObject(100,x,y);
@@ -229,12 +229,12 @@ inline void Player::Jump()
 		{
 			if(collisionWallDown)
 			{
-				SoundManager::GetInstance().Play(JUMP1);
+				SoundManager::GetInstance().Play(SoundManager::JUMP1);
 				velY=-6.5;
 			}
 			else if(jump)
 			{
-				SoundManager::GetInstance().Play(JUMP2);
+				SoundManager::GetInstance().Play(SoundManager::JUMP2);
 				velY=-6.5;
 				jump=false;
 			}
@@ -243,12 +243,12 @@ inline void Player::Jump()
 		{
 			if(collisionWallUp)
 			{
-				SoundManager::GetInstance().Play(JUMP1);
+				SoundManager::GetInstance().Play(SoundManager::JUMP1);
 				velY=6.5;
 			}
 			else if(jump)
 			{
-				SoundManager::GetInstance().Play(JUMP2);
+				SoundManager::GetInstance().Play(SoundManager::JUMP2);
 				velY=6.5;
 				jump=false;
 			}
@@ -296,7 +296,7 @@ inline void Player::Shoot()
 {
 	if(_keys_pressed[X_KEY])
 	{
-		SoundManager::GetInstance().Play(SHOOT);
+		SoundManager::GetInstance().Play(SoundManager::SHOOT);
 		if(dir)
 			GameObjectManager::GetInstance().CreateDynamicObject(95,x+14,y-1,velX+10,0);
 		else

@@ -89,10 +89,11 @@ inline void LevelManager::LoadLevel(int level)
 {
 	LoadImages(level);
 	LoadSounds(level);
-	SoundManager::GetInstance().PlayMusic(1, true);
+	SoundManager::GetInstance().PlayMusic(FileManager::GetInstance().LoadMusicNum(level), true);	
 	GameObjectManager::GetInstance().DeleteAllObjects();
 	FileManager::GetInstance().LoadStaticObjects(level);
 	FileManager::GetInstance().LoadDynamicObjects(level);
+	FileManager::GetInstance().LoadMainMenu(level);
 }
 
 inline void LevelManager::ReloadLevel()

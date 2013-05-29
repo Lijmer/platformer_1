@@ -8,6 +8,9 @@ tileHeight = 0
 [sounds]
 -2,
 ;
+[music]
+0,
+;
 [map]
 -2|
 ;

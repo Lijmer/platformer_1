@@ -24,6 +24,12 @@ SoundManager::SoundManager(void)
 	voice = al_create_voice(44100, ALLEGRO_AUDIO_DEPTH_INT16, ALLEGRO_CHANNEL_CONF_2);
 	mixer = al_create_mixer(44100, ALLEGRO_AUDIO_DEPTH_FLOAT32, ALLEGRO_CHANNEL_CONF_2);
 
+	snd_click=NULL;
+	snd_shoot=NULL;
+	snd_jump1=NULL;
+	snd_jump2=NULL;
+	snd_splat=NULL;
+
 	musicEnabled = true;
 	soundEnabled = true;
 	paused=false;
@@ -31,7 +37,6 @@ SoundManager::SoundManager(void)
 	musicVolume = 1.0f;
 	soundVolume = 1.0f;
 }
-
 SoundManager::~SoundManager(void)
 {
 	DestroyAllSounds();
@@ -43,6 +48,8 @@ SoundManager::~SoundManager(void)
 
 void SoundManager::Update()
 {
+	if(music==NULL)
+		return;
 	if(musicEnabled && !paused)
 		al_set_audio_stream_playing(music, true);
 	else if(!musicEnabled || paused)
@@ -72,33 +79,42 @@ void SoundManager::ChangeSoundVolume()
 
 void SoundManager::Play(int num)
 {
+	if(!soundEnabled)
+		return;
 	try
 	{
-		if(num == SHOOT)
+		if(num == CLICK)
+		{
+			if(snd_click!=NULL)
+				al_play_sample(snd_click,soundVolume,0,1,ALLEGRO_PLAYMODE_ONCE,0);
+			else
+				throw "snd_click";
+		}
+		else if(num == SHOOT)
 		{
 			if(snd_shoot!=NULL)
-				al_play_sample(snd_shoot,1,0,1,ALLEGRO_PLAYMODE_ONCE,0);
+				al_play_sample(snd_shoot,soundVolume,0,1,ALLEGRO_PLAYMODE_ONCE,0);
 			else
 				throw "snd_shoot";
 		}
 		else if(num==JUMP1)
 		{
 			if(snd_jump1!=NULL)
-				al_play_sample(snd_jump1,1,0,1,ALLEGRO_PLAYMODE_ONCE,0);
+				al_play_sample(snd_jump1,soundVolume,0,1,ALLEGRO_PLAYMODE_ONCE,0);
 			else
 				throw "snd_jump1";
 		}
 		else if(num==JUMP2)
 		{
 			if(snd_jump2!=NULL)
-				al_play_sample(snd_jump2,1,0,1,ALLEGRO_PLAYMODE_ONCE,0);
+				al_play_sample(snd_jump2,soundVolume,0,1,ALLEGRO_PLAYMODE_ONCE,0);
 			else
 				throw "snd_jump2";
 		}
 		else if(num==SPLAT)
 		{
 			if(snd_splat!=NULL)
-				al_play_sample(snd_splat,1,0,1,ALLEGRO_PLAYMODE_ONCE,0);
+				al_play_sample(snd_splat,soundVolume,0,1,ALLEGRO_PLAYMODE_ONCE,0);
 			else
 				throw "snd_splat";
 		}
@@ -132,9 +148,10 @@ void SoundManager::Play(int num)
 void SoundManager::PlayMusic(int num, bool loop)
 {
 	DestroyMusic();
-
-	if(num==0)
-		music = al_load_audio_stream("music/music_menu.ogg", 4, 2048);
+	if(num==-1)
+		return;
+	else if(num==0)
+		music = al_load_audio_stream("music/menu.ogg", 4, 2048);
 	else if(num==1)
 		music = al_load_audio_stream("music/level1.ogg", 4, 2048);
 
@@ -144,6 +161,9 @@ void SoundManager::PlayMusic(int num, bool loop)
 			"Error!", "SoundManager", "Couldn't load music", "ok sok", ALLEGRO_MESSAGEBOX_ERROR);
 		return;
 	}
+
+	if(music==NULL)
+		return;
 
 	al_set_audio_stream_loop_secs(music, .0f, al_get_audio_stream_length_secs(music));
 	if(loop)
@@ -167,6 +187,11 @@ void SoundManager::LoadSounds(int levelNum)
 		{
 			switch(*iter)
 			{
+			case -2:
+				SoundManager::snd_click = al_load_sample("snd/click.wav");
+				if(!snd_click)
+					throw "snd_click";
+				break;
 			case 0:
 				SoundManager::snd_shoot = al_load_sample("snd/player/shoot.wav");
 				if(!snd_shoot)

@@ -7,9 +7,9 @@ Save::Save()
 	active = false;
 	SetCollisionType(BB);
 	boundUp=0;
-	boundDown=31;
+	boundDown=32;
 	boundLeft=0;
-	boundRight=28;
+	boundRight=32;
 	SetID(SAVE);
 }
 
