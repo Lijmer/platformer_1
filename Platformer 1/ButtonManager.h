@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <allegro5/allegro.h>
 class btn_Menu;
 class obj_Help_Text;
 class ButtonManager
@@ -13,6 +14,7 @@ public:
 		static ButtonManager instance;
 		return instance;
 	}
+	void Init();
 	void TimerEvent(void);
 	void Draw(void);
 	void CreateButton(float x, float y, int kind);
@@ -49,6 +51,7 @@ public:
 	};
 
 private:
+	ALLEGRO_BITMAP *mainCanvas;
 	void Update(void);
 	void Clean(void);
 	void NextButton(void);

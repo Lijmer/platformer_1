@@ -19,11 +19,6 @@ void Spike_Left::Init(float x,float y)
 	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_SPIKE_LEFT);
 }
 
-void Spike_Left::Draw()
-{
-	al_draw_bitmap(image,x-_camX,y-_camY,0);
-}
-
 void Spike_Left::Destroy()
 {
 

@@ -21,14 +21,13 @@ GameObject::GameObject()
 	velX=0;
 	velY=0;
 	depth=0;
-	activated = true;
+	activated=true;
 	collidable=true;
 	collisionType = BB;
 	radius=0;
 	ID=UNDEFINED;
 
 }
-
 GameObject::~GameObject()
 {
 
@@ -39,8 +38,6 @@ void GameObject::Init(float x, float y)
 {
 	GameObject::x=x;
 	GameObject::y=y;
-	activated =true;
-	collidable=true;
 }
 
 void GameObject::Activate()
@@ -56,6 +53,9 @@ void GameObject::Deactivate()
 }
 
 void GameObject::Draw()
-{}
+{
+	if(image!=NULL)
+		al_draw_bitmap(image, TranslateCameraX(x), TranslateCameraY(y), 0);
+}
 void GameObject::Destroy()
 {}

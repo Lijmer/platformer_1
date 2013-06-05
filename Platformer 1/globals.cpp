@@ -1,4 +1,41 @@
 #include "globals.h"
+
+static bool dropFrames = true;
+static bool camChanged = true;
+
+inline bool GetDropFrames()
+{
+	return dropFrames;
+}
+inline void ToggleDropFrames()
+{
+	if(dropFrames)
+		dropFrames=false;
+	else
+		dropFrames=true;
+}
+
+
+inline void CheckIfCamIsChanged()
+{
+	if(_camX != _camX_prev || _camY != _camY_prev)
+	{
+		camChanged=true;
+	}
+	else
+		camChanged=false;
+}
+
+inline void OverrideCamChanged(bool changed)
+{
+	camChanged = changed;
+}
+
+bool GetCamChanged()
+{
+	return camChanged;
+}
+
 int _camX = 0, _camY=0, _camX_prev=-1, _camY_prev=-1;
 int _difficulty = 0, _currentLevel=0;
 int _hours=0, _minutes=0, _seconds=0, _steps=0;

@@ -7,7 +7,6 @@ public:
 	~obj_Platform_Vertical(void);
 
 	void Update();
-	void Draw();
 	void Destroy();
 
 private:

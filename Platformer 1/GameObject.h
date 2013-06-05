@@ -3,13 +3,16 @@
 #include <allegro5/allegro_primitives.h>
 //#include <allegro5/allegro_image.h>
 #include "ImageManager.h"
+#include "Transformer.h"
 #include "globals.h"
+
+using namespace Transformer;
 
 class GameObject
 {
 public:
 	GameObject();
-	virtual ~GameObject();
+	~GameObject();
 
 	void Init(float x, float y);
 	void Activate();

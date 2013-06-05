@@ -43,11 +43,6 @@ void obj_Double_Spike_Up::Update()
 	yPoint3 += velY;
 }
 
-void obj_Double_Spike_Up::Draw()
-{
-	al_draw_bitmap(image,x-_camX,y-_camY,0);
-}
-
 void obj_Double_Spike_Up::Destroy()
 {}
 

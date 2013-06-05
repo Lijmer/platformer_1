@@ -19,11 +19,6 @@ void Spike_Down::Init(float x, float y)
 	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_SPIKE_DOWN);
 }
 
-void Spike_Down::Draw()
-{
-	al_draw_bitmap(image,x-_camX,y-_camY,0);
-}
-
 void Spike_Down::Destroy()
 {
 

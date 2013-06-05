@@ -2,9 +2,16 @@
 #define GLOBALS_H
 
 const float PI = (float)3.141592;
+const float TAU = (float)6.283184;
 
 const int _SCREEN_WIDTH = 1024;
 const int _SCREEN_HEIGHT = 768;
+
+extern bool GetDropFrames();
+extern void ToggleDropFrames();
+extern void CheckIfCamIsChanged();
+extern void OverrideCamChanged(bool changed);
+extern bool GetCamChanged();
 
 enum OBJECT_ID
 {

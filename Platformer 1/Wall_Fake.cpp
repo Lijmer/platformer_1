@@ -13,9 +13,5 @@ Wall_Fake::Wall_Fake(void)
 	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_WALL);
 }
 
-void Wall_Fake::Draw()
-{
-	al_draw_bitmap(image,x-_camX,y-_camY,0);
-}
 void Wall_Fake::Destroy()
 {}

@@ -11,6 +11,9 @@ tileHeight = 0
 [music]
 0,
 ;
+[background]
+-2,
+;
 [map]
 -2|
 ;

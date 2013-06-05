@@ -12,9 +12,6 @@ Spike::Spike(void)
 	SetCollisionType(TBB);
 }
 
-void Spike::Draw()
-{
-}
 
 void Spike::Destroy()
 {

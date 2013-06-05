@@ -24,7 +24,7 @@ DisplayManager &DisplayManager::GetInstance()
 	return instance;
 }
 
-bool DisplayManager::CreateDisplay()
+void DisplayManager::CreateDisplay()
 {
 
 	al_get_display_mode(al_get_num_display_modes() - 1, &disp_data);
@@ -37,19 +37,12 @@ bool DisplayManager::CreateDisplay()
 	_monitorWidth = disp_data.width;
 	_monitorHeight = disp_data.height;
 
-	al_identity_transform(&camera);
-	al_scale_transform(&camera, 1, 1);
-	al_translate_transform(&camera, 0, 0);
-	al_use_transform(&camera);
-
 	if(!display) //test display object
 	{
 		al_show_native_message_box(NULL, "Error!", "DisplayManager", "Couldn't create display", "Ok Sok", 0);
-		return false;
+		Exit::ExitProgram(-2);
 	}
-	return true;
 }
-
 
 ALLEGRO_DISPLAY* DisplayManager::GetDisplay()
 {
@@ -65,10 +58,6 @@ void DisplayManager::ChangeState()
 		al_toggle_display_flag(display, ALLEGRO_FULLSCREEN_WINDOW, false);
 		al_toggle_display_flag(display, ALLEGRO_NOFRAME, false);
 		al_resize_display(display, _SCREEN_WIDTH, _SCREEN_HEIGHT);
-
-		//Reset transformation
-		al_identity_transform(&camera);
-		al_use_transform(&camera);
 	}
 	else if(state == WINDOWED)
 	{
@@ -76,11 +65,52 @@ void DisplayManager::ChangeState()
 
 		al_toggle_display_flag(display, ALLEGRO_FULLSCREEN_WINDOW, true);
 		al_toggle_display_flag(display, ALLEGRO_NOFRAME, true);
-		al_resize_display(display, _monitorWidth, _monitorHeight);
-
-		al_identity_transform(&camera);
-		al_scale_transform(&camera, _scaleScreen, _scaleScreen);
-		al_translate_transform(&camera, (disp_data.width - (_SCREEN_WIDTH * _scaleScreen))/2.0, (disp_data.height - (_SCREEN_HEIGHT * _scaleScreen))/2.0);
-		al_use_transform(&camera);
+		//al_resize_display(display, _monitorWidth, _monitorHeight);
 	}
 }
+/*
+void DisplayManager::UseFinalTransform()
+{
+	al_use_transform(&CombineTransform(TransformCamera(), TransformDisplay()));
+}
+void DisplayManager::UseCameraTransform()
+{
+	al_use_transform(&TransformCamera());
+}
+void DisplayManager::UseDisplayTransform()
+{
+	al_use_transform(&TransformDisplay());
+}
+
+void DisplayManager::ResetFinalTransform()
+{
+	al_identity_transform(&finalTransform);
+	al_use_transform(&finalTransform);
+}
+
+ALLEGRO_TRANSFORM& DisplayManager::TransformCamera()
+{
+	al_identity_transform(&cameraTransform);
+	al_translate_transform(&cameraTransform, -_camX, -_camY);
+	return cameraTransform;
+}
+ALLEGRO_TRANSFORM& DisplayManager::TransformDisplay()
+{
+	al_identity_transform(&displayTransform);
+	if(state == FULLSCREEN_WINDOW)
+	{
+		al_identity_transform(&displayTransform);
+		al_scale_transform(&displayTransform, _scaleScreen, _scaleScreen);
+		al_translate_transform(&displayTransform, (disp_data.width - (_SCREEN_WIDTH * _scaleScreen))/2.0, (disp_data.height - (_SCREEN_HEIGHT * _scaleScreen))/2.0);
+	}
+	return displayTransform;
+}
+
+ALLEGRO_TRANSFORM& DisplayManager::CombineTransform(ALLEGRO_TRANSFORM &trans1, ALLEGRO_TRANSFORM &trans2)
+{
+	al_compose_transform(&finalTransform, &trans1);
+	al_compose_transform(&finalTransform, &trans2);
+	return finalTransform;
+}
+
+*/

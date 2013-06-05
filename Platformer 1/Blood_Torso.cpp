@@ -4,7 +4,7 @@
 Blood_Torso::Blood_Torso(void)
 {
 	gravity=.62;
-	collided=false;
+	direction = 0;
 	image = ImageManager::GetInstance().GetImage(ImageManager::IMG_BLOOD_TORSO);
 }
 
@@ -21,19 +21,20 @@ void Blood_Torso::Init(float x, float y, float dir, float spd)
 
 void Blood_Torso::Update()
 {
-	direction+=7;
 	if(velY>7)
 		velY=7;
 
 	x+=velX;
 	y+=velY;
 	if(!collided)
+	{
 		velY+=gravity;
+	}
 }
 
 void Blood_Torso::Draw()
 {
-	al_draw_rotated_bitmap(image,1,4,x-_camX,y-_camY,direction*PI/180.0,0);
+	al_draw_rotated_bitmap(image,1,4,TranslateCameraX(x), TranslateCameraY(y),direction*PI/180.0,0);
 }
 
 void Blood_Torso::Destroy()
@@ -41,15 +42,16 @@ void Blood_Torso::Destroy()
 
 void Blood_Torso::Collided(GameObject *other)
 {
-	if((other->GetID() == WALL || other->GetID() == WALL_FADE))
+	if(other->GetID() == WALL)
 	{
 		collided=true;
 		velX=0;
 		velY=0;
 	}
-	else if(other->GetID() == SPIKE)
+	else if(other->GetID() == SPIKE || other->GetID() == WALL_FADE || other->GetID() == TREADMILL_LEFT ||
+		other->GetID() == TREADMILL_RIGHT || other->GetID() == SAVE || other->GetID() == SAW)
 	{
-		velX/=1.5;
-		velY/=1.5;
+		velX/=2;
+		velY=0;
 	}
 }

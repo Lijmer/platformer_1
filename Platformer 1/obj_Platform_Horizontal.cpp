@@ -32,10 +32,6 @@ void obj_Platform_Horizontal::Update()
 		velX=-velX;
 }
 
-void obj_Platform_Horizontal::Draw()
-{
-	al_draw_bitmap(image, x-_camX, y-_camY, 0);
-}
 
 void obj_Platform_Horizontal::Destroy()
 {

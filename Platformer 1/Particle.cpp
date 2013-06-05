@@ -7,6 +7,7 @@ Particle::Particle(void)
 	velX=0;
 	velY=0;
 	alive = true;
+	activated=true;
 	collided = false;
 	image = NULL;
 }
@@ -25,10 +26,8 @@ Particle::~Particle(void)
 
 void Particle::Update()
 {}
-
 void Particle::Draw()
 {}
-
 void Particle::Destroy()
 {}
 
@@ -61,8 +60,6 @@ bool Particle::CheckCollision(GameObject *other)
 		int xPoint3 = other->GetXPoint3();
 		int yPoint3 = other->GetYPoint3();
 
-		
-
 		//1) Check if any of the triangle’s points are within the rectangle, if yes then intersection is true.
 		if((xPoint1 >= x && xPoint1 <= x && yPoint1 >= y && yPoint1 <= y)
 			|| (xPoint2 >= x && xPoint2 <= x && yPoint2 >= y && yPoint2 <= y)
@@ -74,21 +71,7 @@ bool Particle::CheckCollision(GameObject *other)
 		//**************************************************************************************************************************************************************\\
 
 		//2) Check if any of the corners of the rectangle is in the triangle
-		/*
-		als een van de hoeken van een vierkant in de driehoek is, is er collision
-		omdat de lijnen elkaar niet raken, hoeven we alleen maar naar het centrum van het vierkant te kijken. (de x en y)
-
-					 B
-				    / \
-				   /   \
-				  /     \
-				 /   P   \      P'
-				/         \
-			  A ----------- C 
-		*/
-			
-		//Bereken totale oppervlakte van driehoek (ABC)
-		
+		//	 go to dynamicObject.cpp for more details
 		float Px, Py;
 
 		Px = x;
@@ -96,8 +79,6 @@ bool Particle::CheckCollision(GameObject *other)
 		
 		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
 			return true;
-		else
-		return false;
 	}
 	return false;
 }
@@ -111,7 +92,6 @@ void Particle::Activate()
 	if(x>=_camX && x<=_camX+_SCREEN_WIDTH && y>=_camY && y<=_camY+_SCREEN_HEIGHT)
 		activated = true;
 }
-
 void Particle::Deactivate()
 {
 	if(x<_camX || x>_camX+_SCREEN_WIDTH || y<_camY || y>_camY+_SCREEN_HEIGHT)

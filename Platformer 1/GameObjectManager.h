@@ -36,6 +36,7 @@ class Particle;
 class Blood;
 class Blood_Head;
 class Blood_Torso;
+class Blood_Arm;
 
 #pragma endregion
 class GameObjectManager
@@ -57,10 +58,13 @@ public:
 	bool PlaceMeeting(int otherID, float x, float y, DynamicObject *object, GameObject *&other);
 	bool D_object_exists(int ID);
 	
-	GameObject* CreateObject(int ID,int x,int y);
+	GameObject* CreateObject(int ID,float x,float y);
 	DynamicObject* CreateDynamicObject(int ID, float x, float y, float velX, float velY);
+	Particle* CreateParticle(int ID, float x, float y);
 	
 	void KillPlayer();
+	float GetPlayerX();
+	float GetPlayerY();
 	void GetPlayerData(float &x, float &y, float &velX, float &velY, float &gravity, bool &dir, bool &vertical_dir, bool &jump, bool &idle);
 	void SetPlayerData(float x, float y, float velX, float velY, float gravity, bool dir, bool vertical_dir, bool jump, bool idle);
 	obj_Double_Spike_Down* Create_obj_Double_Spike_Down(float x,float y);
@@ -82,6 +86,7 @@ private:
 	void Clean();
 	void ActivateDeactivate();
 	void MotionlessParticles();
+	void SetCam();
 	static int SortFunction(GameObject *i, GameObject *j);
 
 	#pragma region vectors
@@ -124,11 +129,15 @@ private:
 	Blood *blood;
 	Blood_Head *blood_head;
 	Blood_Torso *blood_torso;
+	Blood_Arm *blood_arm;
 #pragma endregion
 
 	ALLEGRO_BITMAP *staticCanvas;
 	ALLEGRO_BITMAP *stillParticleCanvas;
+	ALLEGRO_BITMAP *mainCanvas;
 
 	int stillParticlesSize;
+	bool redrawStaticObjects;
+	bool redrawStillParticles;
 	
 };

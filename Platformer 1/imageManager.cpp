@@ -41,19 +41,15 @@ ImageManager::ImageManager(void)
 	img_button = NULL;
 }
 
-
 ImageManager::~ImageManager(void)
 {
 	DestroyAllImages();
 }
-
-
 ImageManager &ImageManager::GetInstance()
 {
 	static ImageManager instance;
 	return instance;
 }
-
 
 ALLEGRO_BITMAP* ImageManager::GetImage(char ID)
 {
@@ -126,10 +122,24 @@ ALLEGRO_BITMAP* ImageManager::GetImage(char ID)
 
 void ImageManager::LoadImages(int currentLevel)
 {
-	DestroyAllImages();
+	//DestroyAllImages();
 	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	std::vector<int> imgNums = FileManager::GetInstance().LoadImageNums(currentLevel);
 	std::vector<int>::iterator iter;
+	std::vector<int>::iterator iter2;
+	
+	for(iter = loadedImages.begin(); iter != loadedImages.end(); iter++)
+	{
+		for(iter2 = imgNums.begin(); iter2!=imgNums.end(); )
+		{
+			if((*iter) == (*iter2))
+			{
+				iter2 = imgNums.erase(iter2);
+			}
+			else
+				iter2++;
+		}
+	}
 
 	for(iter = imgNums.begin(); iter!=imgNums.end(); iter++)
 	{
@@ -138,6 +148,7 @@ void ImageManager::LoadImages(int currentLevel)
 			switch(*iter)
 			{
 			case 0:
+				loadedImages.push_back(0);
 				img_player = al_load_bitmap("img/player/sprite_sheet.png");
 				if(img_player == NULL)
 					throw "img_player";
@@ -155,66 +166,85 @@ void ImageManager::LoadImages(int currentLevel)
 					//throw "img_blood_foot";
 				break;
 			case 1:
+				loadedImages.push_back(1);
+				al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR | ALLEGRO_MIPMAP);
 				img_wall = al_load_bitmap("img/tiles/32x32/wall.png");
 				if(img_wall==NULL)
 					throw "img_wall";
 				break;
 			case 2:
+				loadedImages.push_back(2);
+				al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR | ALLEGRO_MIPMAP);
 				img_spike_up = al_load_bitmap("img/tiles/32x32/spike_up.png");
 				if(img_spike_up == NULL)
 					throw "img_spike_up";
 				break;
 			case 3:
+				loadedImages.push_back(3);
+				al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR | ALLEGRO_MIPMAP);
 				img_spike_down = al_load_bitmap("img/tiles/32x32/spike_down.png");
 				if(img_spike_down == NULL)
 					throw "img_spike_down";
 				break;
 			case 4:
+				loadedImages.push_back(4);
+				al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR | ALLEGRO_MIPMAP);
 				img_spike_left = al_load_bitmap("img/tiles/32x32/spike_left.png");
 				if(img_spike_left == NULL)
 					throw "img_spike_left";
 				break;
 			case 5:
+				loadedImages.push_back(5);
+				al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR | ALLEGRO_MIPMAP);
 				img_spike_right = al_load_bitmap("img/tiles/32x32/spike_right.png");
 				if(img_spike_right == NULL)
 					throw "img_spike_right";
 				break;
 			case 6:
+				loadedImages.push_back(6);
 				img_save = al_load_bitmap("img/tiles/other/save.png");
 				if(img_save == NULL)
 					throw "img_save";
 				break;
 			case 7:
+				loadedImages.push_back(7);
+				al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR | ALLEGRO_MIPMAP);
 				img_saw = al_load_bitmap("img/tiles/128x128/saw.png");
 				if(img_saw == NULL)
 					throw "img_saw";
 				break;
 			case 8:
+				loadedImages.push_back(8);
 				img_saw_bar = al_load_bitmap("img/other/saw_bar.png");
 				if(img_saw_bar == NULL)
 					throw "img_saw_bar";
 				break;
 			case 9:
+				loadedImages.push_back(9);
 				img_platform = al_load_bitmap("img/tiles/other/platform.png");
 				if(img_platform == NULL)
 					throw "img_platform";
 				break;
 			case 10:
+				loadedImages.push_back(10);
 				img_treadmill_begin = al_load_bitmap("img/tiles/32x32/treadmill_begin.png");
 				if(img_treadmill_begin == NULL)
 					throw "img_treadmill_begin";
 				break;
 			case 11:
+				loadedImages.push_back(11);
 				img_treadmill = al_load_bitmap("img/tiles/32x32/treadmill.png");
 				if(img_treadmill == NULL)
 					throw "img_treadmill";
 				break;
 			case 12:
+				loadedImages.push_back(12);
 				img_treadmill_end = al_load_bitmap("img/tiles/32x32/treadmill_end.png");
 				if(img_treadmill_end == NULL)
 					throw "img_treadmill_end";
 				break;
 			case -2:
+				loadedImages.push_back(-2);
 				img_button = al_load_bitmap("img/button.png");
 				if(img_button == NULL)
 					throw "img_button";

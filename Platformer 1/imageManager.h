@@ -1,6 +1,6 @@
 #pragma once
 #include <allegro5/allegro.h>
-
+#include <vector>
 
 class ImageManager
 {
@@ -39,6 +39,8 @@ public:
 
 private:
 	void DestroyAllImages();
+
+	std::vector<int> loadedImages;
 
 	ALLEGRO_BITMAP *img_player;
 	ALLEGRO_BITMAP *img_wall;

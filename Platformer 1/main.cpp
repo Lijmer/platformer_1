@@ -1,10 +1,15 @@
 #pragma region includes
 //All stuff that needs to be included is in this file
 //#define true false //This line of code can fuck up everything ;)
+//#define if else //this on too xD
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_primitives.h>
 #include "globals.h"
+#include "Transformer.h"
+
+#include "Background.h"
+
 //Backgroundstuff Objects
 #include "FileManager.h"
 #include "SoundManager.h"
@@ -14,17 +19,22 @@
 #include "GameObjectManager.h"
 #include "ButtonManager.h"
 #include "LevelManager.h"
-#include <iostream>
 
 #include "Exit.h"
+
+#include <iostream>
+using namespace Transformer;
 #pragma endregion
 
 float mX=0;
 float mY=0;
+int gameTime = 0;
+int frames = 0;
+float gameFPS = 0;
+bool render = false;
 
 void GetInput(const ALLEGRO_EVENT &ev);
-
-//Function that is used to calculate the time it takes to run a certain piece of code
+void DrawBorders();
 inline double diffclock(clock_t clock1, clock_t clock2)
 {
 	double diffticks = clock1 - clock2;
@@ -59,21 +69,29 @@ inline void ResetKeys()
 		_mouse_pressed[i]=false;
 	}
 }
+inline void UpdateFPS()
+{
+	frames++;
+	if(al_current_time() - gameTime >= 1)
+	{
+		gameTime = al_current_time();
+		gameFPS = frames;
+		frames = 0;
+	}
+}
 
 int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  This applications doesn't take parameters...
 {
 	#pragma region Setup
-	#pragma region Init Allegro and create display
+	#pragma region Init Allegro, create display and install addons
 	//Initialize allegro and create a display
 	if(!al_init())	//initialize Allegro (if it fails to do, show error message and terminate
 	{
 		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "Error!", "Couldn't initialize allegro 5", "Ok Sok", 0);
 		return -1;
 	}
-	if(!DisplayManager::GetInstance().CreateDisplay()) //Create display, if it fails to create a display, show error message en terminate (error message is in function)
-		return -2;
-	#pragma endregion
-	#pragma region Install addons
+	DisplayManager::GetInstance().CreateDisplay();
+	
 	//install addons
 	al_install_keyboard();
 	al_install_mouse();
@@ -84,18 +102,12 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	#pragma endregion
 	#pragma region Init Managers
 	//Initialize managers
-	//(most of them get automaticly initialized from the constructor)
 	GameObjectManager::GetInstance().Init();
+	ButtonManager::GetInstance().Init();
 	LevelManager::GetInstance().Init();
 	#pragma endregion
-	#pragma region Basic variables
-	//Basic variables for the program to run normally
-	bool render = false;
-	int gameTime = al_current_time();
-	int frames = 0;
-	float gameFPS = 0;
+	gameTime = al_get_time();
 	srand(time(unsigned int(0)));
-	#pragma endregion
 	#pragma region Events and Timers
 	//Create event_queue and timer
 	ALLEGRO_EVENT_QUEUE *event_queue = al_create_event_queue();
@@ -109,6 +121,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 
 	al_start_timer(timer);
 	#pragma endregion
+	
 	#pragma endregion Setting up the game before entering the loop (declaring variables, initing allegro, installing addons, registering event sources)
 
 	#pragma region Main Game Loop
@@ -117,23 +130,24 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
 		GetInput(ev);
-
 		#pragma region Timer event
 		if(ev.type == ALLEGRO_EVENT_TIMER)
 		{
 			render = true;
 			UpdateTime();
 			if(_keys_pressed[R_KEY])
-			{
 				LevelManager::GetInstance().RestartLevel();
-				_camX_prev=-1;
-				_camY_prev=-1;
-			}
+
 			if(_keys_pressed[Q_KEY] && GameObjectManager::GetInstance().D_object_exists(PLAYER))
 				GameObjectManager::GetInstance().KillPlayer();
+
+			Background::GetInstance().Update();
 			GameObjectManager::GetInstance().TimerEvent();
 			ButtonManager::GetInstance().TimerEvent();
 			SoundManager::GetInstance().Update();
+			
+			CheckIfCamIsChanged();
+
 			_camX_prev=_camX;
 			_camY_prev=_camY;
 
@@ -148,60 +162,39 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 				_mouseY = ((mY - (_monitorHeight - (_SCREEN_HEIGHT * _scaleScreen))/2.0)/_scaleScreen)+_camY;
 			}
 
-			ResetKeys();
+			ResetKeys();	
 		}
 		#pragma endregion This is where the magic happens ;)
-
 		#pragma region Draw
-		if(render && al_is_event_queue_empty(event_queue))
+		if(render && al_is_event_queue_empty(event_queue) || (render && !GetDropFrames()))
 		{
-			//UPDATE FPS=======================================================================================================
-			frames++;
-			if(al_current_time() - gameTime >= 1)
-			{
-				gameTime = al_current_time();
-				gameFPS = frames;
-				frames = 0;
-			}
-			
+			UpdateFPS();
 			render = false;
 			
 			al_set_target_backbuffer(DisplayManager::GetInstance().GetDisplay());
 			al_clear_to_color(al_map_rgb(192,192,192));
-			
-			//BEGIN PROJECT RENDER=============================================================================================
+
 			//Draw all the objects
+			Background::GetInstance().Draw();
 			GameObjectManager::GetInstance().Draw();
 			ButtonManager::GetInstance().Draw();
-			//Draw text
-			/*
-			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,5,0,"FPS: %f", gameFPS);
-			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,85,0,"_camX: %i\t_camY: %i", _camX, _camY);
-			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,105,0,"hours: %i\tminutes: %i\tseconds: %i\tsteps: %i", _hours, _minutes, _seconds, _steps);
-			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,125,0,"Deaths: %i", _deaths);
-			*/
-			//Draw borders
-			al_draw_filled_rectangle(-(_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0, 0, 0, _SCREEN_HEIGHT,al_map_rgb(0,0,0));
-			al_draw_filled_rectangle(_SCREEN_WIDTH + (_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0, 0, _SCREEN_WIDTH, _SCREEN_HEIGHT, al_map_rgb(0,0,0));
-			al_draw_filled_rectangle(0, -(_monitorHeight - (_SCREEN_HEIGHT * _scaleScreen))/2.0, _SCREEN_WIDTH, 0, al_map_rgb(0,0,0));
-			al_draw_filled_rectangle(0, _SCREEN_HEIGHT + (_monitorHeight - (_SCREEN_HEIGHT * _scaleScreen))/2.0, _SCREEN_WIDTH, _SCREEN_HEIGHT, al_map_rgb(0,0,0));
 
-			//FLIP BUFFERS========================
+			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,255,255), 10, 10, 0, "FPS: %f", gameFPS);
+
+			DrawBorders();
+
 			al_flip_display();
 		}
 		#pragma endregion All drawing stuff happens in here
 	}
 	#pragma endregion
-
-	#pragma region Clean up
 	al_destroy_timer(timer);
 	al_destroy_event_queue(event_queue);
-	#pragma endregion Destroy timer and event_queue, the rest is done by destructors
 	
 	return Exit::GetReturnValue();
 }
 
-void GetInput(const ALLEGRO_EVENT &ev)
+inline void GetInput(const ALLEGRO_EVENT &ev)
 {
 	#pragma region key down
 	if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
@@ -476,6 +469,7 @@ void GetInput(const ALLEGRO_EVENT &ev)
 			}
 		}
 		#pragma endregion
+		
 		#pragma region Left joystick
 		else if(ev.joystick.stick==0)
 		{
@@ -511,7 +505,6 @@ void GetInput(const ALLEGRO_EVENT &ev)
 			}
 			else if(ev.joystick.axis==1)
 			{
-				std::cout << ev.joystick.pos << std::endl;
 				//up
 				if(ev.joystick.pos <= -0.3)
 				{
@@ -553,3 +546,31 @@ void GetInput(const ALLEGRO_EVENT &ev)
 	}
 	#pragma endregion
 }
+
+inline void DrawBorders()
+{
+	al_set_target_backbuffer(DisplayManager::GetInstance().GetDisplay());
+	float lbX1 = TransformDisplayX(-(_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0);
+	float lbX2 = TransformDisplayX(0);
+	float lbY1 = TransformDisplayY(0);
+	float lbY2 = TransformDisplayY(_SCREEN_HEIGHT);
+	float rbX1 = TransformDisplayX(_SCREEN_WIDTH + (_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0);
+	float rbX2 = TransformDisplayX(_SCREEN_WIDTH);
+	float rbY1 = TransformDisplayY(0);
+	float rbY2 = TransformDisplayY(_SCREEN_HEIGHT);
+	float ubX1 = TransformDisplayX(0);
+	float ubX2 = TransformDisplayX(_SCREEN_WIDTH);
+	float ubY1 = TransformDisplayY(-(_monitorHeight - (_SCREEN_HEIGHT * _scaleScreen))/2.0);
+	float ubY2 = TransformDisplayY(0);
+	float dbX1 = TransformDisplayX(0);
+	float dbX2 = TransformDisplayX(_SCREEN_WIDTH);
+	float dbY1 = TransformDisplayY(_SCREEN_HEIGHT + (_monitorHeight - (_SCREEN_HEIGHT * _scaleScreen))/2.0);
+	float dbY2 = TransformDisplayY(_SCREEN_HEIGHT);
+
+	//Draw borders
+	al_draw_filled_rectangle(lbX1, lbY1, lbX2, lbY2,al_map_rgb(0,0,0));
+	al_draw_filled_rectangle(rbX1, rbY1, rbX2, rbY2, al_map_rgb(0,0,0));
+	al_draw_filled_rectangle(ubX1, ubY1, ubX2, ubY2, al_map_rgb(0,0,0));
+	al_draw_filled_rectangle(dbX1, dbY1, dbX2, dbY2, al_map_rgb(0,0,0));
+}
+

@@ -35,7 +35,7 @@ void obj_Saw_Small::Update()
 }
 void obj_Saw_Small::Draw()
 {
-	al_draw_scaled_rotated_bitmap(image,radius*2,radius*2,x-_camX,y-_camY,.5,.5,direction,0);
+	al_draw_scaled_rotated_bitmap(image,radius*2,radius*2,Transformer::TranslateCameraX(x), Transformer::TranslateCameraY(y),.5,.5,direction,0);
 }
 void obj_Saw_Small::Destroy()
 {}

@@ -35,7 +35,7 @@ void obj_Saw_Bar::Update()
 }
 void obj_Saw_Bar::Draw()
 {
-	al_draw_rotated_bitmap(image, 4, 4, x+16 -_camX, y+16 -_camY, direction, 0);
+	al_draw_rotated_bitmap(image, 4, 4, Transformer::TranslateCameraX(x+16), Transformer::TranslateCameraY(y+16), direction, 0);
 }
 void obj_Saw_Bar::Destroy()
 {}

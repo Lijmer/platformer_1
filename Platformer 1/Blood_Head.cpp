@@ -21,19 +21,20 @@ void Blood_Head::Init(float x, float y, float dir, float spd)
 
 void Blood_Head::Update()
 {
-	direction+=7;
 	if(velY>7)
 		velY=7;
 
 	x+=velX;
 	y+=velY;
 	if(!collided)
+	{
 		velY+=gravity;
+	}
 }
 
 void Blood_Head::Draw()
 {
-	al_draw_rotated_bitmap(image,5,8,x-_camX,y-_camY,direction*PI/180.0,0);
+	al_draw_rotated_bitmap(image,5,8,Transformer::TranslateCameraX(x), Transformer::TranslateCameraY(y),direction*PI/180.0,0);
 }
 
 void Blood_Head::Destroy()
@@ -41,15 +42,16 @@ void Blood_Head::Destroy()
 
 void Blood_Head::Collided(GameObject *other)
 {
-	if((other->GetID() == WALL || other->GetID() == WALL_FADE))
+	if(other->GetID() == WALL)
 	{
 		collided=true;
 		velX=0;
 		velY=0;
 	}
-	else if(other->GetID() == SPIKE)
+	else if(other->GetID() == SPIKE || other->GetID() == WALL_FADE || other->GetID() == TREADMILL_LEFT ||
+		other->GetID() == TREADMILL_RIGHT || other->GetID() == SAVE || other->GetID() == SAW)
 	{
-		velX/=1.5;
-		velY/=1.5;
+		velX/=2;
+		velY=0;
 	}
 }

@@ -489,6 +489,42 @@ int FileManager::LoadMusicNum(int levelNum)
 	}
 	return -1;
 }
+int FileManager::LoadBackgroundNum(int level)
+{
+	std::vector<std::string> levelVector = LoadLevelFile(level);
+	std::vector<std::string>::iterator stringIter;
+	std::vector<std::string>::iterator stringIter2;
+	std::string temp("");
+
+	for(stringIter = levelVector.begin(); stringIter!=levelVector.end(); stringIter++)
+	{
+		if((*stringIter) == "[background]")
+		{
+			for(stringIter2 = stringIter+1; stringIter2!=levelVector.end(); stringIter2++)
+			{
+				if((*stringIter2) != ";")
+				{
+					for(unsigned i=0; i<(*stringIter2).size(); i++)
+					{
+						if((*stringIter2)[i] != ',')
+						{
+							temp += (*stringIter2)[i];
+						}
+						else
+						{
+							return ::atoi(temp.c_str());
+						}
+					}
+				}
+				else
+					break;
+			}
+		}
+		else if((*stringIter) == "END")
+			break;
+	}
+	return -1;
+}
 
 //Private
 inline void FileManager::CreateObject(const std::string &ID,float x,float y)

@@ -2,8 +2,13 @@
 #include "GameObjectManager.h"
 
 #include <algorithm>
+#include <iostream>
+#include <allegro5/allegro_native_dialog.h>
+#include <sstream>
 #include "globals.h"
 #include "FontManager.h"
+#include "DisplayManager.h"
+#include "LevelManager.h"
 
 #include "GameObject.h"
 #include "DynamicObject.h"
@@ -37,8 +42,14 @@
 #include "Blood.h"
 #include "Blood_Head.h"
 #include "Blood_Torso.h"
+#include "Blood_Arm.h"
+
+#include "Transformer.h"
+
+using namespace Transformer;
 
 #pragma endregion
+
 //Public
 GameObjectManager::GameObjectManager(void)
 {
@@ -75,6 +86,8 @@ GameObjectManager::GameObjectManager(void)
 	stillParticleCanvas = NULL;
 
 	stillParticlesSize = stillParticles.size();
+	redrawStaticObjects = true;
+	redrawStillParticles = true;
 }
 GameObjectManager::~GameObjectManager(void)
 {
@@ -136,6 +149,7 @@ void GameObjectManager::Init()
 	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	staticCanvas = al_create_bitmap(1024,768);
 	stillParticleCanvas = al_create_bitmap(1024,768);
+	mainCanvas = al_create_bitmap(1024,768);
 }
 
 void GameObjectManager::TimerEvent()
@@ -145,33 +159,57 @@ void GameObjectManager::TimerEvent()
 	Clean();
 	ActivateDeactivate();
 	MotionlessParticles();
+	
 }
 void GameObjectManager::Draw()
 {
 	std::vector<DynamicObject *>::reverse_iterator r_iter;
+	std::vector<StaticObject *>::iterator iter;
 	std::vector<Particle *>::iterator particleIter;
-	//Draw static objects
-	al_draw_bitmap(staticCanvas,0,0,0);
-			
+
+	if(redrawStaticObjects)
+	{
+		al_set_target_bitmap(staticCanvas);
+		al_clear_to_color(al_map_rgba(0,0,0,0));
+		for(iter = staticObjects.begin(); iter!=staticObjects.end(); iter++)
+			(*iter)->Draw();
+
+		redrawStaticObjects=false;
+	}
+
+	if(redrawStillParticles)
+	{
+		al_set_target_bitmap(stillParticleCanvas);
+		al_clear_to_color(al_map_rgba(0,0,0,0));
+		for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end(); particleIter++)
+			(*particleIter)->Draw();
+
+		redrawStillParticles=false;
+	}
+
+	al_set_target_bitmap(mainCanvas);
+	al_clear_to_color(al_map_rgba(0,0,0,0));
+
 	//Draw dynamic objects
 	for(r_iter = dynamicObjects.rbegin(); r_iter!=dynamicObjects.rend(); r_iter++)
 		(*r_iter)->Draw();
 
 	//Draw Particles
-	al_draw_bitmap(stillParticleCanvas,0,0,0);
 	for(particleIter = stillParticlesBuffer.begin(); particleIter!=stillParticlesBuffer.end(); particleIter++)
 		(*particleIter)->Draw();
 	for(particleIter = particles.begin(); particleIter!=particles.end(); particleIter++)
 		(*particleIter)->Draw();
 
-	/*
-	if(D_object_exists(PLAYER))
-	{
-		al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,25,0,"X: %f\tY: %f", player->GetX(), player->GetY());
-		al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,45,0,"Gravity: %f", player->GetGravity());
-		al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,0,255),5,65,0,"velY: %f\tvelX: %f", player->GetVelY(), player->GetVelX());
-	}
-	*/
+	al_set_target_backbuffer(DisplayManager::GetInstance().GetDisplay());
+
+	al_draw_scaled_bitmap(staticCanvas,0,0, al_get_bitmap_width(staticCanvas), al_get_bitmap_height(staticCanvas), TranslateDisplayX(0),
+		TranslateDisplayY(0),ScaleDisplay(al_get_bitmap_width(staticCanvas)), ScaleDisplay(al_get_bitmap_height(staticCanvas)), 0);
+
+	al_draw_scaled_bitmap(mainCanvas,0,0, al_get_bitmap_width(mainCanvas), al_get_bitmap_height(mainCanvas), TranslateDisplayX(0),
+		TranslateDisplayY(0),ScaleDisplay(al_get_bitmap_width(mainCanvas)), ScaleDisplay(al_get_bitmap_height(mainCanvas)), 0);
+
+	al_draw_scaled_bitmap(stillParticleCanvas,0,0, al_get_bitmap_width(stillParticleCanvas), al_get_bitmap_height(stillParticleCanvas), TranslateDisplayX(0),
+		TranslateDisplayY(0),ScaleDisplay(al_get_bitmap_width(stillParticleCanvas)), ScaleDisplay(al_get_bitmap_height(stillParticleCanvas)), 0);
 }
 
 bool GameObjectManager::PlaceFree(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize)
@@ -291,7 +329,7 @@ bool GameObjectManager::D_object_exists(int ID)
 	return false;
 }
 
-GameObject* GameObjectManager::CreateObject(int ID,int x,int y)
+GameObject* GameObjectManager::CreateObject(int ID,float x,float y)
 {
 	if(ID==0)
 	{
@@ -454,29 +492,13 @@ GameObject* GameObjectManager::CreateObject(int ID,int x,int y)
 		pendingDynamicObjects.push_back(player);
 		return player;
 	}
-
-	else if(ID==100)
+	else
 	{
-		blood = new Blood();
-		blood->Init(x,y,rand()%360,(((float)rand()/(float)RAND_MAX)*30.0));
-		particles.push_back(blood);
+		std::stringstream ss;
+		ss << "Could find object ID: " << ID;
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "GameObjectManager", ss.str().c_str(), NULL, ALLEGRO_MESSAGEBOX_ERROR);
 		return NULL;
 	}
-	else if(ID==101)
-	{
-		blood_head = new Blood_Head();
-		blood_head->Init(x,y,270,10);
-		particles.push_back(blood_head);
-		return NULL;
-	}
-	else if(ID==102)
-	{
-		blood_torso = new Blood_Torso();
-		blood_torso->Init(x,y,rand()%360,((float)rand()/(float)RAND_MAX)*30.0);
-		particles.push_back(blood_torso);
-		return NULL;
-	}
-	return NULL;
 }
 DynamicObject* GameObjectManager::CreateDynamicObject(int ID, float x, float y, float velX, float velY)
 {
@@ -608,11 +630,70 @@ DynamicObject* GameObjectManager::CreateDynamicObject(int ID, float x, float y, 
 	}
 	return NULL;
 }
+Particle * GameObjectManager::CreateParticle(int ID, float x, float y)
+{
+	if(ID==100)
+	{
+		blood = new Blood();
+		blood->Init(x,y,rand()%360,(((float)rand()/(float)RAND_MAX)*30.0));
+		particles.push_back(blood);
+		return blood;
+	}
+	else if(ID==101)
+	{
+		blood_head = new Blood_Head();
+		blood_head->Init(x,y,270,10);
+		particles.push_back(blood_head);
+		return blood_head;
+	}
+	else if(ID==102)
+	{
+		blood_torso = new Blood_Torso();
+		blood_torso->Init(x,y,rand()%360,((float)rand()/(float)RAND_MAX)*30.0);
+		particles.push_back(blood_torso);
+		return blood_torso;
+	}
+	else if(ID==103)
+	{
+		blood_arm = new Blood_Arm();
+		blood_arm->Init(x,y,rand()%360,((float)rand()/(float)RAND_MAX)*30.0);
+		particles.push_back(blood_arm);
+		return blood_arm;
+	}
+	else
+	{
+		std::stringstream ss;
+		ss << "Could find object ID: " << ID;
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "GameObjectManager", ss.str().c_str(), NULL, ALLEGRO_MESSAGEBOX_ERROR);
+		return NULL;
+	}
+}
+
 
 void GameObjectManager::KillPlayer()
 {
 	if(player!=NULL)
 		player->Kill();
+}
+float GameObjectManager::GetPlayerX()
+{
+	std::vector<DynamicObject *>::iterator iter;
+	for(iter = dynamicObjects.begin(); iter != dynamicObjects.end(); iter++)
+	{
+		if((*iter)->GetID() == PLAYER)
+			return (*iter)->GetX();
+	}
+	return 0;
+}
+float GameObjectManager::GetPlayerY()
+{
+	std::vector<DynamicObject *>::iterator iter;
+	for(iter = dynamicObjects.begin(); iter != dynamicObjects.end(); iter++)
+	{
+		if((*iter)->GetID() == PLAYER)
+			return (*iter)->GetY();
+	}
+	return 0;
 }
 void GameObjectManager::GetPlayerData(float &x, float &y, float &velX, float &velY, float &gravity, bool &dir, bool &vertical_dir, bool &jump, bool &idle)
 {
@@ -690,13 +771,13 @@ void GameObjectManager::DeleteDynamicObjects(void)
 	std::vector<DynamicObject *>::iterator iter;
 	for(iter=dynamicObjects.begin();iter!=dynamicObjects.end();)
 	{
-		(*iter)->Destroy();
+		//(*iter)->Destroy();
 		delete (*iter);
 		iter = dynamicObjects.erase(iter);
 	}
 	for(iter=deactivatedDynamicObjects.begin();iter!=deactivatedDynamicObjects.end();)
 	{
-		(*iter)->Destroy();
+		//(*iter)->Destroy();
 		delete (*iter);
 		iter = deactivatedDynamicObjects.erase(iter);
 	}
@@ -754,12 +835,12 @@ void GameObjectManager::DeleteAllObjects(void)
 	DeleteParticles();
 }
 
-
 //Private
 inline void GameObjectManager::Update()
 {
 	UpdateDynamicObjects();
 	UpdateParticles();
+	SetCam();
 }
 inline void GameObjectManager::UpdateDynamicObjects()
 {
@@ -860,7 +941,7 @@ inline void GameObjectManager::ActivateDeactivate()
 	std::vector<DynamicObject *>::iterator iter;
 	std::vector<StaticObject *>::iterator iter2;
 	std::vector<Particle *>::iterator particleIter;
-	if(_camX!=_camX_prev || _camY!=_camY_prev)
+	if(GetCamChanged())
 	{
 		//Activate
 		for(iter = deactivatedDynamicObjects.begin(); iter!=deactivatedDynamicObjects.end();)
@@ -938,13 +1019,10 @@ inline void GameObjectManager::ActivateDeactivate()
 		}
 
 		//Draw all staticobjects on the staticCanvas, This is so there will be less looping through the staticObjectsvector
+		
 		sort(staticObjects.begin(),staticObjects.end(), &GameObjectManager::SortFunction);
-		al_set_target_bitmap(staticCanvas);
-		al_clear_to_color(al_map_rgba(0,0,0,0));
-		for(iter2 = staticObjects.begin(); iter2!=staticObjects.end(); iter2++)
-		{
-			(*iter2)->Draw();
-		}
+		redrawStaticObjects=true;
+		
 	}
 }
 inline void GameObjectManager::MotionlessParticles()
@@ -952,7 +1030,6 @@ inline void GameObjectManager::MotionlessParticles()
 	std::vector<Particle *>::iterator particleIter;
 	for(particleIter=particles.begin(); particleIter!=particles.end(); )
 	{
-		//if((*particleIter)->GetVelX() >= -0.1 && (*particleIter)->GetVelX() <= 0.1 && (*particleIter)->GetVelY() >= -0.1 && (*particleIter)->GetVelY() <= 0.1)
 		if((*particleIter)->GetCollided())
 		{
 			if((*particleIter)->GetX() >= _camX && (*particleIter)->GetX() <= _camX+_SCREEN_WIDTH &&
@@ -986,16 +1063,23 @@ inline void GameObjectManager::MotionlessParticles()
 	//If the size of the stillParticle vector has changed
 	if(stillParticlesSize != stillParticles.size())
 	{
-		al_set_target_bitmap(stillParticleCanvas);
-		al_clear_to_color(al_map_rgba(0,0,0,0));
-		for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end(); particleIter++)
-		{
-			//if((*particleIter)->GetX() >= _camX && (*particleIter)->GetX() <= _camX + _SCREEN_WIDTH &&
-			//	(*particleIter)->GetY() >= _camY && (*particleIter)->GetY() <= _camY + _SCREEN_HEIGHT)
-			(*particleIter)->Draw();
-		}
+		redrawStillParticles=true;
 	}
 	stillParticlesSize = stillParticles.size();
+}
+
+inline void GameObjectManager::SetCam()
+{
+	if(D_object_exists(PLAYER))
+	{
+		_camX = int(GetPlayerX()/_SCREEN_WIDTH)*_SCREEN_WIDTH;
+		_camY = int(GetPlayerY()/_SCREEN_HEIGHT)*_SCREEN_HEIGHT;
+	}
+	else if(LevelManager::GetInstance().GetCurrentLevel() == LevelManager::LVL_MENU)
+	{
+		_camX = 0;
+		_camY = 0;
+	}
 }
 
 inline int GameObjectManager::SortFunction(GameObject *i, GameObject *j)

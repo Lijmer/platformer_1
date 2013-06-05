@@ -5,7 +5,6 @@ class Spike : public StaticObject
 public:
 	Spike(void);
 
-	void virtual Draw();
 	void virtual Destroy();
 };
 

@@ -7,7 +7,6 @@ public:
 	virtual ~StaticObject(void);
 
 	void Init(float x, float y);
-	void virtual Draw();
 	void virtual Destroy();
 
 	//what to do when collided

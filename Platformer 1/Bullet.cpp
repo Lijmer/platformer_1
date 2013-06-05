@@ -44,11 +44,11 @@ void Bullet::Draw()
 			color=true;
 		countFrame=0;
 	}
-	al_draw_filled_circle(x-_camX,y-_camY,2,al_map_rgb(0,0,0));
+	al_draw_filled_circle(Transformer::TranslateCameraX(x), Transformer::TranslateCameraY(y),2,al_map_rgb(0,0,0));
 	if(color)
-		al_draw_filled_circle(x-_camX,y-_camY,1,al_map_rgb(255,255,255));
+		al_draw_filled_circle(Transformer::TranslateCameraX(x), Transformer::TranslateCameraY(y),1,al_map_rgb(255,255,255));
 	else
-		al_draw_filled_circle(x-_camX,y-_camY,1,al_map_rgb(239,227,0));
+		al_draw_filled_circle(Transformer::TranslateCameraX(x), Transformer::TranslateCameraY(y),1,al_map_rgb(239,227,0));
 }
 
 void Bullet::Destroy()

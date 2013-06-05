@@ -67,8 +67,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Background.cpp" />
     <ClCompile Include="BaseSprite.cpp" />
     <ClCompile Include="Blood.cpp" />
+    <ClCompile Include="Blood_Arm.cpp" />
     <ClCompile Include="Blood_Head.cpp" />
     <ClCompile Include="Blood_Torso.cpp" />
     <ClCompile Include="btn_Menu.cpp" />
@@ -111,13 +113,16 @@
     <ClCompile Include="Spike_Up.cpp" />
     <ClCompile Include="spr_Player.cpp" />
     <ClCompile Include="StaticObject.cpp" />
+    <ClCompile Include="Transformer.cpp" />
     <ClCompile Include="Wall.cpp" />
     <ClCompile Include="Wall_Fade.cpp" />
     <ClCompile Include="Wall_Fake.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Background.h" />
     <ClInclude Include="BaseSprite.h" />
     <ClInclude Include="Blood.h" />
+    <ClInclude Include="Blood_Arm.h" />
     <ClInclude Include="Blood_Head.h" />
     <ClInclude Include="Blood_Torso.h" />
     <ClInclude Include="btn_Menu.h" />
@@ -137,7 +142,6 @@
     <ClInclude Include="obj_Double_Spike_Up.h" />
     <ClInclude Include="obj_Help_Text.h" />
     <ClInclude Include="obj_Menu_Button.h" />
-    <ClInclude Include="obj_Menu_Initer.h" />
     <ClInclude Include="obj_Platform_Horizontal.h" />
     <ClInclude Include="obj_Platform_Vertical.h" />
     <ClInclude Include="obj_Saw.h" />
@@ -161,6 +165,7 @@
     <ClInclude Include="Spike_Up.h" />
     <ClInclude Include="spr_Player.h" />
     <ClInclude Include="StaticObject.h" />
+    <ClInclude Include="Transformer.h" />
     <ClInclude Include="Wall.h" />
     <ClInclude Include="Wall_Fade.h" />
     <ClInclude Include="Wall_Fake.h" />

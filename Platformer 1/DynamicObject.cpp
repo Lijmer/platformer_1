@@ -30,9 +30,6 @@ void DynamicObject::Update()
 void DynamicObject::UpdateEnd()
 {}
 
-void DynamicObject::Draw()
-{}
-
 void DynamicObject::Destroy()
 {}
 
@@ -326,7 +323,7 @@ void DynamicObject::Collided(GameObject *other)
 {}
 
 
-bool DynamicObject::Is_p_in_triangle(float xPoint1, float yPoint1, float xPoint2, float yPoint2, float xPoint3, float yPoint3, float Px, float Py)
+inline bool DynamicObject::Is_p_in_triangle(float xPoint1, float yPoint1, float xPoint2, float yPoint2, float xPoint3, float yPoint3, float Px, float Py)
 {
 	float A = abs((xPoint1*(yPoint2-yPoint3) + xPoint2*(yPoint3-yPoint1) + xPoint3*(yPoint1-yPoint2))/2.0);
 	//bereken oppervlaktes van driehoeken: ABP, BCP en ACP
@@ -339,7 +336,7 @@ bool DynamicObject::Is_p_in_triangle(float xPoint1, float yPoint1, float xPoint2
 		return false;
 }
 
-bool DynamicObject::Is_p_in_circle(float xCircle, float yCircle, float radiusCircle, float Px, float Py)
+inline bool DynamicObject::Is_p_in_circle(float xCircle, float yCircle, float radiusCircle, float Px, float Py)
 {
 	if((Px-xCircle)*(Px-xCircle) + (Py-yCircle)*(Py-yCircle) < radiusCircle*radiusCircle)
 		return true;

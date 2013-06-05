@@ -41,9 +41,9 @@ void Save::Update()
 void Save::Draw()
 {
 	if(!active)
-		al_draw_bitmap_region(image, 0, 0, 28, 31, x-_camX, y-_camY, 0);
+		al_draw_bitmap_region(image, 0, 0, 28, 31, Transformer::TranslateCameraX(x), Transformer::TranslateCameraY(y), 0);
 	else
-		al_draw_bitmap_region(image, 28, 0, 28, 31, x-_camX, y-_camY, 0);
+		al_draw_bitmap_region(image, 28, 0, 28, 31, Transformer::TranslateCameraX(x), Transformer::TranslateCameraY(y), 0);
 }
 
 void Save::Destroy()

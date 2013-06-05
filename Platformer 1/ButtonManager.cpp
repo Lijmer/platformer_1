@@ -3,7 +3,10 @@
 #include "DisplayManager.h"
 #include "globals.h"
 #include "btn_Menu.h"
+#include "SoundManager.h"
 #include "obj_Help_Text.h"
+#include "Transformer.h"
+using namespace Transformer;
 
 #include <iostream>
 
@@ -21,6 +24,10 @@ ButtonManager::~ButtonManager(void)
 	DestroyButtons();
 	Clean();
 }
+void ButtonManager::Init()
+{
+	mainCanvas = al_create_bitmap(_SCREEN_WIDTH, _SCREEN_HEIGHT);
+}
 void ButtonManager::TimerEvent(void)
 {
 	Update();
@@ -28,6 +35,8 @@ void ButtonManager::TimerEvent(void)
 }
 void ButtonManager::Draw(void)
 {
+	al_set_target_bitmap(mainCanvas);
+	al_clear_to_color(al_map_rgba(0,0,0,0));
 	std::vector<btn_Menu*>::iterator iter;
 	for(iter = buttons.begin(); iter!=buttons.end(); iter++)
 	{
@@ -38,6 +47,9 @@ void ButtonManager::Draw(void)
 	{
 		(*iter2)->Draw();
 	}
+	al_set_target_backbuffer(DisplayManager::GetInstance().GetDisplay());
+	al_draw_scaled_bitmap(mainCanvas, 0,0,_SCREEN_WIDTH,_SCREEN_HEIGHT,
+		TranslateDisplayX(0), TranslateDisplayY(0), ScaleDisplay(_SCREEN_WIDTH), ScaleDisplay(_SCREEN_HEIGHT),0);
 }
 void ButtonManager::CreateButton(float x, float y, int kind)
 {
@@ -156,6 +168,7 @@ void ButtonManager::LoadOptionsMenu()
 	CreateButton(512,288,btn_Menu::TOGGLE_SOUND);
 	CreateButton(512,368,btn_Menu::SOUND_VOLUME);
 	CreateButton(512,448,btn_Menu::TOGGLE_FULLSCREEN);
+	CreateButton(512,528,btn_Menu::TOGGLE_DROP_FRAMES);
 	CreateButton(512,640,btn_Menu::BACK);
 }
 void ButtonManager::LoadMainMenu()
@@ -214,10 +227,12 @@ inline void ButtonManager::Update(void)
 
 	if((_keys_pressed[ENTER] && !_keys[ALT]) || _keys_pressed[Z_KEY])
 	{
+		SoundManager::GetInstance().Play(SoundManager::CLICK);
 		buttons[selectedButton]->Execute();
 	}
 	else if(_keys_pressed[X_KEY])
 	{
+		SoundManager::GetInstance().Play(SoundManager::CLICK);
 		PreviousMenu();
 	}
 }

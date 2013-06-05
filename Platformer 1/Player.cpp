@@ -144,9 +144,6 @@ void Player::Update()
 	SetSpriteData();
 	sprite->Update();
 
-	//Update Cam
-	_camX = int(x/_SCREEN_WIDTH)*_SCREEN_WIDTH;
-	_camY = int(y/_SCREEN_HEIGHT)*_SCREEN_HEIGHT;
 
 	//TROLOLOLOLOL
 	if(_mouseX > x-boundLeft && _mouseX < x+boundRight &&
@@ -167,8 +164,7 @@ void Player::UpdateEnd()
 {}
 void Player::Draw()
 {
-	sprite->Draw(x,y);
-	//al_draw_filled_rectangle(x-boundLeft-_camX,y-boundUp-_camY,x+boundRight-_camX,y+boundDown-_camY,al_map_rgb(255,0,255));
+	sprite->Draw(Transformer::TranslateCameraX(x), Transformer::TranslateCameraY(y));
 }
 void Player::Kill()
 {
@@ -177,10 +173,12 @@ void Player::Kill()
 	SoundManager::GetInstance().Play(SoundManager::SPLAT);
 	//Create normal blood
 	for(int i=0; i<125; i++)
-		GameObjectManager::GetInstance().CreateObject(100,x,y);
+		GameObjectManager::GetInstance().CreateParticle(100,x,y);
 	//create head, torso, arms and feet
-	GameObjectManager::GetInstance().CreateObject(101,x,y);
-	GameObjectManager::GetInstance().CreateObject(102,x,y);
+	GameObjectManager::GetInstance().CreateParticle(101,x,y);
+	GameObjectManager::GetInstance().CreateParticle(102,x,y);
+	GameObjectManager::GetInstance().CreateParticle(103,x,y);
+	GameObjectManager::GetInstance().CreateParticle(103,x,y);
 }
 void Player::Destroy()
 {
@@ -298,9 +296,9 @@ inline void Player::Shoot()
 	{
 		SoundManager::GetInstance().Play(SoundManager::SHOOT);
 		if(dir)
-			GameObjectManager::GetInstance().CreateDynamicObject(95,x+14,y-1,velX+10,0);
+			GameObjectManager::GetInstance().CreateDynamicObject(95,x+4,y-1,velX+10,0);
 		else
-			GameObjectManager::GetInstance().CreateDynamicObject(95,x-14,y-1,velX-10,0);
+			GameObjectManager::GetInstance().CreateDynamicObject(95,x-4,y-1,velX-10,0);
 	}
 }
 inline void Player::InvertGravity()

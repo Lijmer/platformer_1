@@ -53,10 +53,5 @@ void obj_Platform_Vertical::Update()
 	}
 }
 
-void obj_Platform_Vertical::Draw()
-{
-	al_draw_bitmap(image, x-_camX, y-_camY,0);
-}
-
 void obj_Platform_Vertical::Destroy()
 {}

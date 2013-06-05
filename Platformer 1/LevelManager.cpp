@@ -6,7 +6,9 @@
 #include "DisplayManager.h"
 #include "ImageManager.h"
 #include "SoundManager.h"
+#include "Background.h"
 
+#include <iostream>
 #include <sstream>
 #pragma endregion
 
@@ -60,6 +62,7 @@ void LevelManager::PreviousLevel()
 }
 void LevelManager::RestartLevel()
 {
+	OverrideCamChanged(true);
 	ReloadLevel();
 }
 void LevelManager::ChangeLevel(int level)
@@ -89,11 +92,15 @@ inline void LevelManager::LoadLevel(int level)
 {
 	LoadImages(level);
 	LoadSounds(level);
-	SoundManager::GetInstance().PlayMusic(FileManager::GetInstance().LoadMusicNum(level), true);	
+	SoundManager::GetInstance().PlayMusic(FileManager::GetInstance().LoadMusicNum(level), true);
+	Background::GetInstance().LoadBackgroundFromLevel(level);
 	GameObjectManager::GetInstance().DeleteAllObjects();
 	FileManager::GetInstance().LoadStaticObjects(level);
+	std::cout << std::endl << std::endl;
 	FileManager::GetInstance().LoadDynamicObjects(level);
+	std::cout << std::endl << std::endl;
 	FileManager::GetInstance().LoadMainMenu(level);
+	std::cout << std::endl << std::endl;
 }
 
 inline void LevelManager::ReloadLevel()

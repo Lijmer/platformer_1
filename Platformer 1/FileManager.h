@@ -20,6 +20,7 @@ public:
 	const std::vector<int>& LoadImageNums(int levelNum);
 	const std::vector<int>& LoadSoundNums(int levelNum);
 	int LoadMusicNum(int levelNum);
+	int LoadBackgroundNum(int level);
 private:
 	void CreateObject(const std::string &ID, float x, float y);
 	void CreateDynamicObject(const std::string &ID, float x, float y);

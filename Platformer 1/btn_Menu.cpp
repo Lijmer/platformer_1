@@ -2,9 +2,9 @@
 #include "ButtonManager.h"
 #include "FontManager.h"
 #include "ImageManager.h"
-#include "SoundManager.h"
 #include "DisplayManager.h"
 #include "LevelManager.h"
+#include "SoundManager.h"
 #include "globals.h"
 
 #include <sstream>
@@ -34,9 +34,9 @@ void btn_Menu::Draw(void)
 {
 	int fontHeight = FontManager::GetInstance().GetFont(0)->height;
 	if(!selected)
-		al_draw_bitmap_region(image, 0, 0, 256, 64, x-boundLeft-_camX, y-boundUp-_camY,0);
+		al_draw_bitmap_region(image, 0, 0, 256, 64, x-boundLeft, y-boundUp,0);
 	else
-		al_draw_bitmap_region(image, 0, 64, 256, 64, x-boundLeft-_camX, y-boundUp-_camY,0);
+		al_draw_bitmap_region(image, 0, 64, 256, 64, x-boundLeft, y-boundUp,0);
 
 	if(kind==NEW_GAME)
 	{
@@ -132,6 +132,17 @@ void btn_Menu::Draw(void)
 			ss << "Off";
 		else
 			ss << "On";
+		DrawTextOutline(FontManager::GetInstance().GetFont(0), al_map_rgb(255,255,255),
+			al_map_rgb(0,0,0), x, y-(fontHeight/2.0f), ALLEGRO_ALIGN_CENTRE, 2, ss.str().c_str());
+	}
+	else if(kind==TOGGLE_DROP_FRAMES)
+	{
+		std::stringstream ss;
+		ss << "Drop Frames: ";
+		if(GetDropFrames())
+			ss << "On";
+		else
+			ss << "Off";
 		DrawTextOutline(FontManager::GetInstance().GetFont(0), al_map_rgb(255,255,255),
 			al_map_rgb(0,0,0), x, y-(fontHeight/2.0f), ALLEGRO_ALIGN_CENTRE, 2, ss.str().c_str());
 	}
@@ -231,6 +242,10 @@ void btn_Menu::Execute(void)
 	{
 		DisplayManager::GetInstance().ChangeState();
 	}
+	else if(kind==TOGGLE_DROP_FRAMES)
+	{
+		ToggleDropFrames();
+	}
 	else if(kind==EXIT)
 	{
 		Exit::ExitProgram();
@@ -239,7 +254,6 @@ void btn_Menu::Execute(void)
 	{
 		ButtonManager::GetInstance().PreviousMenu();
 	}
-	SoundManager::GetInstance().Play(SoundManager::CLICK);
 }
 
 bool btn_Menu::CheckMouseCollision(void)

@@ -53,15 +53,15 @@ void spr_Player::Draw(float x, float y)
 	if(vertical_direction)
 	{
 		if(direction)
-			al_draw_tinted_scaled_rotated_bitmap_region(image,28*column, 26*row, 28, 26, al_map_rgba(255,255,255,255), 13, 14 ,x-_camX,y-_camY, 1, 1,0,0);
+			al_draw_tinted_scaled_rotated_bitmap_region(image,28*column, 26*row, 28, 26, al_map_rgba(255,255,255,255), 13, 14 ,x,y, 1, 1,0,0);
 		else
-			al_draw_tinted_scaled_rotated_bitmap_region(image,28*column, 26*row, 28, 26, al_map_rgba(255,255,255,255), 13, 14 ,x-_camX,y-_camY, -1, 1,0,0);
+			al_draw_tinted_scaled_rotated_bitmap_region(image,28*column, 26*row, 28, 26, al_map_rgba(255,255,255,255), 13, 14 ,x,y, -1, 1,0,0);
 	}
 	else if(!vertical_direction)
 	{
 		if(direction)
-			al_draw_tinted_scaled_rotated_bitmap_region(image,28*column, 26*row, 28, 26, al_map_rgba(255,255,255,255), 13, 14 ,x-_camX,y-_camY, 1, -1,0,0);
+			al_draw_tinted_scaled_rotated_bitmap_region(image,28*column, 26*row, 28, 26, al_map_rgba(255,255,255,255), 13, 14 ,x,y, 1, -1,0,0);
 		else
-			al_draw_tinted_scaled_rotated_bitmap_region(image,28*column, 26*row, 28, 26, al_map_rgba(255,255,255,255), 13, 14 ,x-_camX,y-_camY, -1, -1,0,0);
+			al_draw_tinted_scaled_rotated_bitmap_region(image,28*column, 26*row, 28, 26, al_map_rgba(255,255,255,255), 13, 14 ,x,y, -1, -1,0,0);
 	}
 }

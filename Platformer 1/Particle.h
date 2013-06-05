@@ -1,6 +1,9 @@
 #pragma once
 #include "GameObject.h"
+#include "Transformer.h"
 #include <math.h>
+
+using namespace Transformer;
 
 class Particle
 {
