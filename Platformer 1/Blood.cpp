@@ -1,11 +1,15 @@
 #include "Blood.h"
 
-
+#include <iostream>
 Blood::Blood(void)
 {
-	gravity = .62;
-	x = 0;
-	y = 0;
+	gravity=.62;
+	x=0;
+	y=0;
+	image = ImageManager::GetInstance().GetImage(100);
+	velX=0;
+	velY=0;
+	collided = false;
 }
 Blood::~Blood(void)
 {
@@ -14,13 +18,13 @@ Blood::~Blood(void)
 
 void Blood::Init(float x, float y, float dir, float spd)
 {
-	image = ImageManager::GetInstance().GetImage(100);
 	Particle::init(x,y,(cos(dir*PI/180.0))*spd,(sin(dir*PI/float(180.0)))*spd);
 }
 void Blood::Update()
 {
-	if(!collided)	
+	if(!collided)
 		velY+=gravity;
+
 	x+=velX;
 	y+=velY;
 

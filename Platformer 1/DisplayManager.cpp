@@ -7,7 +7,7 @@
 DisplayManager::DisplayManager(void)
 {
 	display = NULL;
-	state = WINDOWED;
+	state = FULLSCREEN_WINDOW;
 	monitorWidth=0;
 	monitorHeight=0;
 }
@@ -28,14 +28,16 @@ void DisplayManager::CreateDisplay()
 {
 
 	al_get_display_mode(al_get_num_display_modes() - 1, &disp_data);
-	al_set_new_display_flags(ALLEGRO_WINDOWED);
-	display = al_create_display(_SCREEN_WIDTH, _SCREEN_HEIGHT);	//create our display object
+	al_set_new_display_flags(ALLEGRO_FULLSCREEN_WINDOW | ALLEGRO_NOFRAME);
 	//al_toggle_display_flag(display, ALLEGRO_NOFRAME, false);
 	float scaleScreenWidth = disp_data.width / (float)_SCREEN_WIDTH;
 	float scaleScreenHeight = disp_data.height / (float)_SCREEN_HEIGHT;
 	_scaleScreen = min(scaleScreenWidth, scaleScreenHeight);
 	_monitorWidth = disp_data.width;
 	_monitorHeight = disp_data.height;
+
+	
+	display = al_create_display(disp_data.width, disp_data.height);	//create our display object
 
 	if(!display) //test display object
 	{
@@ -53,19 +55,26 @@ void DisplayManager::ChangeState()
 {
 	if(state == FULLSCREEN_WINDOW)
 	{
-		state = WINDOWED;
-
+		SetState(WINDOWED);
+	}
+	else if(state == WINDOWED)
+	{
+		SetState(FULLSCREEN_WINDOW);
+	}
+}
+void DisplayManager::SetState(int state)
+{
+	DisplayManager::state=state;
+	if(state == WINDOWED)
+	{
 		al_toggle_display_flag(display, ALLEGRO_FULLSCREEN_WINDOW, false);
 		al_toggle_display_flag(display, ALLEGRO_NOFRAME, false);
 		al_resize_display(display, _SCREEN_WIDTH, _SCREEN_HEIGHT);
 	}
-	else if(state == WINDOWED)
+	else if(state == FULLSCREEN_WINDOW)
 	{
-		state = FULLSCREEN_WINDOW;
-
 		al_toggle_display_flag(display, ALLEGRO_FULLSCREEN_WINDOW, true);
 		al_toggle_display_flag(display, ALLEGRO_NOFRAME, true);
-		//al_resize_display(display, _monitorWidth, _monitorHeight);
 	}
 }
 /*

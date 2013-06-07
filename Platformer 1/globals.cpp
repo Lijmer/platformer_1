@@ -14,6 +14,10 @@ inline void ToggleDropFrames()
 	else
 		dropFrames=true;
 }
+inline void SetDropFrames(bool drop)
+{
+	dropFrames=drop;
+}
 
 
 inline void CheckIfCamIsChanged()
@@ -43,9 +47,9 @@ int _deaths=0;
 
 float _monitorWidth = 0, _monitorHeight = 0, _scaleScreen;
 
-bool _keys_pressed[KEYS_SIZE]		=	{false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-bool _keys_released[KEYS_SIZE]		=	{false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-bool _keys[KEYS_SIZE]				=	{false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+bool _keys_pressed[KEYS_SIZE]		=	{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+bool _keys_released[KEYS_SIZE]		=	{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+bool _keys[KEYS_SIZE]				=	{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
 bool _mouse[M_SIZE]					=	{false, false};
 bool _mouse_pressed[M_SIZE]			=	{false, false};
 bool _mouse_released[M_SIZE]		=	{false, false};

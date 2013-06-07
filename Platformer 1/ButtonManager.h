@@ -31,7 +31,7 @@ public:
 		void LoadLoadGame2Menu();
 		void LoadLoadGame3Menu();
 	void LoadHelpMenu();
-	void LoadOptionsMenu();
+	void LoadSettingsMenu();
 	void LoadMainMenu();
 	void PreviousMenu();
 
@@ -47,7 +47,7 @@ public:
 		LOAD_GAME2_MENU,
 		LOAD_GAME3_MENU,
 		HELP_MENU,
-		OPTIONS_MENU
+		SETTINGS_MENU
 	};
 
 private:

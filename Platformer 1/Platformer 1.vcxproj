@@ -56,6 +56,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>c:\allegro\MVSC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -63,7 +65,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\allegro\MVSC\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>allegro-5.0.8-monolith-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -104,6 +106,7 @@
     <ClCompile Include="obj_Trigger_Double_Spike.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Pop_Up_Message.cpp" />
     <ClCompile Include="Save.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Spike.cpp" />
@@ -156,6 +159,7 @@
     <ClInclude Include="obj_Trigger_Double_Spike.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Pop_Up_Message.h" />
     <ClInclude Include="Save.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Spike.h" />

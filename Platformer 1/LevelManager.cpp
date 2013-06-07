@@ -96,11 +96,8 @@ inline void LevelManager::LoadLevel(int level)
 	Background::GetInstance().LoadBackgroundFromLevel(level);
 	GameObjectManager::GetInstance().DeleteAllObjects();
 	FileManager::GetInstance().LoadStaticObjects(level);
-	std::cout << std::endl << std::endl;
 	FileManager::GetInstance().LoadDynamicObjects(level);
-	std::cout << std::endl << std::endl;
 	FileManager::GetInstance().LoadMainMenu(level);
-	std::cout << std::endl << std::endl;
 }
 
 inline void LevelManager::ReloadLevel()

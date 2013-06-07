@@ -17,11 +17,10 @@ public:
 	void LoadBackgroundFromLevel(int level);
 	void LoadBackground(int ID);
 	void DestroyBackground();
+	void Init();
 	void Update();
 	void Draw();
 
-	void SetX(float x)							{Background::x = x;}
-	void SetY(float y)							{Background::y = y;}
 	void SetVelX(float velX)					{Background::velX = velX;}
 	void SetVelY(float velY)					{Background::velY = velY;}
 	void SetTilt(float tilt)
@@ -48,7 +47,6 @@ public:
 	void IncreaseVelYByRandomRange(float min, float max);
 
 private:
-	float x, y;
 	float velX, velY;
 	float tilt; //in radiants
 	float tiltSpeed;
@@ -60,5 +58,6 @@ private:
 	int imageWidth, imageHeight;
 
 	ALLEGRO_BITMAP *image;
+	ALLEGRO_BITMAP *canvas;
 };
 

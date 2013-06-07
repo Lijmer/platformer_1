@@ -1,11 +1,8 @@
 #include "StaticObject.h"
-#include <iostream>
-
 StaticObject::StaticObject(void)
 {
 	SetID(UNDEFINED);
 	SetDepth(0);
-	//std::cout << GetID() << std::endl;
 }
 StaticObject::~StaticObject(void)
 {}

@@ -8,8 +8,11 @@
 #include "GameObjectManager.h"
 #include "LevelManager.h"
 #include "ButtonManager.h"
+#include "SoundManager.h"
 
 #include <iostream>
+
+const int FileManager::MAX_SAVE = 3;
 
 FileManager::FileManager()
 {
@@ -17,40 +20,8 @@ FileManager::FileManager()
 	currentLevelProperties=-1;
 	tileSize[0] = 0;
 	tileSize[1] = 0;
-
-	//Save File structure:
-	//active,level,difficulty,_camX,_camY,x,y,velX,velY,dir,vertical_dir,gravity,jump,idle,deaths,hours,minutes,seconds,steps;
-	const int MAX_SAVE=3;
-	//Open the file
-	std::fstream saveFile;
-	saveFile.open("save/save.sav");
-
-	//If the file doesn't exist, it will create a new file and write default values to it
-	if(!saveFile.is_open())
-	{
-		saveFile.close();
-		std::ofstream defaultSaveFile;
-		defaultSaveFile.open("save/save.sav");
-		for(int i=0; i<MAX_SAVE; i++)
-		{
-			defaultSaveFile << "0,0,0,0,0,96,725.919,0,0,1,1,0,1,1,0,0,0,0,0;" << std::endl;
-		}
-		defaultSaveFile.close();
-		saveFile.open("save/save.sav");
-	}
-
-	//Declare variables to read the file
-	std::string temp;
-	std::vector<std::string> save;
-	std::vector<std::string>::iterator iter;
-	//Read the file
-	while(std::getline(saveFile,temp))
-	{
-		save.push_back(temp);
-	}
-	
-	//Close the file
-	saveFile.close();
+	CreateDefaultSaveFile();
+	LoadSettings();
 }
 
 FileManager& FileManager::GetInstance()
@@ -100,7 +71,7 @@ void FileManager::Load(int saveNum)
 	temp = "";
 	//This variable keeps track of the place of the value to identify what it must do with it.
 	int valueNum=0;
-	float playerX=0, playerY=0, playerVelX=0, playerVelY=0, playerGravity;
+	float playerX=0, playerY=0, playerVelX=0, playerVelY=0, playerGravity=0;
 	bool playerDir=false, playerVerticalDir=false, playerJump=false, playerIdle=false;
 	for(unsigned int i=0; i<save[saveNum].size(); i++)
 	{
@@ -526,7 +497,114 @@ int FileManager::LoadBackgroundNum(int level)
 	return -1;
 }
 
+void FileManager::SaveSettings()
+{
+	std::fstream settingsFile;
+	settingsFile.open("settings");
+
+	if(!settingsFile.is_open())
+	{
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error",	"FileManager", 
+			"Couldn't load or create settings file", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+		return;
+	}
+
+	settingsFile << SoundManager::GetInstance().GetMusicEnabled() << "," << SoundManager::GetInstance().GetMusicVolume() << "," 
+		<< SoundManager::GetInstance().GetSoundEnabled() << "," << SoundManager::GetInstance().GetSoundVolume() << "," <<
+		DisplayManager::GetInstance().GetState() << "," << GetDropFrames() << ";";
+
+	settingsFile.close();
+
+}
+
 //Private
+void FileManager::LoadSettings()
+{
+	std::fstream settingsFile;
+	settingsFile.open("settings");
+
+	if(!settingsFile.is_open())
+	{
+		CreateDefaultSettingsFile();
+		settingsFile.open("settings");
+		if(!settingsFile.is_open())
+		{
+			al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error",	"FileManager", 
+				"Couldn't load or create settings file", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+			return;
+		}
+	}
+
+	std::string settings = "";
+	std::string temp="";
+	unsigned settingPos=0;
+
+	std::getline(settingsFile,settings);
+	settingsFile.close();
+
+	for(unsigned i=0; i<settings.size(); i++)
+	{
+		if(settings[i]!=';' && settings[i]!=',')
+		{
+			temp+=settings[i];
+		}
+		else if(settings[i] == ';')
+		{
+			break;
+		}
+		else
+		{
+			if(settingPos==0)
+				SoundManager::GetInstance().SetMusicEnabled(atoi(temp.c_str()));
+			else if(settingPos==1)
+				SoundManager::GetInstance().SetMusicVolume(atof(temp.c_str()));
+			else if(settingPos==2)
+				SoundManager::GetInstance().SetSoundEnabled(atoi(temp.c_str()));
+			else if(settingPos==3)
+				SoundManager::GetInstance().SetSoundVolume(atof(temp.c_str()));
+			else if(settingPos==4)
+				DisplayManager::GetInstance().SetState(atoi(temp.c_str()));
+			else if(settingPos==5)
+				SetDropFrames(atoi(temp.c_str()));
+			else
+				al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", 
+				"FileManager", "To many settings in file", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+
+			temp="";
+			settingPos++;
+		}
+	}
+}
+
+void FileManager::CreateDefaultSaveFile()
+{
+	//Save File structure:
+	//active,level,difficulty,_camX,_camY,x,y,velX,velY,dir,vertical_dir,gravity,jump,idle,deaths,hours,minutes,seconds,steps;
+	
+	std::fstream saveFile;
+	saveFile.open("save/save.sav");
+
+	//If the file doesn't exist, it will create a new file and write default values to it
+	if(!saveFile.is_open())
+	{
+		std::ofstream defaultSaveFile;
+		defaultSaveFile.open("save/save.sav");
+		for(int i=0; i<MAX_SAVE; i++)
+		{
+			defaultSaveFile << "0,0,0,0,0,96,725.919,0,0,1,1,0,1,1,0,0,0,0,0;" << std::endl;
+		}
+		defaultSaveFile.close();
+	}
+	else
+		saveFile.close();
+}
+void FileManager::CreateDefaultSettingsFile()
+{
+	std::ofstream defaultSettingsFile;
+	defaultSettingsFile.open("settings");
+	defaultSettingsFile << "1,.50,1,1.00,1,1;";
+	defaultSettingsFile.close();
+}
 inline void FileManager::CreateObject(const std::string &ID,float x,float y)
 {
 	if(ID=="-1")
@@ -741,7 +819,6 @@ inline const int* FileManager::LoadLevelProperties(int levelNum)
 	std::vector<std::string>::iterator stringIter2;
 
 	temp="";
-	int tileWidth=0, tileHeight=0;
 
 	for(stringIter = levelVector.begin(); stringIter!=levelVector.end(); stringIter++)
 	{

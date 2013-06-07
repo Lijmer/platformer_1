@@ -500,6 +500,58 @@ GameObject* GameObjectManager::CreateObject(int ID,float x,float y)
 		return NULL;
 	}
 }
+StaticObject* GameObjectManager::CreateStaticObject(int ID, float x, float y)
+{
+	if(ID==0)
+	{
+		wall = new Wall();
+		wall->Init(x,y);
+		staticObjects.push_back(wall);
+		return wall;
+	}
+	else if(ID==1)
+	{
+		spike_up = new Spike_Up();
+		spike_up->Init(x,y);
+		staticObjects.push_back(spike_up);
+		return spike_up;
+	}
+	else if(ID==2)
+	{
+		spike_down = new Spike_Down();
+		spike_down->Init(x,y);
+		staticObjects.push_back(spike_down);
+		return spike_down;
+	}
+	else if(ID==3)
+	{
+		spike_left = new Spike_Left();
+		spike_left->Init(x,y);
+		staticObjects.push_back(spike_left);
+		return spike_left;
+	}
+	else if(ID==4)
+	{
+		spike_right = new Spike_Right();
+		spike_right->Init(x,y);
+		staticObjects.push_back(spike_right);
+		return spike_right;
+	}
+	else if(ID==6)
+	{
+		wall_fake = new Wall_Fake();
+		wall_fake->Init(x,y);
+		staticObjects.push_back(wall_fake);
+		return wall_fake;
+	}
+	else
+	{
+		std::stringstream ss;
+		ss << "Could find StaticObject ID: " << ID;
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "GameObjectManager", ss.str().c_str(), NULL, ALLEGRO_MESSAGEBOX_ERROR);
+		return NULL;
+	}
+}
 DynamicObject* GameObjectManager::CreateDynamicObject(int ID, float x, float y, float velX, float velY)
 {
 	if(ID==5)
@@ -833,6 +885,33 @@ void GameObjectManager::DeleteAllObjects(void)
 	DeleteDynamicObjects();
 	DeleteStaticObjects();
 	DeleteParticles();
+}
+
+void GameObjectManager::DestroyStaticObject(StaticObject *obj)
+{
+	std::vector<StaticObject*>::iterator iter;
+	for(iter = staticObjects.begin(); iter!=staticObjects.end(); iter++)
+	{
+		if((*iter) == obj)
+		{
+			(*iter)->Destroy();
+			delete (*iter);
+			staticObjects.erase(iter);
+			obj=NULL;
+			return;
+		}
+	}
+	for(iter = deactivatedStaticObjects.begin(); iter!=deactivatedStaticObjects.end(); iter++)
+	{
+		if((*iter) == obj)
+		{
+			(*iter)->Destroy();
+			delete (*iter);
+			deactivatedStaticObjects.erase(iter);
+			obj=NULL;
+			return;
+		}
+	}
 }
 
 //Private

@@ -5,6 +5,8 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_primitives.h>
+#include <string>
+#include <sstream>
 #include "globals.h"
 #include "Transformer.h"
 
@@ -19,6 +21,7 @@
 #include "GameObjectManager.h"
 #include "ButtonManager.h"
 #include "LevelManager.h"
+#include "Pop_Up_Message.h"
 
 #include "Exit.h"
 
@@ -26,12 +29,14 @@
 using namespace Transformer;
 #pragma endregion
 
+const float FPS = 60.f;
 float mX=0;
 float mY=0;
 int gameTime = 0;
 int frames = 0;
 float gameFPS = 0;
 bool render = false;
+
 
 void GetInput(const ALLEGRO_EVENT &ev);
 void DrawBorders();
@@ -80,8 +85,10 @@ inline void UpdateFPS()
 	}
 }
 
-int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  This applications doesn't take parameters...
+//int main()int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  This applications doesn't take parameters...
+int main()
 {
+	//std::cout << argc << std::endl << argv << std::endl;
 	#pragma region Setup
 	#pragma region Init Allegro, create display and install addons
 	//Initialize allegro and create a display
@@ -104,6 +111,8 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	//Initialize managers
 	GameObjectManager::GetInstance().Init();
 	ButtonManager::GetInstance().Init();
+	Pop_Up_Message::Init();
+	Background::GetInstance().Init();
 	LevelManager::GetInstance().Init();
 	#pragma endregion
 	gameTime = al_get_time();
@@ -111,7 +120,7 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	#pragma region Events and Timers
 	//Create event_queue and timer
 	ALLEGRO_EVENT_QUEUE *event_queue = al_create_event_queue();
-	ALLEGRO_TIMER *timer = al_create_timer(1.0 / 60.0);
+	ALLEGRO_TIMER *timer = al_create_timer(1.0 / FPS);
 
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
@@ -120,13 +129,14 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 	al_register_event_source(event_queue, al_get_display_event_source(DisplayManager::GetInstance().GetDisplay()));
 
 	al_start_timer(timer);
-	#pragma endregion
 	
+	#pragma endregion
 	#pragma endregion Setting up the game before entering the loop (declaring variables, initing allegro, installing addons, registering event sources)
 
 	#pragma region Main Game Loop
 	while(!Exit::GetDone())
 	{
+		//std::cout << "entered main loop" << std::endl;
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
 		GetInput(ev);
@@ -141,10 +151,36 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			if(_keys_pressed[Q_KEY] && GameObjectManager::GetInstance().D_object_exists(PLAYER))
 				GameObjectManager::GetInstance().KillPlayer();
 
+			if(_keys_pressed[M_KEY])
+			{
+				SoundManager::GetInstance().ToggleMusic();
+				FileManager::GetInstance().SaveSettings();
+				std::stringstream ss;
+				ss << "Music: ";
+				if(SoundManager::GetInstance().GetMusicEnabled())
+					ss << "Enabled";
+				else
+					ss << "Disabled";
+				Pop_Up_Message::NewMessage(ss.str());
+			}
+			if(_keys_pressed[S_KEY])
+			{
+				SoundManager::GetInstance().ToggleSound();
+				FileManager::GetInstance().SaveSettings();
+				std::stringstream ss;
+				ss << "Sound: ";
+				if(SoundManager::GetInstance().GetSoundEnabled())
+					ss << "Enabled";
+				else
+					ss << "Disabled";
+				Pop_Up_Message::NewMessage(ss.str());
+			}
+
 			Background::GetInstance().Update();
 			GameObjectManager::GetInstance().TimerEvent();
 			ButtonManager::GetInstance().TimerEvent();
 			SoundManager::GetInstance().Update();
+			Pop_Up_Message::Update();
 			
 			CheckIfCamIsChanged();
 
@@ -162,12 +198,16 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 				_mouseY = ((mY - (_monitorHeight - (_SCREEN_HEIGHT * _scaleScreen))/2.0)/_scaleScreen)+_camY;
 			}
 
-			ResetKeys();	
+			ResetKeys();
+				
+				//al_unlock_mutex(data->mutex);
 		}
 		#pragma endregion This is where the magic happens ;)
 		#pragma region Draw
 		if(render && al_is_event_queue_empty(event_queue) || (render && !GetDropFrames()))
 		{
+			//std::cout << "draw" << std::endl;
+			//al_lock_mutex(data.mutex);
 			UpdateFPS();
 			render = false;
 			
@@ -178,18 +218,19 @@ int main(int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  
 			Background::GetInstance().Draw();
 			GameObjectManager::GetInstance().Draw();
 			ButtonManager::GetInstance().Draw();
+			Pop_Up_Message::Draw();
 
 			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,255,255), 10, 10, 0, "FPS: %f", gameFPS);
 
 			DrawBorders();
-
+			
+			//al_unlock_mutex(data.mutex);
 			al_flip_display();
 		}
 		#pragma endregion All drawing stuff happens in here
 	}
 	#pragma endregion
-	al_destroy_timer(timer);
-	al_destroy_event_queue(event_queue);
+	//al_destroy_thread(thread);
 	
 	return Exit::GetReturnValue();
 }
@@ -230,7 +271,8 @@ inline void GetInput(const ALLEGRO_EVENT &ev)
 			//FileManager::GetInstance().Load();
 			break;
 		case ALLEGRO_KEY_M:
-			SoundManager::GetInstance().ToggleMusic();
+			_keys[M_KEY]=true;
+			_keys_pressed[M_KEY]=true;
 			break;
 		case ALLEGRO_KEY_Q:
 			_keys_pressed[Q_KEY]=true;
@@ -241,7 +283,8 @@ inline void GetInput(const ALLEGRO_EVENT &ev)
 			_keys[R_KEY]=true;
 			break;
 		case ALLEGRO_KEY_S:
-			SoundManager::GetInstance().ToggleSound();
+			_keys_pressed[S_KEY]=true;
+			_keys[S_KEY]=true;
 			break;
 		case ALLEGRO_KEY_X:
 			_keys_pressed[X_KEY]=true;
@@ -264,6 +307,9 @@ inline void GetInput(const ALLEGRO_EVENT &ev)
 		case ALLEGRO_KEY_ALTGR:
 			_keys_pressed[ALTGR]=true;
 			_keys[ALTGR]=true;
+			break;
+		case ALLEGRO_KEY_H:
+			GameObjectManager::GetInstance().SetPlayerData(2032, 1488, 0, 0, 0, 0, 1, 0, 0);
 			break;
 		}
 	}
@@ -300,6 +346,9 @@ inline void GetInput(const ALLEGRO_EVENT &ev)
 			_keys_released[L_KEY]=true;
 			_keys[L_KEY]=false;
 			break;
+		case ALLEGRO_KEY_M:
+			_keys_released[M_KEY]=true;
+			_keys[M_KEY]=false;
 		case ALLEGRO_KEY_Q:
 			_keys_released[Q_KEY]=true;
 			_keys[Q_KEY]=false;
@@ -308,6 +357,9 @@ inline void GetInput(const ALLEGRO_EVENT &ev)
 			_keys_released[R_KEY]=true;
 			_keys[R_KEY]=false;
 			break;
+		case ALLEGRO_KEY_S:
+			_keys_released[S_KEY]=true;
+			_keys[S_KEY]=false;
 		case ALLEGRO_KEY_X:
 			_keys_released[X_KEY]=true;
 			_keys[X_KEY] = false;
@@ -573,4 +625,3 @@ inline void DrawBorders()
 	al_draw_filled_rectangle(ubX1, ubY1, ubX2, ubY2, al_map_rgb(0,0,0));
 	al_draw_filled_rectangle(dbX1, dbY1, dbX2, dbY2, al_map_rgb(0,0,0));
 }
-

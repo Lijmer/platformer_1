@@ -13,7 +13,7 @@ obj_Saw_Bar::obj_Saw_Bar()
 
 obj_Saw_Bar::~obj_Saw_Bar(void)
 {
-	
+	GameObjectManager::GetInstance().DestroyStaticObject(wall);
 }
 
 
@@ -22,7 +22,7 @@ void obj_Saw_Bar::Init(float x, float y)
 	obj_Saw_Bar::x = x;
 	obj_Saw_Bar::y = y;
 	saw = GameObjectManager::GetInstance().CreateObject(9,x+120,y);
-	GameObjectManager::GetInstance().CreateObject(0,x,y);
+	wall = GameObjectManager::GetInstance().CreateStaticObject(0,x,y);
 }
 void obj_Saw_Bar::Update()
 {

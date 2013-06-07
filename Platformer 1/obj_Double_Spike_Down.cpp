@@ -43,13 +43,6 @@ void obj_Double_Spike_Down::Update()
 	yPoint3+=velY;
 }
 
-
-void obj_Double_Spike_Down::Destroy()
-{}
-
-void obj_Double_Spike_Down::Collided(GameObject *other)
-{}
-
 void obj_Double_Spike_Down::Activate()
 {
 	velY=4;

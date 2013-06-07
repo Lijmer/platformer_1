@@ -5,6 +5,7 @@
 #include "DisplayManager.h"
 #include "LevelManager.h"
 #include "SoundManager.h"
+#include "FileManager.h"
 #include "globals.h"
 
 #include <sstream>
@@ -83,10 +84,10 @@ void btn_Menu::Draw(void)
 		DrawTextOutline(FontManager::GetInstance().GetFont(0), al_map_rgb(255,255,255),
 			al_map_rgb(0,0,0), x, y-(fontHeight/2.0f),ALLEGRO_ALIGN_CENTRE, 2, "Help");
 	}
-	else if(kind==OPTIONS)
+	else if(kind==SETTINGS)
 	{
 		DrawTextOutline(FontManager::GetInstance().GetFont(0), al_map_rgb(255,255,255),
-			al_map_rgb(0,0,0), x, y-(fontHeight/2.0f), ALLEGRO_ALIGN_CENTRE, 2, "Options");
+			al_map_rgb(0,0,0), x, y-(fontHeight/2.0f), ALLEGRO_ALIGN_CENTRE, 2, "Settings");
 	}
 	else if(kind==TOGGLE_MUSIC)
 	{
@@ -218,33 +219,39 @@ void btn_Menu::Execute(void)
 	{
 		ButtonManager::GetInstance().LoadHelpMenu();
 	}
-	else if(kind==OPTIONS)
+	else if(kind==SETTINGS)
 	{
-		ButtonManager::GetInstance().LoadOptionsMenu();
+		ButtonManager::GetInstance().LoadSettingsMenu();
 	}
 	else if(kind==TOGGLE_MUSIC)
 	{
 		SoundManager::GetInstance().ToggleMusic();
+		FileManager::GetInstance().SaveSettings();
 	}
 	else if(kind==MUSIC_VOLUME)
 	{
 		SoundManager::GetInstance().ChangeMusicVolume();
+		FileManager::GetInstance().SaveSettings();
 	}
 	else if(kind==TOGGLE_SOUND)
 	{
 		SoundManager::GetInstance().ToggleSound();
+		FileManager::GetInstance().SaveSettings();
 	}
 	else if(kind==SOUND_VOLUME)
 	{
 		SoundManager::GetInstance().ChangeSoundVolume();
+		FileManager::GetInstance().SaveSettings();
 	}
 	else if(kind==TOGGLE_FULLSCREEN)
 	{
 		DisplayManager::GetInstance().ChangeState();
+		FileManager::GetInstance().SaveSettings();
 	}
 	else if(kind==TOGGLE_DROP_FRAMES)
 	{
 		ToggleDropFrames();
+		FileManager::GetInstance().SaveSettings();
 	}
 	else if(kind==EXIT)
 	{

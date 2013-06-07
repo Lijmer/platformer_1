@@ -18,13 +18,14 @@ public:
 	void ResetFinalTransform();
 	*/
 	void ChangeState();
-	char GetState()			{return state;}
+	int GetState()				{return state;}
+	void SetState(int state);
 
 
 	enum STATE
 	{
-		WINDOWED,
-		FULLSCREEN_WINDOW
+		WINDOWED=0,
+		FULLSCREEN_WINDOW=1
 	};
 private:
 	/*
@@ -38,7 +39,7 @@ private:
 	//ALLEGRO_TRANSFORM displayTransform;
 	//ALLEGRO_TRANSFORM finalTransform;
 
-	char state;
+	int state;
 	int monitorWidth;
 	int monitorHeight;
 };

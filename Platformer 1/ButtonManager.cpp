@@ -159,9 +159,9 @@ void ButtonManager::LoadHelpMenu()
 	CreateHelpText(512,128);
 	CreateButton(512,640,btn_Menu::BACK);
 }
-void ButtonManager::LoadOptionsMenu()
+void ButtonManager::LoadSettingsMenu()
 {
-	currentMenu=OPTIONS_MENU;
+	currentMenu=SETTINGS_MENU;
 	DestroyButtons();
 	CreateButton(512,128,btn_Menu::TOGGLE_MUSIC);
 	CreateButton(512,208,btn_Menu::MUSIC_VOLUME);
@@ -179,14 +179,14 @@ void ButtonManager::LoadMainMenu()
 	CreateButton(512,128,btn_Menu::NEW_GAME);
 	CreateButton(512,208,btn_Menu::LOAD_GAME);
 	CreateButton(512,288,btn_Menu::HELP);
-	CreateButton(512,368,btn_Menu::OPTIONS);
+	CreateButton(512,368,btn_Menu::SETTINGS);
 	CreateButton(512,448,btn_Menu::EXIT);
 }
 
 void ButtonManager::PreviousMenu()
 {
 	if(currentMenu == NEW_GAME_MENU || currentMenu == NEW_GAME_MENU || currentMenu == LOAD_GAME_MENU
-		|| currentMenu == HELP_MENU || currentMenu == OPTIONS_MENU)
+		|| currentMenu == HELP_MENU || currentMenu == SETTINGS_MENU)
 	{
 		LoadMainMenu();
 	}

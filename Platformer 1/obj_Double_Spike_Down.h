@@ -8,8 +8,6 @@ public:
 
 	void Init(float x, float y);
 	void Update();
-	void Destroy();
-	void Collided(GameObject *other);
 
 	void Activate();
 

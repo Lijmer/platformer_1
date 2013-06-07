@@ -43,11 +43,6 @@ void obj_Double_Spike_Up::Update()
 	yPoint3 += velY;
 }
 
-void obj_Double_Spike_Up::Destroy()
-{}
-
-void obj_Double_Spike_Up::Collided(GameObject *other)
-{}
 
 void obj_Double_Spike_Up::Activate()
 {

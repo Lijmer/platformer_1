@@ -76,7 +76,6 @@ void Player::Update()
 		GameObject *vertical_platform;
 		if(GameObjectManager::GetInstance().PlaceMeeting(VERTICAL_PLATFORM, x ,y+1, this, vertical_platform))
 		{
-			int i=0;
 			if(GameObjectManager::GetInstance().PlaceFree(x, y+vertical_platform->GetVelY(), boundUp,boundDown,boundLeft,boundRight,GetInstanceID(),exceptionIDs,exceptionIDsSize))
 				y+=vertical_platform->GetVelY();
 		}

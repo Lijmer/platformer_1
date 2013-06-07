@@ -26,7 +26,7 @@ public:
 	bool GetIdle()				const	{return idle;}
 
 	void SetGravity(float gravity)			{Player::gravity = gravity;}
-	void SetDir(bool Dir)					{Player::dir = dir;}
+	void SetDir(bool dir)					{Player::dir = dir;}
 	void SetVerticalDir(bool vertical_dir)	{Player::vertical_dir = vertical_dir;}
 	void SetJump(bool jump)					{Player::jump = jump;}
 	void SetIdle(bool idle)					{Player::idle = idle;}

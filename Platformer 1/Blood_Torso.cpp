@@ -21,15 +21,11 @@ void Blood_Torso::Init(float x, float y, float dir, float spd)
 
 void Blood_Torso::Update()
 {
-	if(velY>7)
-		velY=7;
+	if(!collided)
+		velY+=gravity;
 
 	x+=velX;
 	y+=velY;
-	if(!collided)
-	{
-		velY+=gravity;
-	}
 }
 
 void Blood_Torso::Draw()

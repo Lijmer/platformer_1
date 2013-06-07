@@ -11,6 +11,9 @@ public:
 
 
 	ALLEGRO_FONT* GetFont(char ID);
+
+	void DrawTextOutline(int fontID, ALLEGRO_COLOR innerColor,
+		ALLEGRO_COLOR outerColor,float x, float y, int flags,int radius, const char* text);
 	
 private:
 	ALLEGRO_FONT *nokiafc22_18;

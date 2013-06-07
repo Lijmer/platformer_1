@@ -35,3 +35,21 @@ ALLEGRO_FONT* FontManager::GetFont(char ID)
 	}
 	return NULL;
 }
+
+void FontManager::DrawTextOutline(int fontID, ALLEGRO_COLOR innerColor,
+	ALLEGRO_COLOR outerColor, float x, float y, int flags,int radius, const char* text)
+{
+	ALLEGRO_FONT* font = GetFont(fontID);
+	al_draw_text(font, outerColor, x-radius, y-radius, flags, text);
+	al_draw_text(font, outerColor, x, y-radius, flags, text);
+	al_draw_text(font, outerColor, x+radius, y-radius, flags, text);
+	al_draw_text(font, outerColor, x-radius, y, flags, text);
+	al_draw_text(font, outerColor, x, y, flags, text);
+	al_draw_text(font, outerColor, x+radius, y, flags, text);
+	al_draw_text(font, outerColor, x-radius, y+radius, flags, text);
+	al_draw_text(font, outerColor, x, y+radius, flags, text);
+	al_draw_text(font, outerColor, x+radius, y+radius, flags, text);
+	
+	al_draw_text(font, innerColor, x,y,flags,text);
+
+}

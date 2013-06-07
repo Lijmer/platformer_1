@@ -9,6 +9,7 @@ const int _SCREEN_HEIGHT = 768;
 
 extern bool GetDropFrames();
 extern void ToggleDropFrames();
+extern void SetDropFrames(bool drop);
 extern void CheckIfCamIsChanged();
 extern void OverrideCamChanged(bool changed);
 extern bool GetCamChanged();
@@ -45,8 +46,10 @@ enum KEYS
 	RIGHT,
 	SPACE,
 	L_KEY,
+	M_KEY,
 	Q_KEY,
 	R_KEY,
+	S_KEY,
 	X_KEY,
 	Z_KEY,
 	ENTER,

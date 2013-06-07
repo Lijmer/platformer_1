@@ -71,7 +71,6 @@ bool Particle::CheckCollision(GameObject *other)
 		//**************************************************************************************************************************************************************\\
 
 		//2) Check if any of the corners of the rectangle is in the triangle
-		//	 go to dynamicObject.cpp for more details
 		float Px, Py;
 
 		Px = x;
@@ -79,6 +78,8 @@ bool Particle::CheckCollision(GameObject *other)
 		
 		if(Is_p_in_triangle(xPoint1, yPoint1, xPoint2, yPoint2, xPoint3, yPoint3, Px, Py))
 			return true;
+
+		//go to dynamicObject.cpp for more optional more precize collision checking
 	}
 	return false;
 }

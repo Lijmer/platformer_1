@@ -18,7 +18,7 @@ void obj_Help_Text::Init(float x, float y)
 
 void obj_Help_Text::Draw()
 {
-	DrawTextOutline(FontManager::GetInstance().GetFont(0), al_map_rgb(0,0,0), al_map_rgb(255,255,255),
+	DrawTextOutline(FontManager::GetInstance().GetFont(0), al_map_rgb(255,255,255), al_map_rgb(0,0,0),
 		x, y, ALLEGRO_ALIGN_CENTRE, 2, "No help will be given MUHAHAHAHAHAHA!");
 }
 

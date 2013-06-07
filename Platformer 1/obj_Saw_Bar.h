@@ -1,5 +1,6 @@
 #pragma once
 #include "DynamicObject.h"
+class StaticObject;
 class obj_Saw_Bar : public DynamicObject
 {
 public:
@@ -14,5 +15,6 @@ public:
 private:
 	float direction;
 	GameObject *saw;
+	StaticObject *wall;
 };
 

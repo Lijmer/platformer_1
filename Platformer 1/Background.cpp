@@ -13,8 +13,6 @@ using namespace Transformer;
 
 Background::Background(void)
 {
-	x=0;
-	y=0;
 	tilt=0;
 	tiltSpeed=0;
 	velX=0;
@@ -33,7 +31,14 @@ Background::Background(void)
 
 Background::~Background(void)
 {
+	al_destroy_bitmap(canvas);
 	DestroyBackground();
+}
+
+void Background::Init()
+{
+	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
+	canvas=al_create_bitmap(_SCREEN_WIDTH, _SCREEN_HEIGHT);
 }
 
 void Background::LoadBackgroundFromLevel(int level)
@@ -52,6 +57,7 @@ void Background::LoadBackground(int ID)
 		break;
 	case -2:
 		image = al_load_bitmap("img/bkg/menu.png");
+		SetVelX(-50);
 		break;
 	case 0:
 		image = al_load_bitmap("img/bkg/level1.png");
@@ -116,6 +122,9 @@ void Background::Draw()
 	if(image==NULL)
 		return;
 
+	al_set_target_bitmap(canvas);
+	al_clear_to_color(al_map_rgb(0,0,0));
+
 	int startX=0;
 	if(offsetX>0)
 		startX=-imageWidth;
@@ -133,29 +142,15 @@ void Background::Draw()
 		for(int y=startY; y<_SCREEN_HEIGHT+imageHeight; y+=imageHeight)
 		{
 			if((_SCREEN_WIDTH-x)/imageWidth>0 && (_SCREEN_WIDTH-y)/imageHeight>0)
-			{
-				al_draw_tinted_scaled_rotated_bitmap_region(image, 0, 0, imageWidth, imageHeight, al_map_rgba(255,255,255,255), cx, cy,
-					TranslateDisplayX(x+offsetX),TranslateDisplayY(y+offsetY),
-					ScaleDisplay(scaleX), ScaleDisplay(scaleY), tilt, 0);
-			}
+				al_draw_bitmap_region(image, 0,0,imageWidth, imageHeight, x+offsetX, y+offsetY,0);
 			else if((_SCREEN_HEIGHT-y)/imageHeight>0)
-			{
-				al_draw_tinted_scaled_rotated_bitmap_region(image, 0, 0, widthLeft, imageHeight, al_map_rgba(255,255,255,255), cx, cy,
-					TranslateDisplayX(x+offsetX),TranslateDisplayY(y+offsetY),
-					ScaleDisplay(scaleX), ScaleDisplay(scaleY), tilt, 0);
-			}
+				al_draw_bitmap_region(image, 0,0,widthLeft, imageHeight, x+offsetX, y+offsetY,0);
 			else if((_SCREEN_WIDTH-x)/imageWidth>0)
-			{
-				al_draw_tinted_scaled_rotated_bitmap_region(image, 0, 0, imageWidth, heightLeft, al_map_rgba(255,255,255,255), cx, cy,
-					TranslateDisplayX(x+offsetX),TranslateDisplayY(y+offsetY),
-					ScaleDisplay(scaleX), ScaleDisplay(scaleY), tilt, 0);
-			}
+				al_draw_bitmap_region(image, 0,0,imageWidth, heightLeft, x+offsetX, y+offsetY,0);
 			else
-			{
-				al_draw_tinted_scaled_rotated_bitmap_region(image, 0, 0, widthLeft, heightLeft, al_map_rgba(255,255,255,255), cx, cy,
-					TranslateDisplayX(x+offsetX),TranslateDisplayY(y+offsetY),
-					ScaleDisplay(scaleX), ScaleDisplay(scaleY), tilt, 0);
-			}
+				al_draw_bitmap_region(image, 0,0,widthLeft, heightLeft, x+offsetX, y+offsetY,0);
 		}
 	}
+	al_set_target_backbuffer(DisplayManager::GetInstance().GetDisplay());
+	al_draw_scaled_bitmap(canvas, 0, 0, _SCREEN_WIDTH, _SCREEN_HEIGHT, TranslateDisplayX(0), TranslateDisplayY(0), ScaleDisplay(_SCREEN_WIDTH), ScaleDisplay(_SCREEN_HEIGHT), 0);
 }

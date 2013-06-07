@@ -11,6 +11,15 @@ Save::Save()
 	boundLeft=0;
 	boundRight=32;
 	SetID(SAVE);
+	visible = true;
+	wall=NULL;
+}
+Save::~Save()
+{
+	if(wall!=NULL)
+	{
+		GameObjectManager::GetInstance().DestroyStaticObject(wall);
+	}
 }
 
 void Save::Init(float x, float y, char difficulty)
@@ -21,13 +30,15 @@ void Save::Init(float x, float y, char difficulty)
 	//If the difficulty is not the same as this object, it will create a wall in its place
 	if(difficulty < _difficulty)
 	{
-		GameObjectManager::GetInstance().CreateObject(0,x,y);
-		SetAlive(false);
+		wall = GameObjectManager::GetInstance().CreateStaticObject(0,x,y);
+		visible=false;
 	}
 }
 
 void Save::Update()
 {
+	if(!visible)
+		return;
 	if(active)
 	{
 		if(++count>120)
@@ -40,19 +51,19 @@ void Save::Update()
 
 void Save::Draw()
 {
+	if(!visible)
+		return;
+
 	if(!active)
-		al_draw_bitmap_region(image, 0, 0, 28, 31, Transformer::TranslateCameraX(x), Transformer::TranslateCameraY(y), 0);
+		al_draw_bitmap_region(image, 0, 0, 28, 31, TranslateCameraX(x), TranslateCameraY(y), 0);
 	else
-		al_draw_bitmap_region(image, 28, 0, 28, 31, Transformer::TranslateCameraX(x), Transformer::TranslateCameraY(y), 0);
-}
-
-void Save::Destroy()
-{
-
+		al_draw_bitmap_region(image, 28, 0, 28, 31, TranslateCameraX(x), TranslateCameraY(y), 0);
 }
 
 void Save::Collided(GameObject *other)
 {
+	if(!visible)
+		return;
 	if(other->GetID() == BULLET && !active && GameObjectManager::GetInstance().D_object_exists(PLAYER))
 	{
 		LevelManager::GetInstance().Save();

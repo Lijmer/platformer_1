@@ -30,6 +30,11 @@ public:
 	float GetMusicVolume()			{return musicVolume;}
 	float GetSoundVolume()			{return soundVolume;}
 
+	void SetSoundEnabled(bool enabled)	{soundEnabled=enabled;}
+	void SetMusicEnabled(bool enabled)	{musicEnabled=enabled;}
+	void SetSoundVolume(float volume)	{soundVolume = volume;}
+	void SetMusicVolume(float volume)	{musicVolume = volume;}
+
 	enum SND
 {
 	CLICK,

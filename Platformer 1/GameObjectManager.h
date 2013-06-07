@@ -59,6 +59,7 @@ public:
 	bool D_object_exists(int ID);
 	
 	GameObject* CreateObject(int ID,float x,float y);
+	StaticObject* CreateStaticObject(int ID, float x, float y);
 	DynamicObject* CreateDynamicObject(int ID, float x, float y, float velX, float velY);
 	Particle* CreateParticle(int ID, float x, float y);
 	
@@ -75,6 +76,8 @@ public:
 	void DeleteStaticObjects(void);
 	void DeleteParticles(void);
 	void DeleteAllObjects(void);
+
+	void DestroyStaticObject(StaticObject *obj);
 
 	void SetButtonsAliveFalse();
 
@@ -136,7 +139,7 @@ private:
 	ALLEGRO_BITMAP *stillParticleCanvas;
 	ALLEGRO_BITMAP *mainCanvas;
 
-	int stillParticlesSize;
+	unsigned int stillParticlesSize;
 	bool redrawStaticObjects;
 	bool redrawStillParticles;
 	

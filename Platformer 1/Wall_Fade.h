@@ -9,8 +9,6 @@ public:
 
 	void Update();
 	void Draw();
-	void Destroy();
-	void Collided(GameObject *other);
 private:
 	bool activated;
 	float opacity;

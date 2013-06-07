@@ -35,17 +35,3 @@ void Wall_Fade::Draw()
 {
 	al_draw_tinted_bitmap(image,al_map_rgba(opacity*255.0,opacity*255.0,opacity*255.0,opacity*255.0),Transformer::TranslateCameraX(x), Transformer::TranslateCameraY(y),0);
 }
-
-void Wall_Fade::Destroy()
-{
-}
-
-void Wall_Fade::Collided(GameObject *other)
-{
-	/*
-	if(other->GetID() == PLAYER)
-	{
-		if(other->GetY()<y)
-			activated=true;
-	}*/
-}
