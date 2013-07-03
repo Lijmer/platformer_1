@@ -31,7 +31,8 @@ void Blood_Arm::Update()
 
 void Blood_Arm::Draw()
 {
-	al_draw_rotated_bitmap(image,1,4,TranslateCameraX(x), TranslateCameraY(y),direction*PI/180.0,0);
+	//al_draw_rotated_bitmap(image,1,4,TranslateCameraX(x), TranslateCameraY(y),direction*PI/180.0,0);
+	al_draw_rotated_bitmap(image,1,5,x,y,direction*PI/180.0,0);
 }
 
 void Blood_Arm::Destroy()

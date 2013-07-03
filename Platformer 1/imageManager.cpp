@@ -51,7 +51,7 @@ ImageManager &ImageManager::GetInstance()
 	return instance;
 }
 
-ALLEGRO_BITMAP* ImageManager::GetImage(char ID)
+ALLEGRO_BITMAP* ImageManager::GetImage(int ID)
 {
 	switch(ID)
 	{

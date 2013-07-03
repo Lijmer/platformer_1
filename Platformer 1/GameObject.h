@@ -6,7 +6,7 @@
 #include "Transformer.h"
 #include "globals.h"
 
-using namespace Transformer;
+//using namespace Transformer;
 
 class GameObject
 {

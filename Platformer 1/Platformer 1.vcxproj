@@ -65,7 +65,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\allegro\MVSC\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>allegro-5.0.8-monolith-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -80,6 +80,7 @@
     <ClCompile Include="ButtonManager.cpp" />
     <ClCompile Include="DisplayManager.cpp" />
     <ClCompile Include="DynamicObject.cpp" />
+    <ClCompile Include="Editor.cpp" />
     <ClCompile Include="Exit.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="FontManager.cpp" />
@@ -133,6 +134,7 @@
     <ClInclude Include="ButtonManager.h" />
     <ClInclude Include="DisplayManager.h" />
     <ClInclude Include="DynamicObject.h" />
+    <ClInclude Include="Editor.h" />
     <ClInclude Include="Exit.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="FontManager.h" />
@@ -144,7 +146,6 @@
     <ClInclude Include="obj_Double_Spike_Down.h" />
     <ClInclude Include="obj_Double_Spike_Up.h" />
     <ClInclude Include="obj_Help_Text.h" />
-    <ClInclude Include="obj_Menu_Button.h" />
     <ClInclude Include="obj_Platform_Horizontal.h" />
     <ClInclude Include="obj_Platform_Vertical.h" />
     <ClInclude Include="obj_Saw.h" />

@@ -46,7 +46,7 @@
 
 #include "Transformer.h"
 
-using namespace Transformer;
+//using namespace Transformer;
 
 #pragma endregion
 
@@ -170,6 +170,7 @@ void GameObjectManager::Draw()
 	if(redrawStaticObjects)
 	{
 		al_set_target_bitmap(staticCanvas);
+		DisplayManager::GetInstance().UseCameraTransform();
 		al_clear_to_color(al_map_rgba(0,0,0,0));
 		for(iter = staticObjects.begin(); iter!=staticObjects.end(); iter++)
 			(*iter)->Draw();
@@ -180,6 +181,7 @@ void GameObjectManager::Draw()
 	if(redrawStillParticles)
 	{
 		al_set_target_bitmap(stillParticleCanvas);
+		DisplayManager::GetInstance().UseCameraTransform();
 		al_clear_to_color(al_map_rgba(0,0,0,0));
 		for(particleIter = stillParticles.begin(); particleIter!=stillParticles.end(); particleIter++)
 			(*particleIter)->Draw();
@@ -188,6 +190,7 @@ void GameObjectManager::Draw()
 	}
 
 	al_set_target_bitmap(mainCanvas);
+	DisplayManager::GetInstance().UseCameraTransform();
 	al_clear_to_color(al_map_rgba(0,0,0,0));
 
 	//Draw dynamic objects
@@ -201,15 +204,18 @@ void GameObjectManager::Draw()
 		(*particleIter)->Draw();
 
 	al_set_target_backbuffer(DisplayManager::GetInstance().GetDisplay());
+	DisplayManager::GetInstance().UseDisplayTransform();
+	//al_draw_scaled_bitmap(staticCanvas,0,0, al_get_bitmap_width(staticCanvas), al_get_bitmap_height(staticCanvas), TranslateDisplayX(0),
+	//	TranslateDisplayY(0),ScaleDisplay(al_get_bitmap_width(staticCanvas)), ScaleDisplay(al_get_bitmap_height(staticCanvas)), 0);
+	al_draw_bitmap(staticCanvas,0,0,0);
+	al_draw_bitmap(mainCanvas,0,0,0);
+	al_draw_bitmap(stillParticleCanvas,0,0,0);
 
-	al_draw_scaled_bitmap(staticCanvas,0,0, al_get_bitmap_width(staticCanvas), al_get_bitmap_height(staticCanvas), TranslateDisplayX(0),
-		TranslateDisplayY(0),ScaleDisplay(al_get_bitmap_width(staticCanvas)), ScaleDisplay(al_get_bitmap_height(staticCanvas)), 0);
+	//al_draw_scaled_bitmap(mainCanvas,0,0, al_get_bitmap_width(mainCanvas), al_get_bitmap_height(mainCanvas), TranslateDisplayX(0),
+	//	TranslateDisplayY(0),ScaleDisplay(al_get_bitmap_width(mainCanvas)), ScaleDisplay(al_get_bitmap_height(mainCanvas)), 0);
 
-	al_draw_scaled_bitmap(mainCanvas,0,0, al_get_bitmap_width(mainCanvas), al_get_bitmap_height(mainCanvas), TranslateDisplayX(0),
-		TranslateDisplayY(0),ScaleDisplay(al_get_bitmap_width(mainCanvas)), ScaleDisplay(al_get_bitmap_height(mainCanvas)), 0);
-
-	al_draw_scaled_bitmap(stillParticleCanvas,0,0, al_get_bitmap_width(stillParticleCanvas), al_get_bitmap_height(stillParticleCanvas), TranslateDisplayX(0),
-		TranslateDisplayY(0),ScaleDisplay(al_get_bitmap_width(stillParticleCanvas)), ScaleDisplay(al_get_bitmap_height(stillParticleCanvas)), 0);
+	//al_draw_scaled_bitmap(stillParticleCanvas,0,0, al_get_bitmap_width(stillParticleCanvas), al_get_bitmap_height(stillParticleCanvas), TranslateDisplayX(0),
+	//	TranslateDisplayY(0),ScaleDisplay(al_get_bitmap_width(stillParticleCanvas)), ScaleDisplay(al_get_bitmap_height(stillParticleCanvas)), 0);
 }
 
 bool GameObjectManager::PlaceFree(float x, float y, int boundUp, int boundDown, int boundLeft, int boundRight, unsigned int instanceID, int *exceptionIDs, int exceptionIDsSize)
@@ -928,7 +934,8 @@ inline void GameObjectManager::UpdateDynamicObjects()
 	if(dynamicObjects.capacity() > dynamicObjects.size()+100)
 		dynamicObjects.shrink_to_fit();
 
-	sort(dynamicObjects.begin(),dynamicObjects.end(), SortFunction);
+  if(!is_sorted(dynamicObjects.begin(), dynamicObjects.end(), SortFunction))
+	  sort(dynamicObjects.begin(),dynamicObjects.end(), SortFunction);
 
 	for(iter = pendingDynamicObjects.begin(); iter!=pendingDynamicObjects.end();)
 	{

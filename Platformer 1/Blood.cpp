@@ -31,7 +31,8 @@ void Blood::Update()
 }
 void Blood::Draw()
 {
-	al_draw_filled_rectangle(Transformer::TranslateCameraX(x-2), Transformer::TranslateCameraY(y-2),Transformer::TranslateCameraX(x+2), Transformer::TranslateCameraY(y+2), al_map_rgb(255,0,0));
+	//al_draw_filled_rectangle(Transformer::TranslateCameraX(x-2), Transformer::TranslateCameraY(y-2),Transformer::TranslateCameraX(x+2), Transformer::TranslateCameraY(y+2), al_map_rgb(255,0,0));
+	al_draw_filled_rectangle(x-2, y-2,x+2, y+2, al_map_rgb(255,0,0));
 }
 void Blood::Destroy()
 {

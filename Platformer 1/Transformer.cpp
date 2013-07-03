@@ -1,4 +1,4 @@
-#include "Transformer.h"
+/*#include "Transformer.h"
 #include "DisplayManager.h"
 #include "globals.h"
 
@@ -52,4 +52,4 @@ namespace Transformer
 		return TranslateDisplayY(ScaleDisplay(y));
 	}
 
-}
+}*/

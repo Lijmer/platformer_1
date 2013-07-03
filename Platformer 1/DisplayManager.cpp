@@ -1,7 +1,7 @@
 #include "DisplayManager.h"
 #include <allegro5/allegro_native_dialog.h>
 #include "globals.h"
-
+#include <iostream>
 #include "Exit.h"
 
 DisplayManager::DisplayManager(void)
@@ -10,6 +10,7 @@ DisplayManager::DisplayManager(void)
 	state = FULLSCREEN_WINDOW;
 	monitorWidth=0;
 	monitorHeight=0;
+
 }
 
 
@@ -26,9 +27,9 @@ DisplayManager &DisplayManager::GetInstance()
 
 void DisplayManager::CreateDisplay()
 {
-
 	al_get_display_mode(al_get_num_display_modes() - 1, &disp_data);
-	al_set_new_display_flags(ALLEGRO_FULLSCREEN_WINDOW | ALLEGRO_NOFRAME);
+	std::cout << disp_data.width << "\t" << disp_data.height << std::endl;
+	al_set_new_display_flags(ALLEGRO_WINDOWED | ALLEGRO_NOFRAME);
 	//al_toggle_display_flag(display, ALLEGRO_NOFRAME, false);
 	float scaleScreenWidth = disp_data.width / (float)_SCREEN_WIDTH;
 	float scaleScreenHeight = disp_data.height / (float)_SCREEN_HEIGHT;
@@ -37,7 +38,7 @@ void DisplayManager::CreateDisplay()
 	_monitorHeight = disp_data.height;
 
 	
-	display = al_create_display(disp_data.width, disp_data.height);	//create our display object
+	display = al_create_display(_SCREEN_WIDTH, _SCREEN_HEIGHT);	//create our display object
 
 	if(!display) //test display object
 	{
@@ -74,10 +75,11 @@ void DisplayManager::SetState(int state)
 	else if(state == FULLSCREEN_WINDOW)
 	{
 		al_toggle_display_flag(display, ALLEGRO_FULLSCREEN_WINDOW, true);
-		al_toggle_display_flag(display, ALLEGRO_NOFRAME, true);
+		al_toggle_display_flag(display, ALLEGRO_NOFRAME, true);		
+		al_resize_display(display, _monitorWidth, _monitorHeight);
 	}
 }
-/*
+
 void DisplayManager::UseFinalTransform()
 {
 	al_use_transform(&CombineTransform(TransformCamera(), TransformDisplay()));
@@ -122,4 +124,3 @@ ALLEGRO_TRANSFORM& DisplayManager::CombineTransform(ALLEGRO_TRANSFORM &trans1, A
 	return finalTransform;
 }
 
-*/

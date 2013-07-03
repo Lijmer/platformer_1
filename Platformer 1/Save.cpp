@@ -55,9 +55,9 @@ void Save::Draw()
 		return;
 
 	if(!active)
-		al_draw_bitmap_region(image, 0, 0, 28, 31, TranslateCameraX(x), TranslateCameraY(y), 0);
+		al_draw_bitmap_region(image, 0, 0, 28, 31, x, y, 0);
 	else
-		al_draw_bitmap_region(image, 28, 0, 28, 31, TranslateCameraX(x), TranslateCameraY(y), 0);
+		al_draw_bitmap_region(image, 28, 0, 28, 31, x, y, 0);
 }
 
 void Save::Collided(GameObject *other)

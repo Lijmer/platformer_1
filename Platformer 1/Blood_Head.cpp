@@ -30,7 +30,8 @@ void Blood_Head::Update()
 
 void Blood_Head::Draw()
 {
-	al_draw_rotated_bitmap(image,5,8,Transformer::TranslateCameraX(x), Transformer::TranslateCameraY(y),direction*PI/180.0,0);
+	//al_draw_rotated_bitmap(image,5,8,Transformer::TranslateCameraX(x), Transformer::TranslateCameraY(y),direction*PI/180.0,0);
+	al_draw_rotated_bitmap(image,5,8,x,y,direction*PI/180.0,0);
 }
 
 void Blood_Head::Destroy()

@@ -9,7 +9,7 @@
 
 #include <sstream>
 
-using namespace Transformer;
+//using namespace Transformer;
 
 Background::Background(void)
 {
@@ -152,5 +152,8 @@ void Background::Draw()
 		}
 	}
 	al_set_target_backbuffer(DisplayManager::GetInstance().GetDisplay());
-	al_draw_scaled_bitmap(canvas, 0, 0, _SCREEN_WIDTH, _SCREEN_HEIGHT, TranslateDisplayX(0), TranslateDisplayY(0), ScaleDisplay(_SCREEN_WIDTH), ScaleDisplay(_SCREEN_HEIGHT), 0);
+	//al_draw_scaled_bitmap(canvas, 0, 0, _SCREEN_WIDTH, _SCREEN_HEIGHT, TranslateDisplayX(0), TranslateDisplayY(0), ScaleDisplay(_SCREEN_WIDTH), ScaleDisplay(_SCREEN_HEIGHT), 0);
+	
+	DisplayManager::GetInstance().UseDisplayTransform();
+	al_draw_bitmap(canvas,0,0,0);
 }

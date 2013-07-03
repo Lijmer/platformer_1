@@ -55,7 +55,7 @@ void GameObject::Deactivate()
 void GameObject::Draw()
 {
 	if(image!=NULL)
-		al_draw_bitmap(image, TranslateCameraX(x), TranslateCameraY(y), 0);
+		al_draw_bitmap(image, x, y, 0);
 }
 void GameObject::Destroy()
 {}

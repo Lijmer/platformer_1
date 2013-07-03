@@ -3,7 +3,7 @@
 #include "globals.h"
 #include "Transformer.h"
 #include "DisplayManager.h"
-using namespace Transformer;
+//using namespace Transformer;
 
 Message *Pop_Up_Message::message = NULL;
 std::vector<Message*> Pop_Up_Message::messages;
@@ -61,7 +61,9 @@ void Pop_Up_Message::Draw()
 	}
 
 	al_set_target_backbuffer(DisplayManager::GetInstance().GetDisplay());
-	al_draw_scaled_bitmap(canvas, 0,0,_SCREEN_WIDTH,_SCREEN_HEIGHT, TranslateDisplayX(0), TranslateDisplayY(0), ScaleDisplay(_SCREEN_WIDTH), ScaleDisplay(_SCREEN_HEIGHT), 0);
+	//al_draw_scaled_bitmap(canvas, 0,0,_SCREEN_WIDTH,_SCREEN_HEIGHT, TranslateDisplayX(0), TranslateDisplayY(0), ScaleDisplay(_SCREEN_WIDTH), ScaleDisplay(_SCREEN_HEIGHT), 0);
+	DisplayManager::GetInstance().UseDisplayTransform();
+	al_draw_bitmap(canvas,0,0,0);
 }
 
 void Pop_Up_Message::NewMessage(const std::string &text)

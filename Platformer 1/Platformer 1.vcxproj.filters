@@ -19,9 +19,6 @@
     <Filter Include="Header Files\Sprites">
       <UniqueIdentifier>{f4fe1ded-047b-4255-a48f-d8a706885d49}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Sprites">
-      <UniqueIdentifier>{d122b1ef-aa6e-4405-b13b-5b35645518f8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Objects">
       <UniqueIdentifier>{e9c236ea-6818-420f-8e10-4a77c976af01}</UniqueIdentifier>
     </Filter>
@@ -97,16 +94,31 @@
     <Filter Include="Header Files\Particles">
       <UniqueIdentifier>{9b3e11d6-05c7-443a-b260-c2ec1eaffbd4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Particles\Sprites">
+      <UniqueIdentifier>{d122b1ef-aa6e-4405-b13b-5b35645518f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor">
+      <UniqueIdentifier>{27936e46-63eb-4005-91df-d584f659f8e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Menu">
+      <UniqueIdentifier>{ce476742-3fc2-4410-9fbf-540520fc88ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Editor">
+      <UniqueIdentifier>{e5dd9347-edbd-41c1-9f39-dae564323c3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Menu">
+      <UniqueIdentifier>{0810f513-2bf7-45aa-bb3a-dd6d1be105d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BaseSprite.cpp">
-      <Filter>Source Files\Sprites</Filter>
+      <Filter>Source Files\Particles\Sprites</Filter>
     </ClCompile>
     <ClCompile Include="spr_Player.cpp">
-      <Filter>Source Files\Sprites</Filter>
+      <Filter>Source Files\Particles\Sprites</Filter>
     </ClCompile>
     <ClCompile Include="Spike.cpp">
       <Filter>Source Files\Objects\Spike</Filter>
@@ -231,12 +243,6 @@
     <ClCompile Include="LevelManager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="obj_Help_Text.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="btn_Menu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Background.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -249,8 +255,17 @@
     <ClCompile Include="ButtonManager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
+    <ClCompile Include="btn_Menu.cpp">
+      <Filter>Source Files\Menu</Filter>
+    </ClCompile>
     <ClCompile Include="Pop_Up_Message.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="obj_Help_Text.cpp">
+      <Filter>Source Files\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor.cpp">
+      <Filter>Source Files\Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -383,15 +398,6 @@
     <ClInclude Include="LevelManager.h">
       <Filter>Header Files\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="obj_Menu_Button.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="obj_Help_Text.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="btn_Menu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Background.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -404,8 +410,17 @@
     <ClInclude Include="ButtonManager.h">
       <Filter>Header Files\Managers</Filter>
     </ClInclude>
+    <ClInclude Include="btn_Menu.h">
+      <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="obj_Help_Text.h">
+      <Filter>Header Files\Menu</Filter>
+    </ClInclude>
     <ClInclude Include="Pop_Up_Message.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor.h">
+      <Filter>Header Files\Editor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

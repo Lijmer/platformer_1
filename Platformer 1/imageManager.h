@@ -13,7 +13,7 @@ public:
 	void LoadImages(int currentLevel);
 	
 
-	ALLEGRO_BITMAP* GetImage(char ID = -1);
+	ALLEGRO_BITMAP* GetImage(int ID = -1);
 
 	enum IMG
 	{

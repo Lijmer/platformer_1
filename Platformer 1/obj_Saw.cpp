@@ -29,7 +29,7 @@ void obj_Saw::Update()
 }
 void obj_Saw::Draw()
 {
-	al_draw_rotated_bitmap(image,radius,radius,Transformer::TranslateCameraX(x), Transformer::TranslateCameraY(y),direction,0);
+	al_draw_rotated_bitmap(image,radius,radius,x, y,direction,0);
 }
 void obj_Saw::Destroy()
 {}

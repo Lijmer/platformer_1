@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 
 namespace Transformer
 {
@@ -12,4 +12,4 @@ namespace Transformer
 	extern float TranslateDisplayY(float y);
 	extern float TransformDisplayX(float x);
 	extern float TransformDisplayY(float y);
-}
+}*/

@@ -3,7 +3,7 @@
 #include "Transformer.h"
 #include <math.h>
 
-using namespace Transformer;
+//using namespace Transformer;
 
 class Particle
 {

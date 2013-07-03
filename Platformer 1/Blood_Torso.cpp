@@ -30,7 +30,8 @@ void Blood_Torso::Update()
 
 void Blood_Torso::Draw()
 {
-	al_draw_rotated_bitmap(image,1,4,TranslateCameraX(x), TranslateCameraY(y),direction*PI/180.0,0);
+	//al_draw_rotated_bitmap(image,1,4,TranslateCameraX(x), TranslateCameraY(y),direction*PI/180.0,0);
+	al_draw_rotated_bitmap(image,1,4,x, y,direction*PI/180.0,0);
 }
 
 void Blood_Torso::Destroy()

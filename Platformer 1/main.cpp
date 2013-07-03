@@ -23,13 +23,16 @@
 #include "LevelManager.h"
 #include "Pop_Up_Message.h"
 
+
+#include "Editor.h"
+
 #include "Exit.h"
 
 #include <iostream>
-using namespace Transformer;
+//using namespace Transformer;
 #pragma endregion
 
-const float FPS = 60.f;
+const float FPS = 60;
 float mX=0;
 float mY=0;
 int gameTime = 0;
@@ -37,7 +40,7 @@ int frames = 0;
 float gameFPS = 0;
 bool render = false;
 
-
+int EditModeMain();
 void GetInput(const ALLEGRO_EVENT &ev);
 void DrawBorders();
 inline double diffclock(clock_t clock1, clock_t clock2)
@@ -85,10 +88,21 @@ inline void UpdateFPS()
 	}
 }
 
-//int main()int argc, char *argv[]) //I have no idea why I use argc, char *argv[]  This applications doesn't take parameters...
-int main()
+int main(int argc, char *argv[])
 {
-	//std::cout << argc << std::endl << argv << std::endl;
+	//take arguments
+	for(int i=1; i<argc; i++)
+	{		
+		std::string strArgv = argv[i];
+
+		if(strArgv == "-edit")
+		{
+			return EditModeMain();
+		}
+		else
+			al_show_native_message_box(NULL, "Error!", "Main", "Unknown parameter", NULL,0);
+	}
+
 	#pragma region Setup
 	#pragma region Init Allegro, create display and install addons
 	//Initialize allegro and create a display
@@ -220,7 +234,7 @@ int main()
 			ButtonManager::GetInstance().Draw();
 			Pop_Up_Message::Draw();
 
-			al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,255,255), 10, 10, 0, "FPS: %f", gameFPS);
+			//al_draw_textf(FontManager::GetInstance().GetFont(0), al_map_rgb(255,255,255), 10, 10, 0, "FPS: %f", gameFPS);
 
 			DrawBorders();
 			
@@ -268,7 +282,6 @@ inline void GetInput(const ALLEGRO_EVENT &ev)
 		case ALLEGRO_KEY_L:
 			_keys_pressed[L_KEY]=true;
 			_keys[L_KEY]=true;
-			//FileManager::GetInstance().Load();
 			break;
 		case ALLEGRO_KEY_M:
 			_keys[M_KEY]=true;
@@ -602,26 +615,88 @@ inline void GetInput(const ALLEGRO_EVENT &ev)
 inline void DrawBorders()
 {
 	al_set_target_backbuffer(DisplayManager::GetInstance().GetDisplay());
-	float lbX1 = TransformDisplayX(-(_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0);
-	float lbX2 = TransformDisplayX(0);
-	float lbY1 = TransformDisplayY(0);
-	float lbY2 = TransformDisplayY(_SCREEN_HEIGHT);
-	float rbX1 = TransformDisplayX(_SCREEN_WIDTH + (_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0);
-	float rbX2 = TransformDisplayX(_SCREEN_WIDTH);
-	float rbY1 = TransformDisplayY(0);
-	float rbY2 = TransformDisplayY(_SCREEN_HEIGHT);
-	float ubX1 = TransformDisplayX(0);
-	float ubX2 = TransformDisplayX(_SCREEN_WIDTH);
-	float ubY1 = TransformDisplayY(-(_monitorHeight - (_SCREEN_HEIGHT * _scaleScreen))/2.0);
-	float ubY2 = TransformDisplayY(0);
-	float dbX1 = TransformDisplayX(0);
-	float dbX2 = TransformDisplayX(_SCREEN_WIDTH);
-	float dbY1 = TransformDisplayY(_SCREEN_HEIGHT + (_monitorHeight - (_SCREEN_HEIGHT * _scaleScreen))/2.0);
-	float dbY2 = TransformDisplayY(_SCREEN_HEIGHT);
+	DisplayManager::GetInstance().UseDisplayTransform();
+	float lbX1 = (-(_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0);
+	float lbX2 = (0);
+	float lbY1 = (0);
+	float lbY2 = (_SCREEN_HEIGHT);
+	float rbX1 = (_SCREEN_WIDTH + (_monitorWidth - (_SCREEN_WIDTH * _scaleScreen))/2.0);
+	float rbX2 = (_SCREEN_WIDTH);
+	float rbY1 = (0);
+	float rbY2 = (_SCREEN_HEIGHT);
+	float ubX1 = (0);
+	float ubX2 = (_SCREEN_WIDTH);
+	float ubY1 = (-(_monitorHeight - (_SCREEN_HEIGHT * _scaleScreen))/2.0);
+	float ubY2 = (0);
+	float dbX1 = (0);
+	float dbX2 = (_SCREEN_WIDTH);
+	float dbY1 = (_SCREEN_HEIGHT + (_monitorHeight - (_SCREEN_HEIGHT * _scaleScreen))/2.0);
+	float dbY2 = (_SCREEN_HEIGHT);
 
 	//Draw borders
 	al_draw_filled_rectangle(lbX1, lbY1, lbX2, lbY2,al_map_rgb(0,0,0));
 	al_draw_filled_rectangle(rbX1, rbY1, rbX2, rbY2, al_map_rgb(0,0,0));
 	al_draw_filled_rectangle(ubX1, ubY1, ubX2, ubY2, al_map_rgb(0,0,0));
 	al_draw_filled_rectangle(dbX1, dbY1, dbX2, dbY2, al_map_rgb(0,0,0));
+}
+
+int EditModeMain()
+{
+	//Init
+	if(!al_init())	//initialize Allegro (if it fails to do, show error message and terminate
+	{
+		al_show_native_message_box(DisplayManager::GetInstance().GetDisplay(), "Error!", "Error!", "Couldn't initialize allegro 5", "Ok Sok", 0);
+		return -1;
+	}
+	DisplayManager::GetInstance().CreateDisplay();
+	
+	//install addons
+	al_install_keyboard();
+	al_install_mouse();
+
+	GameObjectManager::GetInstance().Init();
+	Pop_Up_Message::Init();
+	Background::GetInstance().Init();
+	LevelManager::GetInstance().Init();
+
+	ALLEGRO_EVENT_QUEUE *event_queue = al_create_event_queue();
+	ALLEGRO_TIMER *timer = al_create_timer(1.0 / (FPS/20.f));
+
+	al_register_event_source(event_queue, al_get_timer_event_source(timer));
+	al_register_event_source(event_queue, al_get_keyboard_event_source());
+	al_register_event_source(event_queue, al_get_mouse_event_source());
+	al_start_timer(timer);
+
+	while(!Exit::GetDone())
+	{
+		ALLEGRO_EVENT ev;
+		al_wait_for_event(event_queue, &ev);
+		GetInput(ev);
+
+		//Update
+		if(ev.type == ALLEGRO_EVENT_TIMER)
+		{
+			render = true;
+
+			Background::GetInstance().Update();
+			GameObjectManager::GetInstance().TimerEvent();
+			
+			Editor::GI().Update();
+
+		}
+		//Draw
+		if(render)
+		{
+			al_set_target_backbuffer(DisplayManager::GetInstance().GetDisplay());
+			al_clear_to_color(al_map_rgb(0,0,0));
+
+			al_flip_display();
+		}
+	}
+
+	//Clean up
+	al_destroy_event_queue(event_queue);
+	al_destroy_timer(timer);
+
+	return Exit::GetReturnValue();
 }

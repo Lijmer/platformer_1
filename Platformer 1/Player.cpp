@@ -163,7 +163,7 @@ void Player::UpdateEnd()
 {}
 void Player::Draw()
 {
-	sprite->Draw(Transformer::TranslateCameraX(x), Transformer::TranslateCameraY(y));
+	sprite->Draw(x, y);
 }
 void Player::Kill()
 {

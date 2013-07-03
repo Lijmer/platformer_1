@@ -46,5 +46,5 @@ void obj_Treadmill_Left::Update()
 
 void obj_Treadmill_Left::Draw()
 {
-	al_draw_bitmap_region(image, currentFrame*32, 0, 32, 32, Transformer::TranslateCameraX(x), Transformer::TranslateCameraY(y), 0);
+	al_draw_bitmap_region(image, currentFrame*32, 0, 32, 32, x, y, 0);
 }

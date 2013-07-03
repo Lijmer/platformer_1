@@ -335,12 +335,8 @@ void FileManager::LoadMainMenu(int levelNum)
 
 const std::vector<int>& FileManager::LoadImageNums(int levelNum)
 {
-	std::vector<int>::iterator intIter;
-	//clear imageNums
-	for(intIter = imageNums.begin(); intIter!=imageNums.end();)
-	{
-		intIter = imageNums.erase(intIter);
-	}
+	imageNums.clear();
+
 	std::vector<std::string> levelVector = LoadLevelFile(levelNum);
 	std::vector<std::string>::iterator stringIter;
 	std::vector<std::string>::iterator stringIter2;
@@ -380,12 +376,7 @@ const std::vector<int>& FileManager::LoadImageNums(int levelNum)
 }
 const std::vector<int>& FileManager::LoadSoundNums(int levelNum)
 {
-	std::vector<int>::iterator intIter;
-	//clear soundNums
-	for(intIter = soundNums.begin(); intIter!=soundNums.end();)
-	{
-		intIter = soundNums.erase(intIter);
-	}
+	soundNums.clear();
 	
 	std::vector<std::string> levelVector = LoadLevelFile(levelNum);
 	std::vector<std::string>::iterator stringIter;
